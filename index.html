@@ -1,4 +1,5 @@
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -6,13 +7,26 @@
     <title>TINotes</title>
     <link rel="stylesheet" type="text/css" href="style.css">
 </head>
+
 <body>
     <h1>TINotes</h1>
     <div id="tools">
+        <div id="calculatorTypeSelector">
+            <span>Calculator Type: </span>
+            <div>
+                <input type="radio" id="monochrome" name="calculatorType" value="monochrome">
+                <label for="monochrome">Monochrome</label>
+            </div>
+            <div>
+                <input type="radio" id="color" name="calculatorType" value="color">
+                <label for="color">Color</label>
+            </div>
+        </div>
         <span class="btn" id="newFolderBtn">New Folder</span>
         <span class="btn" id="newFileBtn">New File</span>
     </div>
     <div id="system"></div>
     <script src="script.js"></script>
 </body>
+
 </html>

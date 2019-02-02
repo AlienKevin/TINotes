@@ -18,6 +18,8 @@ newFolderBtn.addEventListener("click",(e) => {
     let newFolder = document.createElement("input");
     newFolder.setAttribute("type", "text");
     newFolder.placeholder = "Enter folder name here";
+    newFolder.minLength = 1;
+    newFolder.maxLength = menuItemLength;
     newFolder.classList.add("fileNameInput");
     system.appendChild(newFolder);
 });

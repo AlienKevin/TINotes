@@ -14,6 +14,12 @@ div#tools{
 div#system{
     margin-top: 1em;
 }
+div#calculatorTypeSelector{
+    margin-bottom: 1em;
+}
+div#calculatorTypeSelector > div{
+    display: inline;
+}
 .fileNameInput{
     height: 2em;
     font-size: 1em;
