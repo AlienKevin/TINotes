@@ -85,15 +85,35 @@ function displayItem(itemName, type) {
     newItem.innerHTML = itemName;
     newItem.classList.add(type);
     newItem.classList.add("btn");
+    newItem.addEventListener("click", () => {
+        const itemInfo = JSON.parse(localStorage.getItem(itemName));
+        displayFile(newItem, itemInfo.content);
+    });
     system.appendChild(newItem);
 }
 
-function openFileEditor(itemName, itemInfo) {
+function createFileEditor(){
     const editor = document.createElement("textarea");
     editor.id = "editor";
     editor.rows = rowLength;
     editor.cols = lineLength;
     editor.spellcheck = false;
+    return editor;
+}
+
+function displayFile(position, content){
+    const viewer = createFileEditor();
+    viewer.readOnly = true;
+    viewer.value = content;
+    insertAfter(position, viewer);
+}
+// source: https://stackoverflow.com/a/4793630/6798201
+function insertAfter(referenceNode, newNode) {
+    referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+}
+
+function openFileEditor(itemName, itemInfo) {
+    const editor = createFileEditor();
     editor.placeholder = "Write notes here"
     editor.addEventListener("keypress", (e) => {
         const content = editor.value.replace(/\n/g,"");
