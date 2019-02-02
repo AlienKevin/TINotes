@@ -54,8 +54,9 @@ function createMenuItem(type, position) {
     newItem.classList.add("itemNameInput");
     newItem.addEventListener('keypress', (e) => {
         if (e.keyCode == 13) { // ENTER key
-            const itemName = storeItem(newItem, type, position);
+            const itemName = newItem.value;
             displayItem(itemName, type);
+            storeItem(newItem, type, position);
         }
     });
     system.appendChild(newItem);
@@ -95,7 +96,14 @@ function openFileEditor(itemName, itemInfo) {
     editor.placeholder = "Write notes here"
     editor.addEventListener("keypress", (e) => {
         if (e.keyCode == 13) { // ENTER key
-            e.defaultPrevented = true; // no linebreak allowed in file
+            e.preventDefault(); // no linebreak allowed in file
+            const leftInRow = lineLength - editor.value.length % (lineLength);
+			console.log('TCL: openFileEditor -> leftInRow', leftInRow);
+            let spaces = "";
+            for (let i = 0; i < leftInRow; i++){
+                spaces += " ";
+            }
+            editor.value += spaces + "\n";
         }
     });
     system.appendChild(editor);
@@ -104,7 +112,7 @@ function openFileEditor(itemName, itemInfo) {
     submitBtn.innerHTML = "Submit";
     submitBtn.addEventListener("click", () => {
         // return file content
-        itemInfo.content = editor.value;
+        itemInfo.content = editor.value.replace(/\n/g, "");
         localStorage.setItem(itemName, JSON.stringify(itemInfo));
         editor.remove();
         submitBtn.remove();
