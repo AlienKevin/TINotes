@@ -1,15 +1,22 @@
 // set up calculator type
 let calculatorType = "color";
+let lineLength, rowLength, menuTitleLength, menuItemLength;
+const newFolderBtn = document.getElementById("newFolderBtn");
+const newFileBtn = document.getElementById("newFileBtn");
+const system = document.getElementById("system");
+let position = "home"; // default root location for the file system
+const itemNameList = [];
+
 document.querySelector(`input#${calculatorType}`).setAttribute("checked", true);
 document.querySelectorAll('input[name="calculatorType"]')
     .forEach((el) => {
         el.addEventListener("change", (e) => {
             calculatorType = e.target.value;
             changeCalculatorType();
-            // console.log('TCL: e.target', e.target);
+            console.log('TCL: e.target', e.target);
         })
     });
-let lineLength, rowLength, menuTitleLength, menuItemLength;
+
 changeCalculatorType();
 
 function changeCalculatorType() {
@@ -28,11 +35,6 @@ function changeCalculatorType() {
     menuItemLength = lineLength - 2;
 }
 
-const newFolderBtn = document.getElementById("newFolderBtn");
-const newFileBtn = document.getElementById("newFileBtn");
-const system = document.getElementById("system");
-let position = "home"; // default root location for the file system
-
 newFolderBtn.addEventListener("click", () => {
     createMenuItem("folder", position)
 });
@@ -42,7 +44,7 @@ newFileBtn.addEventListener("click", () => {
 
 function createMenuItem(type, position) {
     type = type.toLowerCase();
-    // console.log('TCL: createNewMenuItem -> type', type);
+    console.log('TCL: createNewMenuItem -> type', type);
     if (type !== "folder" && type !== "file") {
         throw new TypeError(`menu item's type should be either folder or file, not ${type}`);
     }
@@ -55,11 +57,35 @@ function createMenuItem(type, position) {
     newItem.addEventListener('keypress', (e) => {
         if (e.keyCode == 13) { // ENTER key
             const itemName = newItem.value;
-            displayItem(itemName, type);
-            storeItem(newItem, type, position);
+            if (itemNameList.indexOf(itemName) >= 0) { // repeated name
+                createErrorMessage(newItem,
+                    `Duplicated ${type} name, ${type} name must be unique`);
+            } else {
+                itemNameList.push(itemName);
+                displayItem(itemName, type);
+                storeItem(newItem, type, position);
+            }
         }
     });
     system.appendChild(newItem);
+}
+
+function createErrorMessage(target, message) {
+    console.log('TCL: createErrorMessage -> target', target);
+    console.log('TCL: createErrorMessage -> typeof target', typeof target);
+    // delete all previous error message
+    document.querySelectorAll(".error").forEach(
+        el => {
+            el.remove();
+        }
+    )
+    const popup = document.createElement("span");
+    popup.innerHTML = message;
+    popup.classList.add("error");
+    target.addEventListener("input", () => {
+        popup.remove(); // delete itself when new input appears
+    });
+    insertAfter(target, popup);
 }
 
 function storeItem(newItem, type, position) {
@@ -154,7 +180,7 @@ function openFileEditor(itemName, itemInfo, position) {
     if (position === undefined) {
         system.appendChild(editor);
         system.appendChild(submitBtn);
-    } else{
+    } else {
         insertAfter(position, submitBtn);
         insertAfter(position, editor);
     }
