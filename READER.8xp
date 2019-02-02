@@ -1,4 +1,11 @@
-"IM TRYING SOMETHING A LITTLE DIFFERENT. WHAT DO YOU GUYS THINK ABOUT MAKING SHOPPING A RISK FREE INVESTMENT THAT IS ACTUALLY FUN FOR THE CONSUMER YEAH. I LIKE IT TOO. YOUGUYSAREALWAYSRIGHT SAY GOODBYE TO THE FORCED SALES AND BAD PRODUCT QUALITIES, MARSHALL FIELD AND COMPANY IS OFFERING EXCELLENT CUSTOMER SERVICE AND IMPORTED PRODUCTS DIRECTLY FROM EUROPE TO ENSURE UTMOST CUSTOMER EXPERIENCE. IN ADDITION, WE ARE RECENTLY INTRODUCING FREE DELIVERY AND EASY RETURN POLICY, SO BE SURE TO BE THE FIRST TO TRY OUT OUR NEWEST PRODUCTS WITHOUT RISK. IF YOU DON'T LIKE IT, JUST RETURN IT! #SATISFACTIONGUARANTEED"->Str1
+Menu("Files","file1",1,"file2",2)
+Lbl 1
+"THIS IS THE FIRST FILE"->Str1
+Goto 0
+Lbl 2
+"THIS IS THE SECOND FILE"->Str1
+Goto 0
+Lbl 0
 ClrHome
 26->L
 9->R
@@ -11,7 +18,7 @@ For(I,S,D-L,L)
 	If fPart((I-1)/P)=0 and I!=1
 	Then
 		G+1->G
-		Repeat ((K=24 or K=25) and I>P*2) or K=26 or K=34 or K=23 or K=45
+		Repeat ((K=24 or K=25) and I>P*2) or K=26 or K=34 or K=23 or K=45 or K=105
 			getKey->K
 		End
 		If (K=24 or K=25)
@@ -19,7 +26,7 @@ For(I,S,D-L,L)
 			I-P*2->I
 			G-1->G
 		End
-		If (K=23 or K=45)
+		If (K=23 or K=45 or K=105)
 		Then
 			Goto Q
 		End
@@ -31,17 +38,23 @@ If D>I
 	Then
 	Disp sub(Str1,I,D-I+1)
 End
-Repeat ((K=24 or K=25)) or K=26 or K=34 or K=23 or K=45
+Lbl E
+Repeat ((K=24 or K=25)) or K=26 or K=34 or K=23 or K=45 or K=105
 	getKey->K
 End
 If (K=24 or K=25)
 Then
-	ClrHome
-	(G-1)*P+1->S
-	Disp sub(Str1,S,L)
-	S+L->S
-	G-2->G
-	Goto F
+	If (G<=0)
+	Then
+		Goto E
+	Else
+		ClrHome
+		(G-1)*P+1->S
+		Disp sub(Str1,S,L)
+		S+L->S
+		G-2->G
+		Goto F
+	End
 End
 Lbl Q
 DelVar Str1
