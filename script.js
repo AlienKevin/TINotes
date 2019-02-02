@@ -1,3 +1,5 @@
+// set up namespace for this app
+const app = {};
 // set up calculator type
 let calculatorType = "color";
 document.querySelector(`input#${calculatorType}`).setAttribute("checked", true);
@@ -29,7 +31,7 @@ function changeCalculatorType() {
 
 const newFolderBtn = document.getElementById("newFolderBtn");
 const system = document.getElementById("system");
-let location = "home"; // default root location for the file system
+app.location = "home"; // default root location for the file system
 newFolderBtn.addEventListener("click", (e) => {
     let newFolder = document.createElement("input");
     newFolder.setAttribute("type", "text");
@@ -41,7 +43,7 @@ newFolderBtn.addEventListener("click", (e) => {
         if (e.keyCode == 13) { // ENTER key
             // store new folder with the inputed name
             const folderInfo = {
-                "parent": "home",
+                "location": app.location,
                 "type": "folder"
             };
             const folderName = newFolder.value;
@@ -51,6 +53,8 @@ newFolderBtn.addEventListener("click", (e) => {
             // replace it with label
             newFolder = document.createElement("p");
             newFolder.innerHTML = folderName;
+            newFolder.classList.add("folder");
+            newFolder.classList.add("btn");
             system.appendChild(newFolder);
         }
       });
