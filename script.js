@@ -87,12 +87,12 @@ function displayItem(itemName, type) {
     newItem.classList.add("btn");
     newItem.addEventListener("click", () => {
         const itemInfo = JSON.parse(localStorage.getItem(itemName));
-        displayFile(newItem, itemInfo.content);
+        displayFile(newItem, itemName, itemInfo);
     });
     system.appendChild(newItem);
 }
 
-function createFileEditor(){
+function createFileEditor() {
     const editor = document.createElement("textarea");
     editor.id = "editor";
     editor.rows = rowLength;
@@ -101,22 +101,30 @@ function createFileEditor(){
     return editor;
 }
 
-function displayFile(position, content){
-    const viewer = createFileEditor();
-    viewer.readOnly = true;
-    viewer.value = content;
-    insertAfter(position, viewer);
+function displayFile(position, fileName, fileInfo) {
+    // toggle file editor
+    const editor = document.getElementById("editor");
+    if (editor) {
+        editor.remove();
+        const submitBtn = document.getElementById("submitFileBtn");
+        submitBtn.remove();
+    } else {
+        openFileEditor(fileName, fileInfo, position);
+    }
 }
 // source: https://stackoverflow.com/a/4793630/6798201
 function insertAfter(referenceNode, newNode) {
     referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
 }
 
-function openFileEditor(itemName, itemInfo) {
+function openFileEditor(itemName, itemInfo, position) {
     const editor = createFileEditor();
     editor.placeholder = "Write notes here"
+    if (itemInfo.content !== undefined) {
+        editor.value = itemInfo.content;
+    }
     editor.addEventListener("keypress", (e) => {
-        const content = editor.value.replace(/\n/g,"");
+        const content = editor.value.replace(/\n/g, "");
         const leftInRow = lineLength - content.length % (lineLength);
         if (e.keyCode == 13) { // ENTER key
             e.preventDefault(); // no linebreak allowed in file
@@ -127,13 +135,13 @@ function openFileEditor(itemName, itemInfo) {
             }
             editor.value += spaces + "\n";
         }
-        if (leftInRow === lineLength && content.length !== 0){
-			console.log('TCL: openFileEditor -> leftInRow', leftInRow);
+        if (leftInRow === lineLength && content.length !== 0) {
+            console.log('TCL: openFileEditor -> leftInRow', leftInRow);
             editor.value += "\n"; // avoid word wrapping
         }
     });
-    system.appendChild(editor);
     const submitBtn = document.createElement("span");
+    submitBtn.id = "submitFileBtn";
     submitBtn.classList.add("btn");
     submitBtn.innerHTML = "Submit";
     submitBtn.addEventListener("click", () => {
@@ -143,5 +151,11 @@ function openFileEditor(itemName, itemInfo) {
         editor.remove();
         submitBtn.remove();
     });
-    system.appendChild(submitBtn);
+    if (position === undefined) {
+        system.appendChild(editor);
+        system.appendChild(submitBtn);
+    } else{
+        insertAfter(position, submitBtn);
+        insertAfter(position, editor);
+    }
 }
