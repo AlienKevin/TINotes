@@ -1,19 +1,28 @@
-"The industry business these days is too centered around the profit over the person. #BringBackTheCustomerInCustomerService Thanks to the huge development of Chicago as a city, Marshall Field and Company's business grew exponentially. We will continue to provide the best customer service and most enjoyable shopping experience while serving more customers. #CustomerIsAlwaysRight. The industry business these days is too centered around the profit over the person."->Str1
-16->L
-7->R
+"The industry business these days is too centered around the profit over the person. #BringBackTheCustomerInCustomerService Thanks to the huge development of Chicago as a city, Marshall Field and Company's business grew exponentially."->Str1
+16->C
+8->R
 length(Str1)->D
-For(I,1,D-L,L)
-	If fPart((I-1)/(R*L))=0 and I!=1
+round(D/C/R,0)->T
+Disp T
+Pause 
+For(P,1,T,1)
+	If D/C-P*R>0
 	Then
-		Repeat getKey
+		For(I,1,R,1)
+			If I=R
+			Then
+				Repeat getKey
+				End
+				ClrHome
+			End
+			Output(I,1,sub(Str1,(P-1)*C*R+(I-1)*C+1,C))
 		End
-		ClrHome
+	Else
+		For(I,1,D-P*R*C,C)
+		Then
+			Disp sub(Str1,P*R*C+I,C)
+		End
 	End
-	Disp sub(Str1,I,L)
-End
-If D>I
-	Then
-	Disp sub(Str1,I,D-I+1)
 End
 Repeat getKey
 End
