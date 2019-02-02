@@ -1,0 +1,13 @@
+body{
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+.btn{
+    background: #eee;
+    padding: 10px;
+    cursor: pointer;
+}
+div#tools{
+    display: inline-block;
+    background: gold;
+    padding: 20px;
+}
