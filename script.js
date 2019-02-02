@@ -96,7 +96,8 @@ function openFileEditor(itemName, itemInfo) {
     editor.spellcheck = false;
     editor.placeholder = "Write notes here"
     editor.addEventListener("keypress", (e) => {
-        const leftInRow = lineLength - editor.value.length % (lineLength);
+        const content = editor.value.replace(/\n/g,"");
+        const leftInRow = lineLength - content.length % (lineLength);
         if (e.keyCode == 13) { // ENTER key
             e.preventDefault(); // no linebreak allowed in file
             console.log('TCL: openFileEditor -> leftInRow', leftInRow);
@@ -106,7 +107,8 @@ function openFileEditor(itemName, itemInfo) {
             }
             editor.value += spaces + "\n";
         }
-        if (leftInRow === 1){
+        if (leftInRow === lineLength && content.length !== 0){
+			console.log('TCL: openFileEditor -> leftInRow', leftInRow);
             editor.value += "\n"; // avoid word wrapping
         }
     });
