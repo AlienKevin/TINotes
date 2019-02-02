@@ -29,6 +29,7 @@ function changeCalculatorType() {
 
 const newFolderBtn = document.getElementById("newFolderBtn");
 const system = document.getElementById("system");
+let location = "home"; // default root location for the file system
 newFolderBtn.addEventListener("click", (e) => {
     let newFolder = document.createElement("input");
     newFolder.setAttribute("type", "text");
@@ -36,5 +37,22 @@ newFolderBtn.addEventListener("click", (e) => {
     newFolder.minLength = 1;
     newFolder.maxLength = menuItemLength;
     newFolder.classList.add("fileNameInput");
+    newFolder.addEventListener('keypress', (e) => {
+        if (e.keyCode == 13) { // ENTER key
+            // store new folder with the inputed name
+            const folderInfo = {
+                "parent": "home",
+                "type": "folder"
+            };
+            const folderName = newFolder.value;
+            localStorage.setItem(folderName, JSON.stringify(folderInfo));
+            // remove folder name input
+            newFolder.remove();
+            // replace it with label
+            newFolder = document.createElement("p");
+            newFolder.innerHTML = folderName;
+            system.appendChild(newFolder);
+        }
+      });
     system.appendChild(newFolder);
 });
