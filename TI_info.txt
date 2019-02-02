@@ -15,3 +15,20 @@ Characters like #.!*()[]\{}~` all work perfectly in strings
 However, | (vertical bar) character seems to be escaped and is always one
 less than the number present. E.g. "||" will yield "|", 
 "|" will yeild "" (tested on jsTIfield)
+
+3. How to type things in TI-BASIC editors like jsTIfield and TokensIDE
+The "Sto" arrow (→): ->
+The negative sign (⁻): ~
+The tilde sign (~): |~
+The "squared" symbol (²): ^^2
+	(Note: try ^^CHARACTER for other super-script characters, such as "sin⁻¹(")
+The "pi" symbol (π): pi
+	(Note: try this for other Greek characters as well, such as theta)
+The actual string "pi", for example, if you're typing "typing": \pi
+	(Note: this is true for all special symbols, e.g. \mu to type the literal string "mu")
+The backslash character: \\
+The small L for lists (ʟ): |L
+Y= vars (such as Y₁): {Y1}
+R►Pr(: R>Pr(
+	(Note: when the token has ►, try >)
+Mathematical symbols, such as √(: sqrt(
