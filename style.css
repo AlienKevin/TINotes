@@ -20,7 +20,7 @@ div#calculatorTypeSelector{
 div#calculatorTypeSelector > div{
     display: inline;
 }
-.fileNameInput{
+.itemNameInput{
     height: 2em;
     font-size: 1em;
 }

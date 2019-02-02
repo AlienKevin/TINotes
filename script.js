@@ -1,5 +1,3 @@
-// set up namespace for this app
-const app = {};
 // set up calculator type
 let calculatorType = "color";
 document.querySelector(`input#${calculatorType}`).setAttribute("checked", true);
@@ -30,33 +28,43 @@ function changeCalculatorType() {
 }
 
 const newFolderBtn = document.getElementById("newFolderBtn");
+const newFileBtn = document.getElementById("newFileBtn");
 const system = document.getElementById("system");
-app.location = "home"; // default root location for the file system
-newFolderBtn.addEventListener("click", (e) => {
-    let newFolder = document.createElement("input");
-    newFolder.setAttribute("type", "text");
-    newFolder.placeholder = "Enter folder name here";
-    newFolder.minLength = 1;
-    newFolder.maxLength = menuItemLength;
-    newFolder.classList.add("fileNameInput");
-    newFolder.addEventListener('keypress', (e) => {
+let position = "home"; // default root location for the file system
+
+newFolderBtn.addEventListener("click", () => {createMenuItem("folder", location)});
+newFileBtn.addEventListener("click", () => {createMenuItem("file", location)});
+
+function createMenuItem(type, location){
+    type = type.toLowerCase();
+	console.log('TCL: createNewMenuItem -> type', type);
+    if (type !== "folder" && type !== "file"){
+        throw new TypeError(`menu item's type should be either folder or file, not ${type}`);
+    }
+    let newItem = document.createElement("input");
+    newItem.setAttribute("type", "text");
+    newItem.placeholder = `Enter ${type} name here`;
+    newItem.minLength = 1;
+    newItem.maxLength = menuItemLength;
+    newItem.classList.add("itemNameInput");
+    newItem.addEventListener('keypress', (e) => {
         if (e.keyCode == 13) { // ENTER key
             // store new folder with the inputed name
-            const folderInfo = {
-                "location": app.location,
-                "type": "folder"
+            const itemInfo = {
+                "location": location,
+                "type": type
             };
-            const folderName = newFolder.value;
-            localStorage.setItem(folderName, JSON.stringify(folderInfo));
-            // remove folder name input
-            newFolder.remove();
-            // replace it with label
-            newFolder = document.createElement("p");
-            newFolder.innerHTML = folderName;
-            newFolder.classList.add("folder");
-            newFolder.classList.add("btn");
-            system.appendChild(newFolder);
+            const itemName = newItem.value;
+            localStorage.setItem(itemName, JSON.stringify(itemInfo));
+            // remove item name input
+            newItem.remove();
+            // replace input with label
+            newItem = document.createElement("p");
+            newItem.innerHTML = itemName;
+            newItem.classList.add(type);
+            newItem.classList.add("btn");
+            system.appendChild(newItem);
         }
       });
-    system.appendChild(newFolder);
-});
+    system.appendChild(newItem);
+}
