@@ -1,10 +1,31 @@
-Menu("Files","file1",1,"file2",2)
+Menu("NOTES","PHYSICS",1,"CHEMISTRY",2,"CALCULUS",3,"BIOLOGY",4)
+
 Lbl 1
-"THIS IS THE FIRST FILE"->Str1
+
+	Menu("PHYSICS","NEWTON'S LAWS",11,"UNIVERSAL GRAVITATION",12)
+
+	Lbl 11
+	"An object will not accelerate unless it is acted on by unbalanced forces. All matter has inertia. Inertia is the resistance of any physical object to any change in velocity, or acceleration. An object with a large mass, has a large inertia, and a high resistance to acceleration."->Str1
+	Goto 0
+
+	Lbl 12
+	"Universal gravitation states that every particle in the universe is attracted to every other particle. Amazingly, universal gravitation connects the earth and sky with one equation. The same force that makes apples fall also makes stars, planets, and moons orbit each other!"->Str1
+	Goto 0
+
 Goto 0
+
 Lbl 2
-"THIS IS THE SECOND FILE"->Str1
+"THIS IS THE CHEMISTRY FILE"->Str1
 Goto 0
+
+Lbl 3
+"THIS IS THE CALCULUS FILE"->Str1
+Goto 0
+
+Lbl 4
+"THIS IS THE BIOLOGY FILE"->Str1
+Goto 0
+
 Lbl 0
 ClrHome
 26->L
