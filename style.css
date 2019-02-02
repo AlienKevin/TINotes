@@ -26,3 +26,7 @@ div#calculatorTypeSelector > div{
 }
 .folder{
 }
+
+#editor{
+    font-size: 1em;
+}
