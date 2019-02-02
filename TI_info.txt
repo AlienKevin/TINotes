@@ -1,0 +1,17 @@
+1. Memory
+Total RAM: 21831
+Total Arc: 3602K
+
+Maximum words stored in Archive: 
+21831*9/16/4.5 = 2728 words
+    Explanation:
+    21831 = the total RAM
+    9     = # of string vars available (need to save one for normal operation)
+    16    = all lowercase characters take up 2 bytes (16 bits)
+    4.5   = average length of English words
+
+2. Characters in string
+Characters like #.!*()[]\{}~` all work perfectly in strings
+However, | (vertical bar) character seems to be escaped and is always one
+less than the number present. E.g. "||" will yield "|", 
+"|" will yeild "" (tested on jsTIfield)
