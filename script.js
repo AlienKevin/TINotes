@@ -6,7 +6,7 @@ document.querySelectorAll('input[name="calculatorType"]')
         el.addEventListener("change", (e) => {
             calculatorType = e.target.value;
             changeCalculatorType();
-			// console.log('TCL: e.target', e.target);
+            // console.log('TCL: e.target', e.target);
         })
     });
 let lineLength, rowLength, menuTitleLength, menuItemLength;
@@ -42,7 +42,7 @@ newFileBtn.addEventListener("click", () => {
 
 function createMenuItem(type, position) {
     type = type.toLowerCase();
-	// console.log('TCL: createNewMenuItem -> type', type);
+    // console.log('TCL: createNewMenuItem -> type', type);
     if (type !== "folder" && type !== "file") {
         throw new TypeError(`menu item's type should be either folder or file, not ${type}`);
     }
@@ -71,7 +71,7 @@ function storeItem(newItem, type, position) {
     const itemName = newItem.value;
     if (type === "file") {
         openFileEditor(itemName, itemInfo);
-    } else{
+    } else {
         localStorage.setItem(itemName, JSON.stringify(itemInfo));
     }
     // remove item name input
@@ -93,17 +93,21 @@ function openFileEditor(itemName, itemInfo) {
     editor.id = "editor";
     editor.rows = rowLength;
     editor.cols = lineLength;
+    editor.spellcheck = false;
     editor.placeholder = "Write notes here"
     editor.addEventListener("keypress", (e) => {
+        const leftInRow = lineLength - editor.value.length % (lineLength);
         if (e.keyCode == 13) { // ENTER key
             e.preventDefault(); // no linebreak allowed in file
-            const leftInRow = lineLength - editor.value.length % (lineLength);
-			console.log('TCL: openFileEditor -> leftInRow', leftInRow);
+            console.log('TCL: openFileEditor -> leftInRow', leftInRow);
             let spaces = "";
-            for (let i = 0; i < leftInRow; i++){
+            for (let i = 0; i < leftInRow; i++) {
                 spaces += " ";
             }
             editor.value += spaces + "\n";
+        }
+        if (leftInRow === 1){
+            editor.value += "\n"; // avoid word wrapping
         }
     });
     system.appendChild(editor);
