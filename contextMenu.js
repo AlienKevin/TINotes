@@ -97,24 +97,30 @@
      * Listens for contextmenu events.
      */
     function contextListener() {
-        document.addEventListener("contextmenu", function (e) {
+        // the event object itemClickedEvent's target is the item label in the menu
+        document.addEventListener("contextmenu", function (itemClickedEvent) {
             Array.from(document.getElementsByClassName(contextMenuItemClassName)).forEach(
                 el => {
-                    if (el.getAttribute("data-action") === "delete") {
+                    const itemLabel = itemClickedEvent.target;
+                    switch (el.getAttribute("data-action")) {
+                        case "delete":
                         el.addEventListener("click", () => {
-                            // delete item
-                            const item = e.target;
-                            deleteItem(item);
-                        })
+                            deleteItem(itemLabel);
+                        });
+                        break;
+                        case "rename":
+                        el.addEventListener("click", () => {
+                            renameItem(itemLabel);
+                        });
                     }
                 }
             )
-            taskItemInContext = clickInsideElement(e, taskItemClassName);
+            taskItemInContext = clickInsideElement(itemClickedEvent, taskItemClassName);
 
             if (taskItemInContext) {
-                e.preventDefault();
+                itemClickedEvent.preventDefault();
                 toggleMenuOn();
-                positionMenu(e);
+                positionMenu(itemClickedEvent);
             } else {
                 taskItemInContext = null;
                 toggleMenuOff();

@@ -18,7 +18,7 @@ function generateScript() {
     const homeMenuTitle = `NOTES`;
     let homeMenu = `Menu("${homeMenuTitle}"`;
     let branching = ``;
-    accessStorage(function (item, itemName, itemType, position, index) {
+    iterateStorage(function (item, itemName, itemType, position, index) {
         index += 1;
         homeMenu += `,"${itemName}",${index}`;
         branching += `Lbl ${index}\n`;

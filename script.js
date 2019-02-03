@@ -13,7 +13,7 @@ document.querySelectorAll('input[name="calculatorType"]')
         el.addEventListener("change", (e) => {
             calculatorType = e.target.value;
             changeCalculatorType();
-            // // console.log('TCL: e.target', e.target);
+			// console.log('TCL: e.target', e.target);
         })
     });
 
@@ -35,15 +35,15 @@ function changeCalculatorType() {
     menuItemLength = lineLength - 2;
 }
 // load items from last time in localStorage
-accessStorage(function (item, itemName, type) {
+iterateStorage(function (item, itemName, type) {
     itemNameList.push(itemName);
     displayItem(itemName, type);
 });
 
-function accessStorage(func) {
+function iterateStorage(func) {
     for (let index = 0; index < localStorage.length; index++) {
         const itemName = localStorage.key(index);
-        const item = JSON.parse(localStorage.getItem(itemName));
+        const item = getItemFromStorage(itemName);
         func(item, itemName, item.type, item.position, index);
     }
 }
@@ -57,7 +57,7 @@ newFileBtn.addEventListener("click", () => {
 
 function toggleBtnHighlight(e) {
     if (e.target.classList.contains("btn")) {
-        // console.log('TCL: toggleBtnHighlight -> e.target', e.target);
+		// console.log('TCL: toggleBtnHighlight -> e.target', e.target);
         e.target.classList.toggle("btn-hover");
     }
 }
@@ -68,39 +68,45 @@ document.addEventListener("mouseout", toggleBtnHighlight)
 
 function createMenuItem(type, position) {
     type = type.toLowerCase();
-    // // console.log('TCL: createNewMenuItem -> type', type);
+	// console.log('TCL: createNewMenuItem -> type', type);
     if (type !== "folder" && type !== "file") {
         throw new TypeError(`menu item's type should be either folder or file, not ${type}`);
     }
-    let newItem = document.createElement("input");
-    newItem.setAttribute("type", "text");
-    newItem.placeholder = `Enter ${type} name here`;
-    newItem.minLength = 1;
-    newItem.maxLength = menuItemLength;
-    newItem.spellcheck = false;
-    newItem.classList.add("itemNameInput");
-    newItem.addEventListener('keypress', (e) => {
+    const itemNameInput = createItemNameInput(type);
+    itemNameInput.addEventListener('keypress', (e) => {
         if (e.keyCode == 13) { // ENTER key
-            const itemName = newItem.value;
+            const itemName = itemNameInput.value;
             if (itemNameList.indexOf(itemName) >= 0) { // repeated name
-                createErrorMessage(newItem,
+                createErrorMessage(itemNameInput,
                     `Duplicated ${type} name, ${type} name must be unique`);
             } else {
                 itemNameList.push(itemName);
-                displayItem(itemName, type);
-                storeItem(newItem, type, position);
+                displayItem(itemName, type, itemNameInput);
+                storeItem(itemNameInput, type, position);
                 // remove item name input
-                newItem.remove();
+                itemNameInput.remove();
             }
         }
     });
-    system.appendChild(newItem);
-    newItem.focus();
+    system.appendChild(itemNameInput);
+    itemNameInput.focus();
+}
+
+// Create input box for entering name of the file or folder
+function createItemNameInput(type){
+    const itemNameInput = document.createElement("input");
+    itemNameInput.setAttribute("type", "text");
+    itemNameInput.placeholder = `Enter ${type} name here`;
+    itemNameInput.minLength = 1;
+    itemNameInput.maxLength = menuItemLength;
+    itemNameInput.spellcheck = false;
+    itemNameInput.classList.add("itemNameInput");
+    return itemNameInput;
 }
 
 function createErrorMessage(target, message) {
-    // // console.log('TCL: createErrorMessage -> target', target);
-    // // console.log('TCL: createErrorMessage -> typeof target', typeof target);
+	// console.log('TCL: createErrorMessage -> target', target);
+	// console.log('TCL: createErrorMessage -> typeof target', typeof target);
     // delete all previous error message
     document.querySelectorAll(".error").forEach(
         el => {
@@ -116,22 +122,22 @@ function createErrorMessage(target, message) {
     insertAfter(target, popup);
 }
 
-function storeItem(newItem, type, position) {
+function storeItem(itemNameInput, type, position) {
     // store new item with the inputed name
     const itemInfo = {
         "position": position,
         "type": type
     };
-    const itemName = newItem.value;
+    const itemName = itemNameInput.value;
     if (type === "file") {
         openFileEditor(itemName, itemInfo);
     } else {
-        localStorage.setItem(itemName, JSON.stringify(itemInfo));
+        setItemInStorage(itemName, itemInfo);
     }
     return itemName;
 }
 
-function displayItem(itemName, type) {
+function displayItem(itemName, type, position) {
     // replace input with label
     const newItem = document.createElement("p");
     if (type === "file") {
@@ -145,11 +151,17 @@ function displayItem(itemName, type) {
     newItem.setAttribute("data-name", itemName);
     newItem.addEventListener("click", () => {
         if (type === "file") {
-            const itemInfo = JSON.parse(localStorage.getItem(itemName));
+            const itemInfo = getItemFromStorage(itemName);
             displayFile(newItem, itemName, itemInfo);
         }
     });
-    system.appendChild(newItem);
+    // console.log("displaying item...");
+    if (position){
+		// console.log('TCL: displayItem -> position', position);
+        insertAfter(position, newItem);
+    } else{
+        system.appendChild(newItem);
+    }
 }
 
 function createFileEditor(id) {
@@ -182,20 +194,84 @@ function displayFile(position, fileName, fileInfo) {
     }
 }
 
-function deleteItem(item) {
-    const itemName = item.getAttribute("data-name");
+function deleteItem(itemLabel) {
+    const itemName = itemLabel.getAttribute("data-name");
     if (itemName) {
-        localStorage.removeItem(item.getAttribute("data-name"));
+        removeItemFromStorage(itemName);
+        removeElement(itemNameList, itemName);
     }
-    item.remove();
-    removeElement(itemNameList, itemName);
+    itemLabel.remove();
+}
+
+function renameItem(itemLabel) {
+    const oldItemName = itemLabel.getAttribute("data-name");
+    if (oldItemName) {
+        const item = getItemFromStorage(oldItemName);
+        const type = item.type;
+        const itemNameInput = createItemNameInput();
+        itemNameInput.value = oldItemName;
+        insertAfter(itemLabel, itemNameInput);
+        itemNameInput.focus();
+		// console.log('TCL: renameItem -> itemLabel', itemLabel);
+		// console.log('TCL: renameItem -> itemLabel.parentNode', itemLabel.parentNode);
+        itemLabel.remove();
+        itemNameInput.addEventListener("keypress", (e) => {
+            if (e.keyCode == 13) { // ENTER key
+                const newItemName = itemNameInput.value;
+                if (itemNameList.indexOf(newItemName) >= 0 && newItemName !== oldItemName) { // repeated name
+                    createErrorMessage(itemNameInput,
+                        `Duplicated ${type} name, ${type} name must be unique`);
+                } else {
+                    replaceElement(itemNameList, oldItemName, newItemName);
+                    renameItemInStorage(oldItemName, newItemName);
+                    displayItem(newItemName, type, itemNameInput);
+                    // remove item name input
+                    itemNameInput.remove();
+                }
+            }
+        })
+    }
+}
+
+function renameItemInStorage(oldItemName, newItemName){
+    const item = getItemFromStorage(oldItemName);
+    removeItemFromStorage(oldItemName);
+    setItemInStorage(newItemName, item);
+}
+
+function removeItemFromStorage(itemName){
+    localStorage.removeItem(itemName);
+}
+
+function getItemFromStorage(itemName) {
+    return JSON.parse(localStorage.getItem(itemName));
+}
+
+function setItemInStorage(itemName, item) {
+    localStorage.setItem(itemName, JSON.stringify(item));
 }
 
 // Source: https://stackoverflow.com/a/9792947/6798201
+// Remove one element in array, only remove
+// the first occurance starting from the end of the array
+// uncomment break to remove all occurance
 function removeElement(array, element) {
     for (var i = array.length - 1; i >= 0; i--) {
         if (array[i] === element) {
             array.splice(i, 1);
+            break;
+        }
+    }
+}
+
+// Based on: https://stackoverflow.com/a/9792947/6798201
+// Replace one element in array with new element, only replace 
+// the first occurance starting from the end of the array
+// uncomment break to replace all occurance
+function replaceElement(array, oldElement, newElement){
+    for (var i = array.length - 1; i >= 0; i--) {
+        if (array[i] === oldElement) {
+            array.splice(i, 1, newElement);
             break;
         }
     }
@@ -218,7 +294,7 @@ function openFileEditor(itemName, itemInfo, position) {
         const leftInRow = lineLength - content.length % (lineLength);
         if (e.keyCode == 13) { // ENTER key
             e.preventDefault(); // no linebreak allowed in file
-            // // console.log('TCL: openFileEditor -> leftInRow', leftInRow);
+			// console.log('TCL: openFileEditor -> leftInRow', leftInRow);
             let spaces = "";
             for (let i = 0; i < leftInRow; i++) {
                 spaces += " ";
@@ -226,7 +302,7 @@ function openFileEditor(itemName, itemInfo, position) {
             editor.value += spaces + "\n";
         }
         if (leftInRow === lineLength && content.length !== 0) {
-            // // console.log('TCL: openFileEditor -> leftInRow', leftInRow);
+			// console.log('TCL: openFileEditor -> leftInRow', leftInRow);
             editor.value += "\n"; // avoid word wrapping
         }
     });
@@ -237,7 +313,7 @@ function openFileEditor(itemName, itemInfo, position) {
     submitBtn.addEventListener("click", () => {
         // return file content
         itemInfo.content = editor.value.replace(/\n/g, "");
-        localStorage.setItem(itemName, JSON.stringify(itemInfo));
+        setItemInStorage(itemName, itemInfo);
         editor.remove();
         submitBtn.remove();
     });

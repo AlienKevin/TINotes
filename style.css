@@ -140,7 +140,7 @@ div#calculatorTypeSelector>div {
   }
   
   /* Modal Body */
-  .modal-body {padding: 2px 16px;}
+  .modal-body {padding: 1em 16px;}
   
   /* Modal Footer */
   .modal-footer {
