@@ -137,7 +137,10 @@ function displayFile(position, fileName, fileInfo) {
         editor.remove();
         const submitBtn = document.getElementById("submitFileBtn");
         submitBtn.remove();
-        displayFile(position, fileName, fileInfo);
+        const clickedItemName = editor.getAttribute("data-item");
+        if (clickedItemName !== fileName) { // not the same file
+            displayFile(position, fileName, fileInfo);
+        }
     } else {
         openFileEditor(fileName, fileInfo, position);
     }
@@ -152,6 +155,7 @@ function openFileEditor(itemName, itemInfo, position) {
     editor.placeholder = "Write notes here"
     if (itemInfo.content !== undefined) {
         editor.value = itemInfo.content;
+        editor.setAttribute("data-item", itemName);
     }
     editor.addEventListener("keypress", (e) => {
         const content = editor.value.replace(/\n/g, "");
