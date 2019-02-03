@@ -13,7 +13,7 @@ document.querySelectorAll('input[name="calculatorType"]')
         el.addEventListener("change", (e) => {
             calculatorType = e.target.value;
             changeCalculatorType();
-            console.log('TCL: e.target', e.target);
+			// console.log('TCL: e.target', e.target);
         })
     });
 
@@ -42,9 +42,22 @@ newFileBtn.addEventListener("click", () => {
     createMenuItem("file", position)
 });
 
+function toggleBtnHighlight(e){
+    const btn = e.target;
+	// console.log('TCL: highlightBtn -> btn', btn);
+    btn.classList.toggle("btn-hover");
+}
+
+document.querySelectorAll(".btn").forEach(
+    btn => {
+        btn.addEventListener("mouseover", toggleBtnHighlight);
+        btn.addEventListener("mouseout", toggleBtnHighlight)
+    }
+)
+
 function createMenuItem(type, position) {
     type = type.toLowerCase();
-    console.log('TCL: createNewMenuItem -> type', type);
+	// console.log('TCL: createNewMenuItem -> type', type);
     if (type !== "folder" && type !== "file") {
         throw new TypeError(`menu item's type should be either folder or file, not ${type}`);
     }
@@ -72,8 +85,8 @@ function createMenuItem(type, position) {
 }
 
 function createErrorMessage(target, message) {
-    console.log('TCL: createErrorMessage -> target', target);
-    console.log('TCL: createErrorMessage -> typeof target', typeof target);
+	// console.log('TCL: createErrorMessage -> target', target);
+	// console.log('TCL: createErrorMessage -> typeof target', typeof target);
     // delete all previous error message
     document.querySelectorAll(".error").forEach(
         el => {
@@ -166,7 +179,7 @@ function openFileEditor(itemName, itemInfo, position) {
         const leftInRow = lineLength - content.length % (lineLength);
         if (e.keyCode == 13) { // ENTER key
             e.preventDefault(); // no linebreak allowed in file
-            console.log('TCL: openFileEditor -> leftInRow', leftInRow);
+			// console.log('TCL: openFileEditor -> leftInRow', leftInRow);
             let spaces = "";
             for (let i = 0; i < leftInRow; i++) {
                 spaces += " ";
@@ -174,7 +187,7 @@ function openFileEditor(itemName, itemInfo, position) {
             editor.value += spaces + "\n";
         }
         if (leftInRow === lineLength && content.length !== 0) {
-            console.log('TCL: openFileEditor -> leftInRow', leftInRow);
+			// console.log('TCL: openFileEditor -> leftInRow', leftInRow);
             editor.value += "\n"; // avoid word wrapping
         }
     });
