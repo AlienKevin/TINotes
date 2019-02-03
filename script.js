@@ -128,6 +128,8 @@ function displayItem(itemName, type) {
     }
     newItem.classList.add(type);
     newItem.classList.add("btn");
+    newItem.classList.add("item");
+    newItem.setAttribute("data-name", itemName);
     newItem.addEventListener("click", () => {
         if (type === "file") {
             const itemInfo = JSON.parse(localStorage.getItem(itemName));
@@ -161,6 +163,26 @@ function displayFile(position, fileName, fileInfo) {
         openFileEditor(fileName, fileInfo, position);
     }
 }
+
+function deleteItem(item){
+    const itemName = item.getAttribute("data-name");
+    if (itemName){
+        localStorage.removeItem(item.getAttribute("data-name"));
+    }
+    item.remove();
+    removeElement(itemNameList, itemName);
+}
+
+// Source: https://stackoverflow.com/a/9792947/6798201
+function removeElement(array, element){
+    for (var i=array.length-1; i>=0; i--) {
+        if (array[i] === element) {
+            array.splice(i, 1);
+            break;
+        }
+    }
+}
+
 // source: https://stackoverflow.com/a/4793630/6798201
 function insertAfter(referenceNode, newNode) {
     referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
