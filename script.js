@@ -80,6 +80,7 @@ function createMenuItem(type, position) {
         }
     });
     system.appendChild(newItem);
+    newItem.focus();
 }
 
 function createErrorMessage(target, message) {
@@ -207,4 +208,5 @@ function openFileEditor(itemName, itemInfo, position) {
         insertAfter(position, submitBtn);
         insertAfter(position, editor);
     }
+    editor.focus();
 }
