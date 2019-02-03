@@ -13,7 +13,7 @@ document.querySelectorAll('input[name="calculatorType"]')
         el.addEventListener("change", (e) => {
             calculatorType = e.target.value;
             changeCalculatorType();
-			// // console.log('TCL: e.target', e.target);
+            // // console.log('TCL: e.target', e.target);
         })
     });
 
@@ -34,6 +34,19 @@ function changeCalculatorType() {
     menuTitleLength = lineLength;
     menuItemLength = lineLength - 2;
 }
+// load items from last time in localStorage
+accessStorage(function (item, itemName, type) {
+    itemNameList.push(itemName);
+    displayItem(itemName, type);
+});
+
+function accessStorage(func) {
+    for (let index = 0; index < localStorage.length; index++) {
+        const itemName = localStorage.key(index);
+        const item = JSON.parse(localStorage.getItem(itemName));
+        func(item, itemName, item.type, item.position, index);
+    }
+}
 
 newFolderBtn.addEventListener("click", () => {
     createMenuItem("folder", position)
@@ -44,7 +57,7 @@ newFileBtn.addEventListener("click", () => {
 
 function toggleBtnHighlight(e) {
     if (e.target.classList.contains("btn")) {
-		// console.log('TCL: toggleBtnHighlight -> e.target', e.target);
+        // console.log('TCL: toggleBtnHighlight -> e.target', e.target);
         e.target.classList.toggle("btn-hover");
     }
 }
@@ -55,7 +68,7 @@ document.addEventListener("mouseout", toggleBtnHighlight)
 
 function createMenuItem(type, position) {
     type = type.toLowerCase();
-	// // console.log('TCL: createNewMenuItem -> type', type);
+    // // console.log('TCL: createNewMenuItem -> type', type);
     if (type !== "folder" && type !== "file") {
         throw new TypeError(`menu item's type should be either folder or file, not ${type}`);
     }
@@ -76,6 +89,8 @@ function createMenuItem(type, position) {
                 itemNameList.push(itemName);
                 displayItem(itemName, type);
                 storeItem(newItem, type, position);
+                // remove item name input
+                newItem.remove();
             }
         }
     });
@@ -84,8 +99,8 @@ function createMenuItem(type, position) {
 }
 
 function createErrorMessage(target, message) {
-	// // console.log('TCL: createErrorMessage -> target', target);
-	// // console.log('TCL: createErrorMessage -> typeof target', typeof target);
+    // // console.log('TCL: createErrorMessage -> target', target);
+    // // console.log('TCL: createErrorMessage -> typeof target', typeof target);
     // delete all previous error message
     document.querySelectorAll(".error").forEach(
         el => {
@@ -113,8 +128,6 @@ function storeItem(newItem, type, position) {
     } else {
         localStorage.setItem(itemName, JSON.stringify(itemInfo));
     }
-    // remove item name input
-    newItem.remove();
     return itemName;
 }
 
@@ -141,9 +154,9 @@ function displayItem(itemName, type) {
 
 function createFileEditor(id) {
     const editor = document.createElement("textarea");
-    if (id){
+    if (id) {
         editor.id = id;
-    } else{
+    } else {
         editor.id = "editor";
     }
     editor.classList.add("editor");
@@ -169,9 +182,9 @@ function displayFile(position, fileName, fileInfo) {
     }
 }
 
-function deleteItem(item){
+function deleteItem(item) {
     const itemName = item.getAttribute("data-name");
-    if (itemName){
+    if (itemName) {
         localStorage.removeItem(item.getAttribute("data-name"));
     }
     item.remove();
@@ -179,8 +192,8 @@ function deleteItem(item){
 }
 
 // Source: https://stackoverflow.com/a/9792947/6798201
-function removeElement(array, element){
-    for (var i=array.length-1; i>=0; i--) {
+function removeElement(array, element) {
+    for (var i = array.length - 1; i >= 0; i--) {
         if (array[i] === element) {
             array.splice(i, 1);
             break;
@@ -205,7 +218,7 @@ function openFileEditor(itemName, itemInfo, position) {
         const leftInRow = lineLength - content.length % (lineLength);
         if (e.keyCode == 13) { // ENTER key
             e.preventDefault(); // no linebreak allowed in file
-			// // console.log('TCL: openFileEditor -> leftInRow', leftInRow);
+            // // console.log('TCL: openFileEditor -> leftInRow', leftInRow);
             let spaces = "";
             for (let i = 0; i < leftInRow; i++) {
                 spaces += " ";
@@ -213,7 +226,7 @@ function openFileEditor(itemName, itemInfo, position) {
             editor.value += spaces + "\n";
         }
         if (leftInRow === lineLength && content.length !== 0) {
-			// // console.log('TCL: openFileEditor -> leftInRow', leftInRow);
+            // // console.log('TCL: openFileEditor -> leftInRow', leftInRow);
             editor.value += "\n"; // avoid word wrapping
         }
     });
