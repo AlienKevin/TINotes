@@ -1,49 +1,58 @@
-body{
+body {
     font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
     font-size: 1em;
     margin: 2em;
 }
-.btn{
+
+.btn {
     transition: box-shadow .3s;
     background: #eee;
     padding: .5em;
     cursor: pointer;
 }
-.btn-hover{
+
+.btn-hover {
     /* source: https://codepen.io/ovdojoey/pen/BomKyZ*/
-    box-shadow: 0 0 11px rgba(33,33,33,.2); 
+    box-shadow: 0 0 11px rgba(33, 33, 33, .2);
     background: #ddd;
 }
+
 #submitFileBtn {
     position: relative;
     bottom: 1em;
     left: 1em;
 }
+
 /* Source: https://stackoverflow.com/a/4609491/6798201 */
-#submitFileBtn:after{
+#submitFileBtn:after {
     content: "\A";
     white-space: pre;
 }
-div#tools{
+
+div#tools {
     display: inline-block;
 }
-div#system{
+
+div#system {
     margin-top: 1em;
 }
-div#calculatorTypeSelector{
+
+div#calculatorTypeSelector {
     margin-bottom: 1em;
 }
-div#calculatorTypeSelector > div{
+
+div#calculatorTypeSelector>div {
     display: inline;
 }
-.itemNameInput{
+
+.itemNameInput {
     height: 2em;
     font-size: 1em;
 }
-.folder{
-}
 
-#editor{
+.folder {}
+
+.editor {
     font-size: 1em;
 }
 
@@ -58,29 +67,102 @@ div#calculatorTypeSelector > div{
     background-color: #fff;
     border: solid 1px #dfdfdf;
     box-shadow: 1px 1px 2px #cfcfcf;
-  }
-  
-  .context-menu--active {
+}
+
+.context-menu--active {
     display: block;
-  }
-  
-  .context-menu__items {
+}
+
+.context-menu__items {
     list-style: none;
     margin: 0;
     padding: 0;
-  }
-  
-  .context-menu__item {
+}
+
+.context-menu__item {
     display: block;
     margin-bottom: 4px;
     padding: .5em;
     cursor: pointer;
-  }
+}
 
-  .context-menu__item:hover{
-      background: #ddd;
+.context-menu__item:hover {
+    background: #ddd;
+}
+
+.context-menu__item:last-child {
+    margin-bottom: 0;
+}
+
+/* Source: https://www.w3schools.com/howto/howto_css_modals.asp*/
+/* The Modal (background) */
+.modal {
+    display: none; /* Hidden by default */
+    position: fixed; /* Stay in place */
+    z-index: 1; /* Sit on top */
+    left: 0;
+    top: 0;
+    width: 100%; /* Full width */
+    height: 100%; /* Full height */
+    overflow: auto; /* Enable scroll if needed */
+    background-color: rgb(0,0,0); /* Fallback color */
+    background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
   }
   
-  .context-menu__item:last-child {
-    margin-bottom: 0;
+  /* Modal Content/Box */
+  .modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; /* 15% from the top and centered */
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; /* Could be more or less, depending on screen size */
+  }
+  
+  /* The Close Button */
+  .close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+  }
+  
+  .close:hover,
+  .close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+  }
+/* Modal Header */
+.modal-header {
+    padding: 2px 16px;
+    background-color: #5cb85c;
+    color: white;
+  }
+  
+  /* Modal Body */
+  .modal-body {padding: 2px 16px;}
+  
+  /* Modal Footer */
+  .modal-footer {
+    padding: 1.5em 16px;
+    background-color: #5cb85c;
+  }
+  
+  /* Modal Content */
+  .modal-content {
+    position: relative;
+    background-color: #fefefe;
+    margin: auto;
+    padding: 0;
+    border: 1px solid #888;
+    width: 80%;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    animation-name: animatetop;
+    animation-duration: 0.4s
+  }
+  
+  /* Add Animation */
+  @keyframes animatetop {
+    from {top: -300px; opacity: 0}
+    to {top: 0; opacity: 1}
   }

@@ -139,9 +139,14 @@ function displayItem(itemName, type) {
     system.appendChild(newItem);
 }
 
-function createFileEditor() {
+function createFileEditor(id) {
     const editor = document.createElement("textarea");
-    editor.id = "editor";
+    if (id){
+        editor.id = id;
+    } else{
+        editor.id = "editor";
+    }
+    editor.classList.add("editor");
     editor.rows = rowLength;
     editor.cols = lineLength;
     editor.spellcheck = false;

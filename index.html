@@ -24,17 +24,38 @@
         </div>
         <span class="btn" id="newFolderBtn">New Folder</span>
         <span class="btn" id="newFileBtn">New File</span>
+        <span class="btn" id="generateScriptBtn">Generate TI Script</span>
     </div>
     <div id="system"></div>
+    <!-- Popup window for displaying generated TI script -->
+    <div id="popup" class="modal">
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h2>Generated TI Script</h2>
+            </div>
+            <div class="modal-body">
+            </div>
+            <div class="modal-footer">
+                <span class="btn">Download</span>
+            </div>
+        </div>
+
+    </div>
     <nav id="context-menu" class="context-menu">
         <ul class="context-menu__items">
-          <li class="context-menu__item" data-action="delete">
-            Delete
-          </li>
+            <li class="context-menu__item" data-action="delete">
+                Delete
+            </li>
         </ul>
-      </nav>
+    </nav>
     <script src="script.js"></script>
     <script src="contextMenu.js"></script>
+    <script src="baseScript.txt"></script>
+    <script src="generateScript.js"></script>
+    <script src="popup.js"></script>
 </body>
 
 </html>
