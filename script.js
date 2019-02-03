@@ -53,6 +53,7 @@ function createMenuItem(type, position) {
     newItem.placeholder = `Enter ${type} name here`;
     newItem.minLength = 1;
     newItem.maxLength = menuItemLength;
+    newItem.spellcheck = false;
     newItem.classList.add("itemNameInput");
     newItem.addEventListener('keypress', (e) => {
         if (e.keyCode == 13) { // ENTER key
@@ -112,8 +113,10 @@ function displayItem(itemName, type) {
     newItem.classList.add(type);
     newItem.classList.add("btn");
     newItem.addEventListener("click", () => {
-        const itemInfo = JSON.parse(localStorage.getItem(itemName));
-        displayFile(newItem, itemName, itemInfo);
+        if (type === "file") {
+            const itemInfo = JSON.parse(localStorage.getItem(itemName));
+            displayFile(newItem, itemName, itemInfo);
+        }
     });
     system.appendChild(newItem);
 }
@@ -134,6 +137,7 @@ function displayFile(position, fileName, fileInfo) {
         editor.remove();
         const submitBtn = document.getElementById("submitFileBtn");
         submitBtn.remove();
+        displayFile(position, fileName, fileInfo);
     } else {
         openFileEditor(fileName, fileInfo, position);
     }
