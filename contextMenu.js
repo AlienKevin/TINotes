@@ -99,26 +99,27 @@
     function contextListener() {
         // the event object itemClickedEvent's target is the item label in the menu
         document.addEventListener("contextmenu", function (itemClickedEvent) {
-            Array.from(document.getElementsByClassName(contextMenuItemClassName)).forEach(
-                el => {
-                    const itemLabel = itemClickedEvent.target;
-                    switch (el.getAttribute("data-action")) {
-                        case "delete":
-                        el.addEventListener("click", () => {
-                            deleteItem(itemLabel);
-                        });
-                        break;
-                        case "rename":
-                        el.addEventListener("click", () => {
-                            renameItem(itemLabel);
-                        });
-                    }
-                }
-            )
             taskItemInContext = clickInsideElement(itemClickedEvent, taskItemClassName);
-
             if (taskItemInContext) {
                 itemClickedEvent.preventDefault();
+                Array.from(document.getElementsByClassName(contextMenuItemClassName)).forEach(
+                    el => {
+                        const itemLabel = itemClickedEvent.target;
+
+                        switch (el.getAttribute("data-action")) {
+                            case "delete":
+                                el.onclick = () => {
+                                    deleteItem(itemLabel);
+                                };
+                                break;
+                            case "rename":
+                                el.onclick = () => {
+                                    renameItem(itemLabel);
+                                };
+                                break;
+                        }
+                    }
+                )
                 toggleMenuOn();
                 positionMenu(itemClickedEvent);
             } else {

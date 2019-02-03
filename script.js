@@ -198,7 +198,7 @@ function deleteItem(itemLabel) {
     const itemName = itemLabel.getAttribute("data-name");
     if (itemName) {
         removeItemFromStorage(itemName);
-        removeElement(itemNameList, itemName);
+        removeElementInArray(itemNameList, itemName);
     }
     itemLabel.remove();
 }
@@ -222,7 +222,7 @@ function renameItem(itemLabel) {
                     createErrorMessage(itemNameInput,
                         `Duplicated ${type} name, ${type} name must be unique`);
                 } else {
-                    replaceElement(itemNameList, oldItemName, newItemName);
+                    replaceElementInArray(itemNameList, oldItemName, newItemName);
                     renameItemInStorage(oldItemName, newItemName);
                     displayItem(newItemName, type, itemNameInput);
                     // remove item name input
@@ -255,7 +255,7 @@ function setItemInStorage(itemName, item) {
 // Remove one element in array, only remove
 // the first occurance starting from the end of the array
 // uncomment break to remove all occurance
-function removeElement(array, element) {
+function removeElementInArray(array, element) {
     for (var i = array.length - 1; i >= 0; i--) {
         if (array[i] === element) {
             array.splice(i, 1);
@@ -268,7 +268,7 @@ function removeElement(array, element) {
 // Replace one element in array with new element, only replace 
 // the first occurance starting from the end of the array
 // uncomment break to replace all occurance
-function replaceElement(array, oldElement, newElement){
+function replaceElementInArray(array, oldElement, newElement){
     for (var i = array.length - 1; i >= 0; i--) {
         if (array[i] === oldElement) {
             array.splice(i, 1, newElement);
