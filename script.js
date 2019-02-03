@@ -109,7 +109,11 @@ function storeItem(newItem, type, position) {
 function displayItem(itemName, type) {
     // replace input with label
     const newItem = document.createElement("p");
-    newItem.innerHTML = itemName;
+    if (type === "file"){
+        newItem.innerHTML = `📝${itemName}`;
+    } else{
+        newItem.innerHTML = `📁${itemName}`;
+    }
     newItem.classList.add(type);
     newItem.classList.add("btn");
     newItem.addEventListener("click", () => {
