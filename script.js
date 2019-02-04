@@ -101,6 +101,9 @@ function createItemNameInput(type){
     itemNameInput.maxLength = menuItemLength;
     itemNameInput.spellcheck = false;
     itemNameInput.classList.add("itemNameInput");
+    itemNameInput.style.display = "block";
+    itemNameInput.style.marginTop = ".5em";
+    itemNameInput.style.marginBottom = ".5em";
     return itemNameInput;
 }
 
