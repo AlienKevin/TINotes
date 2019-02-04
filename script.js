@@ -1,6 +1,9 @@
 // set up calculator type
 let calculatorType = "color";
+// maximum lengths allowed because of screen size limitation
 let lineLength, rowLength, menuTitleLength, menuItemLength;
+// minimum length required, no empty string
+const minMenuItemLength = 1;
 const newFolderBtn = document.getElementById("newFolderBtn");
 const newFileBtn = document.getElementById("newFileBtn");
 const system = document.getElementById("system");
@@ -13,7 +16,7 @@ document.querySelectorAll('input[name="calculatorType"]')
         el.addEventListener("change", (e) => {
             calculatorType = e.target.value;
             changeCalculatorType();
-			// console.log('TCL: e.target', e.target);
+            // console.log('TCL: e.target', e.target);
         })
     });
 
@@ -57,7 +60,7 @@ newFileBtn.addEventListener("click", () => {
 
 function toggleBtnHighlight(e) {
     if (e.target.classList.contains("btn")) {
-		// console.log('TCL: toggleBtnHighlight -> e.target', e.target);
+        // console.log('TCL: toggleBtnHighlight -> e.target', e.target);
         e.target.classList.toggle("btn-hover");
     }
 }
@@ -68,7 +71,7 @@ document.addEventListener("mouseout", toggleBtnHighlight)
 
 function createMenuItem(type, position) {
     type = type.toLowerCase();
-	// console.log('TCL: createNewMenuItem -> type', type);
+    // console.log('TCL: createNewMenuItem -> type', type);
     if (type !== "folder" && type !== "file") {
         throw new TypeError(`menu item's type should be either folder or file, not ${type}`);
     }
@@ -76,15 +79,19 @@ function createMenuItem(type, position) {
     itemNameInput.addEventListener('keypress', (e) => {
         if (e.keyCode == 13) { // ENTER key
             const itemName = itemNameInput.value;
-            if (itemNameList.indexOf(itemName) >= 0) { // repeated name
-                createErrorMessage(itemNameInput,
-                    `Duplicated ${type} name, ${type} name must be unique`);
-            } else {
-                itemNameList.push(itemName);
-                displayItem(itemName, type, itemNameInput);
-                storeItem(itemNameInput, type, position);
-                // remove item name input
-                itemNameInput.remove();
+            if (itemName.length >= minMenuItemLength) {
+                if (itemNameList.indexOf(itemName) >= 0) { // repeated name
+                    createErrorMessage(itemNameInput,
+                        `Duplicated ${type} name, ${type} name must be unique`);
+                } else {
+                    itemNameList.push(itemName);
+                    displayItem(itemName, type, itemNameInput);
+                    storeItem(itemNameInput, type, position);
+                    // remove item name input
+                    itemNameInput.remove();
+                }
+            } else{
+                createErrorMessage(itemNameInput,`${type} name can't be empty`);
             }
         }
     });
@@ -93,11 +100,11 @@ function createMenuItem(type, position) {
 }
 
 // Create input box for entering name of the file or folder
-function createItemNameInput(type){
+function createItemNameInput(type) {
     const itemNameInput = document.createElement("input");
     itemNameInput.setAttribute("type", "text");
     itemNameInput.placeholder = `Enter ${type} name here`;
-    itemNameInput.minLength = 1;
+    // minLength must be detected in ENTER key press event
     itemNameInput.maxLength = menuItemLength;
     itemNameInput.spellcheck = false;
     itemNameInput.classList.add("itemNameInput");
@@ -108,8 +115,8 @@ function createItemNameInput(type){
 }
 
 function createErrorMessage(target, message) {
-	// console.log('TCL: createErrorMessage -> target', target);
-	// console.log('TCL: createErrorMessage -> typeof target', typeof target);
+    // console.log('TCL: createErrorMessage -> target', target);
+    // console.log('TCL: createErrorMessage -> typeof target', typeof target);
     // delete all previous error message
     document.querySelectorAll(".error").forEach(
         el => {
@@ -159,10 +166,10 @@ function displayItem(itemName, type, position) {
         }
     });
     // console.log("displaying item...");
-    if (position){
-		// console.log('TCL: displayItem -> position', position);
+    if (position) {
+        // console.log('TCL: displayItem -> position', position);
         insertAfter(position, newItem);
-    } else{
+    } else {
         system.appendChild(newItem);
     }
 }
@@ -215,8 +222,8 @@ function renameItem(itemLabel) {
         itemNameInput.value = oldItemName;
         insertAfter(itemLabel, itemNameInput);
         itemNameInput.focus();
-		// console.log('TCL: renameItem -> itemLabel', itemLabel);
-		// console.log('TCL: renameItem -> itemLabel.parentNode', itemLabel.parentNode);
+        // console.log('TCL: renameItem -> itemLabel', itemLabel);
+        // console.log('TCL: renameItem -> itemLabel.parentNode', itemLabel.parentNode);
         itemLabel.remove();
         itemNameInput.addEventListener("keypress", (e) => {
             if (e.keyCode == 13) { // ENTER key
@@ -236,13 +243,13 @@ function renameItem(itemLabel) {
     }
 }
 
-function renameItemInStorage(oldItemName, newItemName){
+function renameItemInStorage(oldItemName, newItemName) {
     const item = getItemFromStorage(oldItemName);
     removeItemFromStorage(oldItemName);
     setItemInStorage(newItemName, item);
 }
 
-function removeItemFromStorage(itemName){
+function removeItemFromStorage(itemName) {
     localStorage.removeItem(itemName);
 }
 
@@ -271,7 +278,7 @@ function removeElementInArray(array, element) {
 // Replace one element in array with new element, only replace 
 // the first occurance starting from the end of the array
 // uncomment break to replace all occurance
-function replaceElementInArray(array, oldElement, newElement){
+function replaceElementInArray(array, oldElement, newElement) {
     for (var i = array.length - 1; i >= 0; i--) {
         if (array[i] === oldElement) {
             array.splice(i, 1, newElement);
@@ -297,7 +304,7 @@ function openFileEditor(itemName, itemInfo, position) {
         const leftInRow = lineLength - content.length % (lineLength);
         if (e.keyCode == 13) { // ENTER key
             e.preventDefault(); // no linebreak allowed in file
-			// console.log('TCL: openFileEditor -> leftInRow', leftInRow);
+            // console.log('TCL: openFileEditor -> leftInRow', leftInRow);
             let spaces = "";
             for (let i = 0; i < leftInRow; i++) {
                 spaces += " ";
@@ -305,7 +312,7 @@ function openFileEditor(itemName, itemInfo, position) {
             editor.value += spaces + "\n";
         }
         if (leftInRow === lineLength && content.length !== 0) {
-			// console.log('TCL: openFileEditor -> leftInRow', leftInRow);
+            // console.log('TCL: openFileEditor -> leftInRow', leftInRow);
             editor.value += "\n"; // avoid word wrapping
         }
     });

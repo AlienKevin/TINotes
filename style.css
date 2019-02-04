@@ -31,6 +31,7 @@ body {
 
 div#tools {
     display: inline-block;
+    margin-bottom: .5em;
 }
 
 div#system {
