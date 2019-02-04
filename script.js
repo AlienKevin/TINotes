@@ -140,7 +140,7 @@ function storeItem(itemNameInput, type, position) {
     };
     const itemName = itemNameInput.value;
     if (type === "file") {
-        openFileEditor(itemName, itemInfo);
+        openFileEditField(itemName, itemInfo);
     } else {
         setItemInStorage(itemName, itemInfo);
     }
@@ -190,17 +190,15 @@ function createFileEditor(id) {
 
 function displayFile(position, fileName, fileInfo) {
     // toggle file editor
-    const editor = document.getElementById("editor");
-    if (editor) {
-        editor.remove();
-        const submitBtn = document.getElementById("submitFileBtn");
-        submitBtn.remove();
-        const clickedItemName = editor.getAttribute("data-item");
+    const editField = document.getElementById("editField");
+    if (editField) {
+        editField.remove();
+        const clickedItemName = editField.getAttribute("data-item");
         if (clickedItemName !== fileName) { // not the same file
             displayFile(position, fileName, fileInfo);
         }
     } else {
-        openFileEditor(fileName, fileInfo, position);
+        openFileEditField(fileName, fileInfo, position);
     }
 }
 
@@ -292,7 +290,7 @@ function insertAfter(referenceNode, newNode) {
     referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
 }
 
-function openFileEditor(itemName, itemInfo, position) {
+function openFileEditField(itemName, itemInfo, position) {
     const editor = createFileEditor();
     editor.placeholder = "Write notes here"
     if (itemInfo.content !== undefined) {
@@ -324,15 +322,17 @@ function openFileEditor(itemName, itemInfo, position) {
         // return file content
         itemInfo.content = editor.value.replace(/\n/g, "");
         setItemInStorage(itemName, itemInfo);
-        editor.remove();
-        submitBtn.remove();
+        editField.remove();
     });
+    const editField = document.createElement("div");
+    editField.id = "editField";
+    editField.setAttribute("data-item", itemName);
     if (position === undefined) {
-        system.appendChild(editor);
-        system.appendChild(submitBtn);
+        system.appendChild(editField);
     } else {
-        insertAfter(position, submitBtn);
-        insertAfter(position, editor);
+        insertAfter(position, editField);
     }
+    editField.appendChild(editor);
+    editField.appendChild(submitBtn);
     editor.focus();
 }
