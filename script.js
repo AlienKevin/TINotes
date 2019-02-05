@@ -7,6 +7,7 @@ const minMenuItemLength = 1;
 const newFolderBtn = document.getElementById("newFolderBtn");
 const newFileBtn = document.getElementById("newFileBtn");
 const backBtn = document.getElementById("backBtn");
+const clearBtn = document.getElementById("clearBtn");
 const system = document.getElementById("system");
 let position = "home"; // default root location for the file system
 const itemNameList = [];
@@ -65,6 +66,14 @@ backBtn.addEventListener("click", () => {
         }
     })
 })
+clearBtn.addEventListener("click", () => {
+    // remove all items in current position (folder)
+    itemNameList.forEach(item => {
+        removeItemFromStorage(item);
+    });
+    // clear the representation of items in the window
+    clearAllItems();
+});
 
 function toggleBtnHighlight(e) {
     if (e.target.classList.contains("btn")) {
@@ -155,6 +164,8 @@ function storeItem(itemNameInput, type, position) {
     return itemName;
 }
 
+// remove all labels of items and delete them in current item name list
+// DOES NOT REMOVE FROM STORAGE!!!
 function clearAllItems(){
     for (itemName of itemNameList){
         Array.from(document.getElementsByClassName("item")).forEach(
@@ -166,6 +177,7 @@ function clearAllItems(){
     itemNameList.length = 0; // clear the current item list
 }
 
+// set the current position (folder)
 function setPosition(newPosition){
     position = newPosition;
     clearAllItems();
@@ -177,6 +189,7 @@ function setPosition(newPosition){
     });
 }
 
+// display item labels
 function displayItem(itemName, type, position) {
     // replace input with label
     const newItem = document.createElement("p");

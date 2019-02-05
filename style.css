@@ -29,7 +29,7 @@ body {
     white-space: pre;
 }
 
-#backBtn{
+#clearBtn{
     margin-left: auto;
 }
 
@@ -39,8 +39,12 @@ div#tools {
     margin-bottom: .5em;
 }
 
-div#tools span:nth-child(-n+3){
+div#tools span{
     margin-right: .5em;
+}
+
+div#tools span:nth-last-child(){
+    margin-right: 0;
 }
 
 div#system {
