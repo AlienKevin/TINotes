@@ -90,8 +90,8 @@ function createMenuItem(type, position) {
                     // remove item name input
                     itemNameInput.remove();
                 }
-            } else{
-                createErrorMessage(itemNameInput,`${type} name can't be empty`);
+            } else {
+                createErrorMessage(itemNameInput, `${type} name can't be empty`);
             }
         }
     });
@@ -300,15 +300,15 @@ function openFileEditField(itemName, itemInfo, position) {
     editor.addEventListener("keypress", (e) => {
         const content = editor.value.replace(/\n/g, "");
         const leftInRow = lineLength - content.length % (lineLength);
-        if (e.keyCode == 13) { // ENTER key
-            e.preventDefault(); // no linebreak allowed in file
-            // console.log('TCL: openFileEditor -> leftInRow', leftInRow);
-            let spaces = "";
-            for (let i = 0; i < leftInRow; i++) {
-                spaces += " ";
-            }
-            editor.value += spaces + "\n";
-        }
+        // if (e.keyCode == 13) { // ENTER key
+        //     e.preventDefault(); // no linebreak allowed in file
+        //     // console.log('TCL: openFileEditor -> leftInRow', leftInRow);
+        //     let spaces = "";
+        //     for (let i = 0; i < leftInRow; i++) {
+        //         spaces += " ";
+        //     }
+        //     editor.value += spaces + "\n";
+        // }
         if (leftInRow === lineLength && content.length !== 0) {
             // console.log('TCL: openFileEditor -> leftInRow', leftInRow);
             editor.value += "\n"; // avoid word wrapping
@@ -320,7 +320,8 @@ function openFileEditField(itemName, itemInfo, position) {
     submitBtn.innerHTML = "Submit";
     submitBtn.addEventListener("click", () => {
         // return file content
-        itemInfo.content = editor.value.replace(/\n/g, "");
+        editor.value = convertNewlinesToSpaces(editor.value);
+        itemInfo.content = editor.value;
         setItemInStorage(itemName, itemInfo);
         editField.remove();
     });
@@ -335,4 +336,28 @@ function openFileEditField(itemName, itemInfo, position) {
     editField.appendChild(editor);
     editField.appendChild(submitBtn);
     editor.focus();
+}
+
+function convertNewlinesToSpaces(inputStr) {
+    let str = inputStr;
+    let previousNewlineIndex = 0;
+    let newlineIndex = str.indexOf("\n");
+    // substitute newlines with spaces
+    while (newlineIndex >= 0 && previousNewlineIndex < str.length) {
+        newlineIndex = str.indexOf("\n", previousNewlineIndex);
+        if (newlineIndex < 0) {
+            break;
+        }
+        console.log('newlineIndex:' + newlineIndex);
+        const numOfSpaces = lineLength - (newlineIndex - previousNewlineIndex);
+        let spaces = "";
+        for (let i = 0; i < numOfSpaces; i++) {
+            spaces += " ";
+        }
+        str = str.slice(0, newlineIndex) + spaces + str.slice(newlineIndex + 1);
+        console.log("str: " + str);
+        previousNewlineIndex = newlineIndex + numOfSpaces;
+        console.log("previousNewlineIndex: " + previousNewlineIndex)
+    }
+    return str;
 }
