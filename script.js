@@ -60,19 +60,33 @@ newFileBtn.addEventListener("click", () => {
     createMenuItem("file", position)
 });
 backBtn.addEventListener("click", () => {
-    iterateStorage(function(item, itemName, itemType, itemPosition, index){
-        if (itemName === position){
+    iterateStorage(function (item, itemName, itemType, itemPosition, index) {
+        if (itemName === position) {
             setPosition(itemPosition);
         }
     })
 })
 clearBtn.addEventListener("click", () => {
-    // remove all items in current position (folder)
-    itemNameList.forEach(item => {
-        removeItemFromStorage(item);
-    });
-    // clear the representation of items in the window
-    clearAllItems();
+    swal({
+            title: "Are you sure?",
+            text: "Once deleted, you will not be able to recover this folder!",
+            icon: "warning",
+            buttons: true,
+            dangerMode: true,
+        })
+        .then((willDelete) => {
+            if (willDelete) {
+                swal("All items are deleted in this folder", {
+                    icon: "success",
+                });
+                // remove all items in current position (folder)
+                itemNameList.forEach(item => {
+                    removeItemFromStorage(item);
+                });
+                // clear the representation of items in the window
+                clearAllItems();
+            }
+        });
 });
 
 function toggleBtnHighlight(e) {
@@ -166,8 +180,8 @@ function storeItem(itemNameInput, type, position) {
 
 // remove all labels of items and delete them in current item name list
 // DOES NOT REMOVE FROM STORAGE!!!
-function clearAllItems(){
-    for (itemName of itemNameList){
+function clearAllItems() {
+    for (itemName of itemNameList) {
         Array.from(document.getElementsByClassName("item")).forEach(
             (el) => {
                 el.remove();
@@ -178,11 +192,11 @@ function clearAllItems(){
 }
 
 // set the current position (folder)
-function setPosition(newPosition){
+function setPosition(newPosition) {
     position = newPosition;
     clearAllItems();
-    iterateStorage(function(item, itemName, itemType, itemPosition, index){
-        if (itemPosition === newPosition){
+    iterateStorage(function (item, itemName, itemType, itemPosition, index) {
+        if (itemPosition === newPosition) {
             itemNameList.push(itemName);
             displayItem(itemName, itemType);
         }
@@ -206,7 +220,7 @@ function displayItem(itemName, type, position) {
         if (type === "file") {
             const itemInfo = getItemFromStorage(itemName);
             displayFile(newItem, itemName, itemInfo);
-        } else{
+        } else {
             setPosition(itemName); // set item location to the folder
         }
     });
@@ -343,7 +357,7 @@ function openFileEditField(itemName, itemInfo, position) {
         editor.setAttribute("data-item", itemName);
     }
     editor.addEventListener("input", () => {
-        const content = editor.value.replace(/\n/g,"");
+        const content = editor.value.replace(/\n/g, "");
         console.log('TCL: openFileEditField -> content.length', content.length);
         if ((content.length - 1) % lineLength === 0 && content.length - 1 !== 0) {
             editor.value = insertString(editor.value, editor.value.length - 1, "\n", 0); // avoid word wrapping
@@ -407,14 +421,14 @@ function convertSpacesToNewlines(inputStr) {
         if (str[index] === " ") {
             str = insertString(str, index, "", 1);
             index--;
-        } else{
+        } else {
             str = insertString(str, index + 1, "\n", 0);
             index += lineLength + 1;
         }
     }
-  return str;
+    return str;
 }
 
-function insertString(str, index, insertedString, deleteLength = 0){
-    return str.slice(0,index) + insertedString + str.slice(index + deleteLength);
+function insertString(str, index, insertedString, deleteLength = 0) {
+    return str.slice(0, index) + insertedString + str.slice(index + deleteLength);
 }
