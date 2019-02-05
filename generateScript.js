@@ -38,6 +38,10 @@ function generateScript() {
     // console.log('TCL: generateScript -> script', script);
 }
 
+
+
+
+
 // Source: https://ourcodeworld.com/articles/read/189/how-to-create-a-file-and-generate-a-download-with-javascript-in-the-browser-without-a-server
 // Start downloading a file in browser
 function download(filename, text) {

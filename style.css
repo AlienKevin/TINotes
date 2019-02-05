@@ -29,9 +29,18 @@ body {
     white-space: pre;
 }
 
+#backBtn{
+    margin-left: auto;
+}
+
 div#tools {
-    display: inline-block;
+    display: flex;
+    flex-wrap: wrap;
     margin-bottom: .5em;
+}
+
+div#tools span:nth-child(-n+3){
+    margin-right: .5em;
 }
 
 div#system {
@@ -40,6 +49,7 @@ div#system {
 
 div#calculatorTypeSelector {
     margin-bottom: 1em;
+    flex: 0 1 100%;
 }
 
 div#calculatorTypeSelector>div {
