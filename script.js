@@ -6,6 +6,7 @@ let lineLength, rowLength, menuTitleLength, menuItemLength;
 const minMenuItemLength = 1;
 const newFolderBtn = document.getElementById("newFolderBtn");
 const newFileBtn = document.getElementById("newFileBtn");
+const backBtn = document.getElementById("backBtn");
 const system = document.getElementById("system");
 let position = "home"; // default root location for the file system
 const itemNameList = [];
@@ -57,6 +58,13 @@ newFolderBtn.addEventListener("click", () => {
 newFileBtn.addEventListener("click", () => {
     createMenuItem("file", position)
 });
+backBtn.addEventListener("click", () => {
+    iterateStorage(function(item, itemName, itemType, itemPosition, index){
+        if (itemName === position){
+            setPosition(itemPosition);
+        }
+    })
+})
 
 function toggleBtnHighlight(e) {
     if (e.target.classList.contains("btn")) {
@@ -161,10 +169,10 @@ function clearAllItems(){
 function setPosition(newPosition){
     position = newPosition;
     clearAllItems();
-    iterateStorage(function(item, itemName, itemType, position, index){
-        if (position === newPosition){
+    iterateStorage(function(item, itemName, itemType, itemPosition, index){
+        if (itemPosition === newPosition){
             itemNameList.push(itemName);
-            displayItem(itemName, type);
+            displayItem(itemName, itemType);
         }
     });
 }
