@@ -147,6 +147,28 @@ function storeItem(itemNameInput, type, position) {
     return itemName;
 }
 
+function clearAllItems(){
+    for (itemName of itemNameList){
+        Array.from(document.getElementsByClassName("item")).forEach(
+            (el) => {
+                el.remove();
+            }
+        )
+    }
+    itemNameList.length = 0; // clear the current item list
+}
+
+function setPosition(newPosition){
+    position = newPosition;
+    clearAllItems();
+    iterateStorage(function(item, itemName, itemType, position, index){
+        if (position === newPosition){
+            itemNameList.push(itemName);
+            displayItem(itemName, type);
+        }
+    });
+}
+
 function displayItem(itemName, type, position) {
     // replace input with label
     const newItem = document.createElement("p");
@@ -163,6 +185,8 @@ function displayItem(itemName, type, position) {
         if (type === "file") {
             const itemInfo = getItemFromStorage(itemName);
             displayFile(newItem, itemName, itemInfo);
+        } else{
+            setPosition(itemName); // set item location to the folder
         }
     });
     // console.log("displaying item...");
