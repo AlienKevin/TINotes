@@ -294,25 +294,16 @@ function openFileEditField(itemName, itemInfo, position) {
     const editor = createFileEditor();
     editor.placeholder = "Write notes here"
     if (itemInfo.content !== undefined) {
-        editor.value = itemInfo.content;
+        editor.value = convertSpacesToNewlines(itemInfo.content);
         editor.setAttribute("data-item", itemName);
     }
-    editor.addEventListener("keypress", (e) => {
-        const content = editor.value.replace(/\n/g, "");
-        const leftInRow = lineLength - content.length % (lineLength);
-        // if (e.keyCode == 13) { // ENTER key
-        //     e.preventDefault(); // no linebreak allowed in file
-        //     // console.log('TCL: openFileEditor -> leftInRow', leftInRow);
-        //     let spaces = "";
-        //     for (let i = 0; i < leftInRow; i++) {
-        //         spaces += " ";
-        //     }
-        //     editor.value += spaces + "\n";
-        // }
-        if (leftInRow === lineLength && content.length !== 0) {
-            // console.log('TCL: openFileEditor -> leftInRow', leftInRow);
-            editor.value += "\n"; // avoid word wrapping
+    editor.addEventListener("input", () => {
+        const content = editor.value.replace(/\n/g,"");
+        console.log('TCL: openFileEditField -> content.length', content.length);
+        if ((content.length - 1) % lineLength === 0 && content.length - 1 !== 0) {
+            editor.value = insertString(editor.value, editor.value.length - 1, "\n", 0); // avoid word wrapping
         }
+        // editor.value = editor.value.replace(/([\s\S]{80})/g, "$1\n");
     });
     const submitBtn = document.createElement("span");
     submitBtn.id = "submitFileBtn";
@@ -320,6 +311,7 @@ function openFileEditField(itemName, itemInfo, position) {
     submitBtn.innerHTML = "Submit";
     submitBtn.addEventListener("click", () => {
         // return file content
+        console.log("converting newlines to spaces");
         editor.value = convertNewlinesToSpaces(editor.value);
         itemInfo.content = editor.value;
         setItemInStorage(itemName, itemInfo);
@@ -355,9 +347,29 @@ function convertNewlinesToSpaces(inputStr) {
             spaces += " ";
         }
         str = str.slice(0, newlineIndex) + spaces + str.slice(newlineIndex + 1);
+        // str = insertString(str, newlineIndex, spaces, 1);
         console.log("str: " + str);
         previousNewlineIndex = newlineIndex + numOfSpaces;
         console.log("previousNewlineIndex: " + previousNewlineIndex)
     }
     return str;
+}
+
+function convertSpacesToNewlines(inputStr) {
+    let str = inputStr;
+    let index = lineLength - 1;
+    while (index < str.length) {
+        if (str[index] === " ") {
+            str = insertString(str, index, "", 1);
+            index--;
+        } else{
+            str = insertString(str, index + 1, "\n", 0);
+            index += lineLength + 1;
+        }
+    }
+  return str;
+}
+
+function insertString(str, index, insertedString, deleteLength = 0){
+    return str.slice(0,index) + insertedString + str.slice(index + deleteLength);
 }
