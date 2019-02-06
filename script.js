@@ -9,9 +9,36 @@ const newFileBtn = document.getElementById("newFileBtn");
 const backBtn = document.getElementById("backBtn");
 const clearBtn = document.getElementById("clearBtn");
 const system = document.getElementById("system");
+const navigationBar = document.getElementById("navigationBar");
 const homePosition = "home";
 let position = homePosition; // default root location for the file system
 const itemNameList = [];
+
+// show item navigation bar
+displayNavigationBar();
+
+function displayNavigationBar(){
+    Array.from(document.getElementsByClassName("positionLabel"))
+        .forEach(el => el.remove());
+	console.log('TCL: displayNavigationBar -> position', position);
+    const positions = position.split("/");
+    for (let i = 0; i < positions.length; i++){
+        createPositionLabel(positions.slice(0, i + 1).join("/"));
+    }
+}
+
+function createPositionLabel(position){
+	console.log('TCL: createPositionLabel -> position', position);
+    const positionLabel = document.createElement("span");
+    positionLabel.classList.add("btn");
+    positionLabel.classList.add("positionLabel");
+    positionLabel.innerHTML = getEndOfPosition(position);
+    positionLabel.addEventListener("click", () => {
+        setPosition(position);
+		console.log('TCL: createPositionLabel -> position', position);
+    });
+    navigationBar.appendChild(positionLabel);
+}
 
 document.querySelector(`input#${calculatorType}`).setAttribute("checked", true);
 document.querySelectorAll('input[name="calculatorType"]')
@@ -19,7 +46,7 @@ document.querySelectorAll('input[name="calculatorType"]')
         el.addEventListener("change", (e) => {
             calculatorType = e.target.value;
             changeCalculatorType();
-			// console.log('TCL: e.target', e.target);
+			console.log('TCL: e.target', e.target);
         })
     });
 
@@ -66,6 +93,7 @@ backBtn.addEventListener("click", () => {
     iterateStorage(function (item, itemName, itemType, itemPosition, index) {
         if (itemName === position) {
             setPosition(itemPosition);
+            displayNavigationBar();
         }
     })
 })
@@ -95,7 +123,6 @@ clearBtn.addEventListener("click", () => {
 
 function toggleBtnHighlight(e) {
     if (e.target.classList.contains("btn")) {
-		// console.log('TCL: toggleBtnHighlight -> e.target', e.target);
         e.target.classList.toggle("btn-hover");
     }
 }
@@ -106,7 +133,7 @@ document.addEventListener("mouseout", toggleBtnHighlight)
 
 function createMenuItem(type, position) {
     type = type.toLowerCase();
-	// console.log('TCL: createNewMenuItem -> type', type);
+	console.log('TCL: createNewMenuItem -> type', type);
     if (type !== "folder" && type !== "file") {
         throw new TypeError(`menu item's type should be either folder or file, not ${type}`);
     }
@@ -150,8 +177,8 @@ function createItemNameInput(type) {
 }
 
 function createErrorMessage(target, message) {
-	// console.log('TCL: createErrorMessage -> target', target);
-	// console.log('TCL: createErrorMessage -> typeof target', typeof target);
+	console.log('TCL: createErrorMessage -> target', target);
+	console.log('TCL: createErrorMessage -> typeof target', typeof target);
     // delete all previous error message
     document.querySelectorAll(".error").forEach(
         el => {
@@ -174,7 +201,7 @@ function storeItem(itemNameInput, type, position) {
         "type": type
     };
     const itemName = `${position}/${itemNameInput.value}`;
-	// console.log('TCL: storeItem -> itemName', itemName);
+	console.log('TCL: storeItem -> itemName', itemName);
     if (type === "file") {
         openFileEditField(itemName, itemInfo);
     } else {
@@ -212,11 +239,18 @@ function setPosition(newPosition) {
     });
 }
 
+// retrieve the item name from its full position path
+// e.g. itemName = "home/folder1/file1"
+// returns "file1"
+function getEndOfPosition(itemName){
+    return itemName.substring(itemName.lastIndexOf("/") + 1);
+}
+
 // display item labels
 function displayItem(itemName, type, itemPosition) {
     // replace input with label
     const newItem = document.createElement("p");
-    const displayedName = itemName.substring(itemName.lastIndexOf("/") + 1);
+    const displayedName = getEndOfPosition(itemName);
     if (type === "file") {
         newItem.innerHTML = `📝${displayedName}`;
     } else {
@@ -232,18 +266,19 @@ function displayItem(itemName, type, itemPosition) {
             displayFile(newItem, itemName, itemInfo);
         } else {
             // set item location to the folder
-            // console.log('TCL: displayItem -> position', position);
+			console.log('TCL: displayItem -> position', position);
             if (getItemFromStorage(itemName)){
                 setPosition(itemName);
             } else{
                 appendPosition(itemName);
             }
-            // console.log('TCL: displayItem -> position', position);
+            displayNavigationBar();
+			console.log('TCL: displayItem -> position', position);
         }
     });
     // console.log("displaying item...");
     if (itemPosition) {
-		// console.log('TCL: displayItem -> position', itemPosition);
+		console.log('TCL: displayItem -> position', itemPosition);
         insertAfter(itemPosition, newItem);
     } else {
         system.appendChild(newItem);
@@ -296,8 +331,8 @@ function renameItem(itemLabel) {
         itemNameInput.value = oldItemName;
         insertAfter(itemLabel, itemNameInput);
         itemNameInput.focus();
-		// console.log('TCL: renameItem -> itemLabel', itemLabel);
-		// console.log('TCL: renameItem -> itemLabel.parentNode', itemLabel.parentNode);
+		console.log('TCL: renameItem -> itemLabel', itemLabel);
+		console.log('TCL: renameItem -> itemLabel.parentNode', itemLabel.parentNode);
         itemLabel.remove();
         itemNameInput.addEventListener("keypress", (e) => {
             if (e.keyCode == 13) { // ENTER key
@@ -375,7 +410,7 @@ function openFileEditField(itemName, itemInfo, position) {
     }
     editor.addEventListener("input", () => {
         const content = editor.value.replace(/\n/g, "");
-		// console.log('TCL: openFileEditField -> content.length', content.length);
+		console.log('TCL: openFileEditField -> content.length', content.length);
         if ((content.length - 1) % lineLength === 0 && content.length - 1 !== 0) {
             editor.value = insertString(editor.value, editor.value.length - 1, "\n", 0); // avoid word wrapping
         }

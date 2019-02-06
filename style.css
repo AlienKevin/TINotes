@@ -47,6 +47,13 @@ div#tools span:nth-last-child(){
     margin-right: 0;
 }
 
+div#controlPanel{
+    display: flex;
+    flex-wrap: wrap;
+    flex: 0 1 100%;
+    margin-bottom: 1em;
+}
+
 div#system {
     margin-top: 1em;
 }
