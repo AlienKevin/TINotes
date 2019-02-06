@@ -7,6 +7,7 @@ body {
 i.fa-angle-right{
     position: relative;
     top: .1em;
+    padding: 0 .5em;
 }
 
 .btn {
@@ -44,19 +45,19 @@ div#tools {
     margin-bottom: .5em;
 }
 
-div#tools span{
-    margin-right: .5em;
-}
-
-div#tools span:nth-last-child(){
-    margin-right: 0;
-}
-
 div#controlPanel{
     display: flex;
     flex-wrap: wrap;
     flex: 0 1 100%;
     margin-bottom: 1em;
+}
+
+div#controlPanel span{
+    margin-right: .5em;
+}
+
+div#controlPanel span:nth-last-child(){
+    margin-right: 0;
 }
 
 .positionLabel{
