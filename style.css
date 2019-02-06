@@ -4,6 +4,11 @@ body {
     margin: 2em;
 }
 
+i.fa-angle-right{
+    position: relative;
+    top: .1em;
+}
+
 .btn {
     transition: box-shadow .3s;
     background: #eee;
@@ -52,6 +57,10 @@ div#controlPanel{
     flex-wrap: wrap;
     flex: 0 1 100%;
     margin-bottom: 1em;
+}
+
+.positionLabel{
+    background: transparent;
 }
 
 div#system {
