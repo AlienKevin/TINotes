@@ -9,7 +9,8 @@ const newFileBtn = document.getElementById("newFileBtn");
 const backBtn = document.getElementById("backBtn");
 const clearBtn = document.getElementById("clearBtn");
 const system = document.getElementById("system");
-let position = "home"; // default root location for the file system
+const homePosition = "home";
+let position = homePosition; // default root location for the file system
 const itemNameList = [];
 
 document.querySelector(`input#${calculatorType}`).setAttribute("checked", true);
@@ -18,7 +19,7 @@ document.querySelectorAll('input[name="calculatorType"]')
         el.addEventListener("change", (e) => {
             calculatorType = e.target.value;
             changeCalculatorType();
-            // console.log('TCL: e.target', e.target);
+			// console.log('TCL: e.target', e.target);
         })
     });
 
@@ -41,8 +42,10 @@ function changeCalculatorType() {
 }
 // load items from last time in localStorage
 iterateStorage(function (item, itemName, type) {
-    itemNameList.push(itemName);
-    displayItem(itemName, type);
+    if (item.position === homePosition) { // only show ones at home position
+        itemNameList.push(itemName);
+        displayItem(itemName, type);
+    }
 });
 
 function iterateStorage(func) {
@@ -67,6 +70,7 @@ backBtn.addEventListener("click", () => {
     })
 })
 clearBtn.addEventListener("click", () => {
+    // Based on: https://sweetalert.js.org/guides/#getting-started
     swal({
             title: "Are you sure?",
             text: "Once deleted, you will not be able to recover this folder!",
@@ -91,7 +95,7 @@ clearBtn.addEventListener("click", () => {
 
 function toggleBtnHighlight(e) {
     if (e.target.classList.contains("btn")) {
-        // console.log('TCL: toggleBtnHighlight -> e.target', e.target);
+		// console.log('TCL: toggleBtnHighlight -> e.target', e.target);
         e.target.classList.toggle("btn-hover");
     }
 }
@@ -102,7 +106,7 @@ document.addEventListener("mouseout", toggleBtnHighlight)
 
 function createMenuItem(type, position) {
     type = type.toLowerCase();
-    // console.log('TCL: createNewMenuItem -> type', type);
+	// console.log('TCL: createNewMenuItem -> type', type);
     if (type !== "folder" && type !== "file") {
         throw new TypeError(`menu item's type should be either folder or file, not ${type}`);
     }
@@ -146,8 +150,8 @@ function createItemNameInput(type) {
 }
 
 function createErrorMessage(target, message) {
-    // console.log('TCL: createErrorMessage -> target', target);
-    // console.log('TCL: createErrorMessage -> typeof target', typeof target);
+	// console.log('TCL: createErrorMessage -> target', target);
+	// console.log('TCL: createErrorMessage -> typeof target', typeof target);
     // delete all previous error message
     document.querySelectorAll(".error").forEach(
         el => {
@@ -169,7 +173,8 @@ function storeItem(itemNameInput, type, position) {
         "position": position,
         "type": type
     };
-    const itemName = itemNameInput.value;
+    const itemName = `${position}/${itemNameInput.value}`;
+	// console.log('TCL: storeItem -> itemName', itemName);
     if (type === "file") {
         openFileEditField(itemName, itemInfo);
     } else {
@@ -191,6 +196,10 @@ function clearAllItems() {
     itemNameList.length = 0; // clear the current item list
 }
 
+function appendPosition(newPosition) {
+    setPosition(`${position}/${newPosition}`);
+}
+
 // set the current position (folder)
 function setPosition(newPosition) {
     position = newPosition;
@@ -204,7 +213,7 @@ function setPosition(newPosition) {
 }
 
 // display item labels
-function displayItem(itemName, type, position) {
+function displayItem(itemName, type, itemPosition) {
     // replace input with label
     const newItem = document.createElement("p");
     if (type === "file") {
@@ -221,13 +230,20 @@ function displayItem(itemName, type, position) {
             const itemInfo = getItemFromStorage(itemName);
             displayFile(newItem, itemName, itemInfo);
         } else {
-            setPosition(itemName); // set item location to the folder
+            // set item location to the folder
+            // console.log('TCL: displayItem -> position', position);
+            if (getItemFromStorage(itemName)){
+                setPosition(itemName);
+            } else{
+                appendPosition(itemName);
+            }
+            // console.log('TCL: displayItem -> position', position);
         }
     });
     // console.log("displaying item...");
-    if (position) {
-        // console.log('TCL: displayItem -> position', position);
-        insertAfter(position, newItem);
+    if (itemPosition) {
+		// console.log('TCL: displayItem -> position', itemPosition);
+        insertAfter(itemPosition, newItem);
     } else {
         system.appendChild(newItem);
     }
@@ -279,8 +295,8 @@ function renameItem(itemLabel) {
         itemNameInput.value = oldItemName;
         insertAfter(itemLabel, itemNameInput);
         itemNameInput.focus();
-        // console.log('TCL: renameItem -> itemLabel', itemLabel);
-        // console.log('TCL: renameItem -> itemLabel.parentNode', itemLabel.parentNode);
+		// console.log('TCL: renameItem -> itemLabel', itemLabel);
+		// console.log('TCL: renameItem -> itemLabel.parentNode', itemLabel.parentNode);
         itemLabel.remove();
         itemNameInput.addEventListener("keypress", (e) => {
             if (e.keyCode == 13) { // ENTER key
@@ -358,7 +374,7 @@ function openFileEditField(itemName, itemInfo, position) {
     }
     editor.addEventListener("input", () => {
         const content = editor.value.replace(/\n/g, "");
-        console.log('TCL: openFileEditField -> content.length', content.length);
+		// console.log('TCL: openFileEditField -> content.length', content.length);
         if ((content.length - 1) % lineLength === 0 && content.length - 1 !== 0) {
             editor.value = insertString(editor.value, editor.value.length - 1, "\n", 0); // avoid word wrapping
         }
