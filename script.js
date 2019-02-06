@@ -26,7 +26,7 @@ function displayNavigationBar() {
     }
 }
 
-function removeAllChildren(element){
+function removeAllChildren(element) {
     while (element.firstChild) {
         element.removeChild(element.firstChild);
     }
@@ -81,11 +81,11 @@ iterateStorage(function (item, itemName, type) {
     }
 });
 // no items are loaded
-if (itemNameList.length === 0){
+if (itemNameList.length === 0) {
     displayNewItemPlaceholder();
 }
 
-function displayNewItemPlaceholder(){
+function displayNewItemPlaceholder() {
     let placeholder = document.getElementById("newItemPlaceholder");
     if (placeholder) {
         placeholder.remove();
@@ -135,6 +135,8 @@ clearBtn.addEventListener("click", () => {
             if (willDelete) {
                 swal("All items are deleted in this folder", {
                     icon: "success",
+                    buttons: false,
+                    timer: 800,
                 });
                 // remove all items in current position (folder)
                 itemNameList.forEach(item => {
