@@ -216,10 +216,11 @@ function setPosition(newPosition) {
 function displayItem(itemName, type, itemPosition) {
     // replace input with label
     const newItem = document.createElement("p");
+    const displayedName = itemName.substring(itemName.lastIndexOf("/") + 1);
     if (type === "file") {
-        newItem.innerHTML = `📝${itemName}`;
+        newItem.innerHTML = `📝${displayedName}`;
     } else {
-        newItem.innerHTML = `📁${itemName}`;
+        newItem.innerHTML = `📁${displayedName}`;
     }
     newItem.classList.add(type);
     newItem.classList.add("btn");
