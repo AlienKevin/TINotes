@@ -80,6 +80,26 @@ iterateStorage(function (item, itemName, type) {
         displayItem(itemName, type);
     }
 });
+// no items are loaded
+if (itemNameList.length === 0){
+    displayNewItemPlaceholder();
+}
+
+function displayNewItemPlaceholder(){
+    let placeholder = document.getElementById("newItemPlaceholder");
+    if (placeholder) {
+        placeholder.remove();
+    }
+    placeholder = document.createElement("p");
+    placeholder.id = "newItemPlaceholder";
+    placeholder.classList.add("btn");
+    placeholder.innerHTML = "Create New File";
+    placeholder.addEventListener("click", () => {
+        createMenuItem("file");
+        placeholder.remove();
+    });
+    system.appendChild(placeholder);
+}
 
 function iterateStorage(func) {
     for (let index = 0; index < localStorage.length; index++) {
@@ -90,10 +110,10 @@ function iterateStorage(func) {
 }
 
 newFolderBtn.addEventListener("click", () => {
-    createMenuItem("folder", position)
+    createMenuItem("folder")
 });
 newFileBtn.addEventListener("click", () => {
-    createMenuItem("file", position)
+    createMenuItem("file")
 });
 backBtn.addEventListener("click", () => {
     iterateStorage(function (item, itemName, itemType, itemPosition, index) {
@@ -136,7 +156,7 @@ document.addEventListener("mouseover", toggleBtnHighlight)
 
 document.addEventListener("mouseout", toggleBtnHighlight)
 
-function createMenuItem(type, position) {
+function createMenuItem(type) {
     type = type.toLowerCase();
     console.log('TCL: createNewMenuItem -> type', type);
     if (type !== "folder" && type !== "file") {
@@ -226,6 +246,7 @@ function clearAllItems() {
         )
     }
     itemNameList.length = 0; // clear the current item list
+    displayNewItemPlaceholder(); // show placeholder
 }
 
 function appendPosition(newPosition) {

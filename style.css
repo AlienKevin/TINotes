@@ -23,6 +23,11 @@ i.fa-angle-right{
     background: #ddd;
 }
 
+#newItemPlaceholder{
+    border: 1px dashed gray;
+    background: transparent;
+}
+
 #submitFileBtn {
     position: relative;
     bottom: 1em;
