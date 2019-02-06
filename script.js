@@ -93,7 +93,6 @@ backBtn.addEventListener("click", () => {
     iterateStorage(function (item, itemName, itemType, itemPosition, index) {
         if (itemName === position) {
             setPosition(itemPosition);
-            displayNavigationBar();
         }
     })
 })
@@ -237,6 +236,7 @@ function setPosition(newPosition) {
             displayItem(itemName, itemType);
         }
     });
+    displayNavigationBar();
 }
 
 // retrieve the item name from its full position path
@@ -272,7 +272,6 @@ function displayItem(itemName, type, itemPosition) {
             } else{
                 appendPosition(itemName);
             }
-            displayNavigationBar();
 			console.log('TCL: displayItem -> position', position);
         }
     });
