@@ -19,7 +19,12 @@ function exportScript() {
     popupBody.appendChild(viewer);
 }
 
+function selectAllItems(){
+    
+}
+
 function generateScript() {
+    selectAllItems();
     const homeMenuTitle = `NOTES`;
     let homeMenu = `Menu("${homeMenuTitle}"`;
     let branching = ``;
