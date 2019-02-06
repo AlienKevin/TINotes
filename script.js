@@ -19,7 +19,7 @@ displayNavigationBar();
 
 function displayNavigationBar() {
     removeAllChildren(navigationBar);
-    console.log('TCL: displayNavigationBar -> position', position);
+	// console.log('TCL: displayNavigationBar -> position', position);
     const positions = position.split("/");
     for (let i = 0; i < positions.length; i++) {
         createPositionLabel(positions.slice(0, i + 1).join("/"));
@@ -33,14 +33,14 @@ function removeAllChildren(element) {
 }
 
 function createPositionLabel(position) {
-    console.log('TCL: createPositionLabel -> position', position);
+	// console.log('TCL: createPositionLabel -> position', position);
     const positionLabel = document.createElement("span");
     positionLabel.classList.add("btn");
     positionLabel.classList.add("positionLabel");
     positionLabel.innerHTML = getEndOfPosition(position);
     positionLabel.addEventListener("click", () => {
         setPosition(position);
-        console.log('TCL: createPositionLabel -> position', position);
+		// console.log('TCL: createPositionLabel -> position', position);
     });
     navigationBar.appendChild(positionLabel);
     positionLabel.insertAdjacentHTML("afterend", `<i class="far fa-angle-right"></i>`);
@@ -52,7 +52,7 @@ document.querySelectorAll('input[name="calculatorType"]')
         el.addEventListener("change", (e) => {
             calculatorType = e.target.value;
             changeCalculatorType();
-            console.log('TCL: e.target', e.target);
+			// console.log('TCL: e.target', e.target);
         })
     });
 
@@ -93,10 +93,30 @@ function displayNewItemPlaceholder() {
     placeholder = document.createElement("p");
     placeholder.id = "newItemPlaceholder";
     placeholder.classList.add("btn");
-    placeholder.innerHTML = "Create New File";
+    placeholder.innerHTML = "Create a New File or Folder";
     placeholder.addEventListener("click", () => {
-        createMenuItem("file");
-        placeholder.remove();
+        swal({
+            title: "Create a file or folder?",
+            buttons: {
+              file: {
+                  text: "File",
+                  value: "file",
+                  className: "blurred centered",
+              },
+              folder: {
+                  text: "Folder",
+                  value: "folder",
+                  className: "blurred centered",
+              },
+            },
+          })
+          .then((value) => {
+			// console.log('TCL: displayNewItemPlaceholder -> value', value);
+            if (value){
+                createMenuItem(value);
+                placeholder.remove();
+            }
+          });
     });
     system.appendChild(placeholder);
 }
@@ -160,7 +180,7 @@ document.addEventListener("mouseout", toggleBtnHighlight)
 
 function createMenuItem(type) {
     type = type.toLowerCase();
-    console.log('TCL: createNewMenuItem -> type', type);
+	// console.log('TCL: createNewMenuItem -> type', type);
     if (type !== "folder" && type !== "file") {
         throw new TypeError(`menu item's type should be either folder or file, not ${type}`);
     }
@@ -204,8 +224,8 @@ function createItemNameInput(type) {
 }
 
 function createErrorMessage(target, message) {
-    console.log('TCL: createErrorMessage -> target', target);
-    console.log('TCL: createErrorMessage -> typeof target', typeof target);
+	// console.log('TCL: createErrorMessage -> target', target);
+	// console.log('TCL: createErrorMessage -> typeof target', typeof target);
     // delete all previous error message
     document.querySelectorAll(".error").forEach(
         el => {
@@ -228,7 +248,7 @@ function storeItem(itemNameInput, type, position) {
         "type": type
     };
     const itemName = `${position}/${itemNameInput.value}`;
-    console.log('TCL: storeItem -> itemName', itemName);
+	// console.log('TCL: storeItem -> itemName', itemName);
     if (type === "file") {
         openFileEditField(itemName, itemInfo);
     } else {
@@ -295,18 +315,18 @@ function displayItem(itemName, type, itemPosition) {
             displayFile(newItem, itemName, itemInfo);
         } else {
             // set item location to the folder
-            console.log('TCL: displayItem -> position', position);
+			// console.log('TCL: displayItem -> position', position);
             if (getItemFromStorage(itemName)) {
                 setPosition(itemName);
             } else {
                 appendPosition(itemName);
             }
-            console.log('TCL: displayItem -> position', position);
+			// console.log('TCL: displayItem -> position', position);
         }
     });
     // console.log("displaying item...");
     if (itemPosition) {
-        console.log('TCL: displayItem -> position', itemPosition);
+		// console.log('TCL: displayItem -> position', itemPosition);
         insertAfter(itemPosition, newItem);
     } else {
         system.appendChild(newItem);
@@ -359,8 +379,8 @@ function renameItem(itemLabel) {
         itemNameInput.value = oldItemName;
         insertAfter(itemLabel, itemNameInput);
         itemNameInput.focus();
-        console.log('TCL: renameItem -> itemLabel', itemLabel);
-        console.log('TCL: renameItem -> itemLabel.parentNode', itemLabel.parentNode);
+		// console.log('TCL: renameItem -> itemLabel', itemLabel);
+		// console.log('TCL: renameItem -> itemLabel.parentNode', itemLabel.parentNode);
         itemLabel.remove();
         itemNameInput.addEventListener("keypress", (e) => {
             if (e.keyCode == 13) { // ENTER key
@@ -438,7 +458,7 @@ function openFileEditField(itemName, itemInfo, position) {
     }
     editor.addEventListener("input", () => {
         const content = editor.value.replace(/\n/g, "");
-        console.log('TCL: openFileEditField -> content.length', content.length);
+		// console.log('TCL: openFileEditField -> content.length', content.length);
         if ((content.length - 1) % lineLength === 0 && content.length - 1 !== 0) {
             editor.value = insertString(editor.value, editor.value.length - 1, "\n", 0); // avoid word wrapping
         }

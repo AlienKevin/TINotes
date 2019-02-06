@@ -23,6 +23,13 @@ i.fa-angle-right{
     background: #ddd;
 }
 
+.blurred:focus{
+    box-shadow: none;
+}
+.swal-footer{
+    text-align: center;
+}
+
 #newItemPlaceholder{
     border: 1px dashed gray;
     background: transparent;
