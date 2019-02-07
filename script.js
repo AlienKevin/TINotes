@@ -192,14 +192,15 @@ function createMenuItem(type) {
     const itemNameInput = createItemNameInput(type);
     itemNameInput.addEventListener('keypress', (e) => {
         if (e.keyCode == 13) { // ENTER key
-            const itemName = itemNameInput.value;
-            if (itemName.length >= minMenuItemLength) {
-                if (itemNameList.indexOf(itemName) >= 0) { // repeated name
+            const shortItemName = itemNameInput.value;
+            const fullItemName = getFullItemName(shortItemName);
+            if (shortItemName.length >= minMenuItemLength) {
+                if (itemNameList.indexOf(fullItemName) >= 0) { // repeated name
                     createErrorMessage(itemNameInput,
                         `Duplicated ${type} name, ${type} name must be unique`);
                 } else {
-                    itemNameList.push(itemName);
-                    displayItem(itemName, type, itemNameInput);
+                    itemNameList.push(fullItemName);
+                    displayItem(fullItemName, type, itemNameInput);
                     storeItem(itemNameInput, type, position);
                     // remove item name input
                     itemNameInput.remove();
@@ -211,6 +212,10 @@ function createMenuItem(type) {
     });
     system.appendChild(itemNameInput);
     itemNameInput.focus();
+}
+
+function getFullItemName(shortItemName){
+    return `${position}/${shortItemName}`;
 }
 
 // Create input box for entering name of the file or folder
@@ -381,7 +386,7 @@ function renameItem(itemLabel) {
         const item = getItemFromStorage(oldItemName);
         const type = item.type;
         const itemNameInput = createItemNameInput();
-        itemNameInput.value = oldItemName;
+        itemNameInput.value = getEndOfPosition(oldItemName);
         insertAfter(itemLabel, itemNameInput);
         itemNameInput.focus();
         // console.log('TCL: renameItem -> itemLabel', itemLabel);
@@ -389,7 +394,7 @@ function renameItem(itemLabel) {
         itemLabel.remove();
         itemNameInput.addEventListener("keypress", (e) => {
             if (e.keyCode == 13) { // ENTER key
-                const newItemName = itemNameInput.value;
+                const newItemName = getFullItemName(itemNameInput.value);
                 if (itemNameList.indexOf(newItemName) >= 0 && newItemName !== oldItemName) { // repeated name
                     createErrorMessage(itemNameInput,
                         `Duplicated ${type} name, ${type} name must be unique`);
