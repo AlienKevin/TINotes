@@ -507,6 +507,10 @@ function openFileEditField(itemName, itemInfo, position) {
         setItemInStorage(itemName, itemInfo);
         editField.remove();
     });
+    Mousetrap(editor).bind('mod+s', function(e, combo) {
+        submitBtn.click();
+        return false; // prevent event's default behavior
+    });
     const editField = document.createElement("div");
     editField.id = "editField";
     editField.setAttribute("data-item", itemName);
