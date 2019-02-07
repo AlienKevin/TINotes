@@ -134,12 +134,24 @@ function iterateStorage(func) {
     }
 }
 
+// create a new folder
 newFolderBtn.addEventListener("click", () => {
     createMenuItem("folder");
 });
+Mousetrap.bind("shift+f", (e) => { // keyboard shortcut
+    createMenuItem("folder");
+    return false; // prevent event's default behavior
+});
+
+// create a new file
 newFileBtn.addEventListener("click", () => {
     createMenuItem("file");
 });
+Mousetrap.bind("shift+t", (e) => { // keyboard shortcut
+    createMenuItem("file");
+    return false;
+});
+
 backBtn.addEventListener("click", () => {
     iterateStorage(function (item, itemName, itemType, itemPosition, index) {
         if (itemName === position) {
