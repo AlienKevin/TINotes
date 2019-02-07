@@ -19,7 +19,7 @@ displayNavigationBar();
 
 function displayNavigationBar() {
     removeAllChildren(navigationBar);
-    // console.log('TCL: displayNavigationBar -> position', position);
+	// // console.log('TCL: displayNavigationBar -> position', position);
     const positions = position.split("/");
     for (let i = 0; i < positions.length; i++) {
         createPositionLabel(positions.slice(0, i + 1).join("/"));
@@ -33,14 +33,14 @@ function removeAllChildren(element) {
 }
 
 function createPositionLabel(position) {
-    // console.log('TCL: createPositionLabel -> position', position);
+	// // console.log('TCL: createPositionLabel -> position', position);
     const positionLabel = document.createElement("span");
     positionLabel.classList.add("btn");
     positionLabel.classList.add("positionLabel");
     positionLabel.innerHTML = getEndOfPosition(position);
     positionLabel.addEventListener("click", () => {
         setPosition(position);
-        // console.log('TCL: createPositionLabel -> position', position);
+		// // console.log('TCL: createPositionLabel -> position', position);
     });
     navigationBar.appendChild(positionLabel);
     positionLabel.insertAdjacentHTML("afterend", `<i class="far fa-angle-right"></i>`);
@@ -52,7 +52,7 @@ document.querySelectorAll('input[name="calculatorType"]')
         el.addEventListener("change", (e) => {
             calculatorType = e.target.value;
             changeCalculatorType();
-            // console.log('TCL: e.target', e.target);
+			// // console.log('TCL: e.target', e.target);
         })
     });
 
@@ -83,7 +83,7 @@ iterateStorage(function (item, itemName, type) {
 
 displayItemPlaceholder();
 
-function removeItemPlaceholder(){
+function removeItemPlaceholder() {
     let placeholder = document.getElementById("newItemPlaceholder");
     if (placeholder) { // remove previous placeholder
         placeholder.remove();
@@ -114,7 +114,7 @@ function displayItemPlaceholder() {
                     },
                 })
                 .then((value) => {
-                    // console.log('TCL: displayNewItemPlaceholder -> value', value);
+					// // console.log('TCL: displayNewItemPlaceholder -> value', value);
                     if (value) {
                         createMenuItem(value);
                     }
@@ -124,6 +124,8 @@ function displayItemPlaceholder() {
     }
 }
 
+// iterate through storage for access
+// DO NOT DELETE ANY ITEMS IN STORAGE, THIS WILL MESS UP THE LOOP INDEX!!!
 function iterateStorage(func) {
     for (let index = 0; index < localStorage.length; index++) {
         const itemName = localStorage.key(index);
@@ -162,9 +164,19 @@ clearBtn.addEventListener("click", () => {
                     timer: 800,
                 });
                 // remove all items in current position (folder)
-                itemNameList.forEach(item => {
-                    removeItemFromStorage(item);
+                // itemNameList.forEach(item => {
+                //     removeItemFromStorage(item);
+                // });
+				// console.log('TCL: position', position);
+                const removeItemList = [];
+                iterateStorage(function(item, itemName, itemType, itemPosition, index){
+					// console.log('TCL: itemPosition', itemPosition);
+					// console.log('TCL: itemName', itemName);
+                    if(itemPosition.startsWith(position)){
+                        removeItemList.push(itemName);
+                    }
                 });
+                removeItemList.forEach((item) => {removeItemFromStorage(item)});
                 // clear the representation of items in the window
                 clearAllItems();
                 displayItemPlaceholder(); // show placeholder
@@ -185,7 +197,7 @@ document.addEventListener("mouseout", toggleBtnHighlight)
 function createMenuItem(type) {
     removeItemPlaceholder();
     type = type.toLowerCase();
-    // console.log('TCL: createNewMenuItem -> type', type);
+	// // console.log('TCL: createNewMenuItem -> type', type);
     if (type !== "folder" && type !== "file") {
         throw new TypeError(`menu item's type should be either folder or file, not ${type}`);
     }
@@ -214,7 +226,7 @@ function createMenuItem(type) {
     itemNameInput.focus();
 }
 
-function getFullItemName(shortItemName){
+function getFullItemName(shortItemName) {
     return `${position}/${shortItemName}`;
 }
 
@@ -234,8 +246,8 @@ function createItemNameInput(type) {
 }
 
 function createErrorMessage(target, message) {
-    // console.log('TCL: createErrorMessage -> target', target);
-    // console.log('TCL: createErrorMessage -> typeof target', typeof target);
+	// // console.log('TCL: createErrorMessage -> target', target);
+	// // console.log('TCL: createErrorMessage -> typeof target', typeof target);
     // delete all previous error message
     document.querySelectorAll(".error").forEach(
         el => {
@@ -258,7 +270,7 @@ function storeItem(itemNameInput, type, position) {
         "type": type
     };
     const itemName = `${position}/${itemNameInput.value}`;
-    // console.log('TCL: storeItem -> itemName', itemName);
+	// // console.log('TCL: storeItem -> itemName', itemName);
     if (type === "file") {
         openFileEditField(itemName, itemInfo);
     } else {
@@ -270,13 +282,10 @@ function storeItem(itemNameInput, type, position) {
 // remove all labels of items and delete them in current item name list
 // DOES NOT REMOVE FROM STORAGE!!!
 function clearAllItems() {
-    for (itemName of itemNameList) {
-        Array.from(document.getElementsByClassName("item")).forEach(
-            (el) => {
-                el.remove();
-            }
-        )
-    }
+    Array.from(document.getElementsByClassName("item")).forEach(
+        (el) => {
+            el.remove();
+        })
     itemNameList.length = 0; // clear the current item list
 }
 
@@ -325,18 +334,18 @@ function displayItem(itemName, type, itemPosition) {
             displayFile(newItem, itemName, itemInfo);
         } else {
             // set item location to the folder
-            // console.log('TCL: displayItem -> position', position);
+			// // console.log('TCL: displayItem -> position', position);
             if (getItemFromStorage(itemName)) {
                 setPosition(itemName);
             } else {
                 appendPosition(itemName);
             }
-            // console.log('TCL: displayItem -> position', position);
+			// // console.log('TCL: displayItem -> position', position);
         }
     });
     // console.log("displaying item...");
     if (itemPosition) {
-        // console.log('TCL: displayItem -> position', itemPosition);
+		// // console.log('TCL: displayItem -> position', itemPosition);
         insertAfter(itemPosition, newItem);
     } else {
         system.appendChild(newItem);
@@ -389,8 +398,8 @@ function renameItem(itemLabel) {
         itemNameInput.value = getEndOfPosition(oldItemName);
         insertAfter(itemLabel, itemNameInput);
         itemNameInput.focus();
-        // console.log('TCL: renameItem -> itemLabel', itemLabel);
-        // console.log('TCL: renameItem -> itemLabel.parentNode', itemLabel.parentNode);
+		// // console.log('TCL: renameItem -> itemLabel', itemLabel);
+		// // console.log('TCL: renameItem -> itemLabel.parentNode', itemLabel.parentNode);
         itemLabel.remove();
         itemNameInput.addEventListener("keypress", (e) => {
             if (e.keyCode == 13) { // ENTER key
@@ -468,7 +477,7 @@ function openFileEditField(itemName, itemInfo, position) {
     }
     editor.addEventListener("input", () => {
         const content = editor.value.replace(/\n/g, "");
-        // console.log('TCL: openFileEditField -> content.length', content.length);
+		// // console.log('TCL: openFileEditField -> content.length', content.length);
         if ((content.length - 1) % lineLength === 0 && content.length - 1 !== 0) {
             editor.value = insertString(editor.value, editor.value.length - 1, "\n", 0); // avoid word wrapping
         }
