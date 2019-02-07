@@ -11,20 +11,29 @@ i.fa-angle-right{
 }
 
 .btn {
+    -webkit-transition: -webkit-box-shadow .3s;
+    transition: -webkit-box-shadow .3s;
     transition: box-shadow .3s;
+    transition: box-shadow .3s, -webkit-box-shadow .3s;
     background: #eee;
     padding: .5em;
     cursor: pointer;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
 }
 
 .btn-hover {
     /* source: https://codepen.io/ovdojoey/pen/BomKyZ*/
-    box-shadow: 0 0 11px rgba(33, 33, 33, .2);
+    -webkit-box-shadow: 0 0 11px rgba(33, 33, 33, .2);
+            box-shadow: 0 0 11px rgba(33, 33, 33, .2);
     background: #ddd;
 }
 
 .blurred:focus{
-    box-shadow: none;
+    -webkit-box-shadow: none;
+            box-shadow: none;
 }
 .swal-footer{
     text-align: center;
@@ -52,15 +61,23 @@ i.fa-angle-right{
 }
 
 div#tools {
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-wrap: wrap;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
     margin-bottom: .5em;
 }
 
 div#controlPanel{
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-wrap: wrap;
-    flex: 0 1 100%;
+    -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+    -webkit-box-flex: 0;
+        -ms-flex: 0 1 100%;
+            flex: 0 1 100%;
     margin-bottom: 1em;
 }
 
@@ -82,7 +99,9 @@ div#system {
 
 div#calculatorTypeSelector {
     margin-bottom: 1em;
-    flex: 0 1 100%;
+    -webkit-box-flex: 0;
+        -ms-flex: 0 1 100%;
+            flex: 0 1 100%;
 }
 
 div#calculatorTypeSelector>div {
@@ -110,7 +129,8 @@ div#calculatorTypeSelector>div {
     width: 240px;
     background-color: #fff;
     border: solid 1px #dfdfdf;
-    box-shadow: 1px 1px 2px #cfcfcf;
+    -webkit-box-shadow: 1px 1px 2px #cfcfcf;
+            box-shadow: 1px 1px 2px #cfcfcf;
 }
 
 .context-menu--active {
@@ -200,12 +220,19 @@ div#calculatorTypeSelector>div {
     padding: 0;
     border: 1px solid #888;
     width: 80%;
-    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
-    animation-name: animatetop;
-    animation-duration: 0.4s
+    -webkit-box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+    -webkit-animation-name: animatetop;
+            animation-name: animatetop;
+    -webkit-animation-duration: 0.4s;
+            animation-duration: 0.4s
   }
   
   /* Add Animation */
+  @-webkit-keyframes animatetop {
+    from {top: -300px; opacity: 0}
+    to {top: 0; opacity: 1}
+  }
   @keyframes animatetop {
     from {top: -300px; opacity: 0}
     to {top: 0; opacity: 1}
