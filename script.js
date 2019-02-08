@@ -139,7 +139,7 @@ newFolderBtn.addEventListener("click", () => {
     createMenuItem("folder");
 });
 Mousetrap.bind("shift+f", (e) => { // keyboard shortcut
-    createMenuItem("folder");
+    newFolderBtn.click();
     return false; // prevent event's default behavior
 });
 
@@ -148,10 +148,11 @@ newFileBtn.addEventListener("click", () => {
     createMenuItem("file");
 });
 Mousetrap.bind("shift+t", (e) => { // keyboard shortcut
-    createMenuItem("file");
+    newFileBtn.click();
     return false;
 });
 
+// moving back to parent folder
 backBtn.addEventListener("click", () => {
     iterateStorage(function (item, itemName, itemType, itemPosition, index) {
         if (itemName === position) {
@@ -159,6 +160,10 @@ backBtn.addEventListener("click", () => {
         }
     })
 })
+Mousetrap.bind("backspace", () => {
+    backBtn.click();
+})
+
 clearBtn.addEventListener("click", () => {
     // Based on: https://sweetalert.js.org/guides/#getting-started
     swal({
