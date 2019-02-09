@@ -1,8 +1,6 @@
 # TINotes
 Notes management and viewing system built for TI graphing calculators. Users are able to store organized notes in a folder system in their TI calculators for reference later. You can use the graphic user interface to create files and folders and then TINotes will generate a script file for your TI calculators. You can easily send this file to your calculator and start viewing your notes. 
 
-NOTE: As of currently, folder system is not supported but you can still create files.
-
 ## Set up
 1. Download or clone this repository
 2. Lauch the `index.html` file by double click in your favorite browser
