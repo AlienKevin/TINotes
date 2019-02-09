@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>TINotes</title>
+    <!--Page stylesheet-->
     <link rel="stylesheet" type="text/css" href="style.css">
     <!--Use fallback.js to load all libraries, github: https://github.com/dolox/fallback/blob/master/README.md-->
 	<script src="fallback.js/fallback.min.js" type="text/javascript"></script>
@@ -12,9 +13,9 @@
 </head>
 
 <body>
-    <h1>TINotes</h1>
+    <h1>TINotes <i class="far fa-info-circle" id="infoBtn"></i></h1>
     <div id="tools">
-        <div id="calculatorTypeSelector">
+        <div id="calculatorTypeSelector" data-intro="Select your calculator type">
             <span>Calculator Type: </span>
             <div>
                 <input type="radio" id="monochrome" name="calculatorType" value="monochrome">

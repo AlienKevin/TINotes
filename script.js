@@ -4,6 +4,7 @@ let calculatorType = "color";
 let lineLength, rowLength, menuTitleLength, menuItemLength;
 // minimum length required, no empty string
 const minMenuItemLength = 1;
+const infoBtn = document.getElementById("infoBtn");
 const newFolderBtn = document.getElementById("newFolderBtn");
 const newFileBtn = document.getElementById("newFileBtn");
 const backBtn = document.getElementById("backBtn");
@@ -151,6 +152,11 @@ function iterateStorage(func) {
         func(item, itemName, item.type, item.position, index);
     }
 }
+
+// set up information button
+infoBtn.addEventListener("click", () => {
+    introJs().start();
+});
 
 // create a new folder
 newFolderBtn.addEventListener("click", () => {

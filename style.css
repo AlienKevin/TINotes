@@ -31,6 +31,17 @@ i.fa-angle-right{
     background: #ddd;
 }
 
+#infoBtn{
+    cursor: pointer;
+    font-size: .5em;
+    position: relative;
+    bottom: .25em;
+}
+
+#infoBtn:hover{
+    color: #888;
+}
+
 .blurred:focus{
     -webkit-box-shadow: none;
             box-shadow: none;
