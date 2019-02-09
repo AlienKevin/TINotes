@@ -26,5 +26,10 @@ NOTE: As of currently, folder system is not supported but you can still create f
 5. Load the TI file to your calculator
 \* TINotes has been only been tested on TI Connect CE, so it should at least work for TI-84 Plus CE, TI-84 Plus C Silver Edition, TI-84 Plus Silver Edition, TI-84 Plus. For other older calculators, you may need to first compile the script and then load it using TI Connect to your calculator. For compilation, you may need to install softwares like [TokenIDE](https://www.ticalc.org/archives/files/fileinfo/433/43315.html) or online alternative [SourceCoder](https://www.cemetech.net/sc/)
 
+### Keyboard Shortcuts
+1. `Shift+f` to create a new folder
+2. `Shift+t` to create a new file
+3. `Ctrl+s` or `Command+s` to save a file when the file editor is open
+4. `Backspace` to go back to parent folder
 ## License
 This project is licensed under the terms of the MIT license.
