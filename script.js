@@ -13,13 +13,31 @@ const navigationBar = document.getElementById("navigationBar");
 const homePosition = "home";
 let position = homePosition; // default root location for the file system
 const itemNameList = [];
+const greekLetters = {
+    alpha: "α",
+    beta: "β",
+    gamma: "γ",
+    Delta: "Δ",
+    delta: "δ",
+    epsilon: "ε",
+    pi: "π",
+    lambda: "λ",
+    mu: "μ",
+    Omega: "Ω",
+    phat: "p̂",
+    Phi: "Φ",
+    rho: "ρ",
+    Sigma: "Σ",
+    sigma: "σ",
+    tau: "τ",
+}
 
 // show item navigation bar
 displayNavigationBar();
 
 function displayNavigationBar() {
     removeAllChildren(navigationBar);
-	// // console.log('TCL: displayNavigationBar -> position', position);
+    // // console.log('TCL: displayNavigationBar -> position', position);
     const positions = position.split("/");
     for (let i = 0; i < positions.length; i++) {
         createPositionLabel(positions.slice(0, i + 1).join("/"));
@@ -33,14 +51,14 @@ function removeAllChildren(element) {
 }
 
 function createPositionLabel(position) {
-	// // console.log('TCL: createPositionLabel -> position', position);
+    // // console.log('TCL: createPositionLabel -> position', position);
     const positionLabel = document.createElement("span");
     positionLabel.classList.add("btn");
     positionLabel.classList.add("positionLabel");
     positionLabel.innerHTML = getEndOfPosition(position);
     positionLabel.addEventListener("click", () => {
         setPosition(position);
-		// // console.log('TCL: createPositionLabel -> position', position);
+        // // console.log('TCL: createPositionLabel -> position', position);
     });
     navigationBar.appendChild(positionLabel);
     positionLabel.insertAdjacentHTML("afterend", `<i class="far fa-angle-right"></i>`);
@@ -52,7 +70,7 @@ document.querySelectorAll('input[name="calculatorType"]')
         el.addEventListener("change", (e) => {
             calculatorType = e.target.value;
             changeCalculatorType();
-			// // console.log('TCL: e.target', e.target);
+            // // console.log('TCL: e.target', e.target);
         })
     });
 
@@ -114,7 +132,7 @@ function displayItemPlaceholder() {
                     },
                 })
                 .then((value) => {
-					// // console.log('TCL: displayNewItemPlaceholder -> value', value);
+                    // // console.log('TCL: displayNewItemPlaceholder -> value', value);
                     if (value) {
                         createMenuItem(value);
                     }
@@ -184,16 +202,18 @@ clearBtn.addEventListener("click", () => {
                 // itemNameList.forEach(item => {
                 //     removeItemFromStorage(item);
                 // });
-				// console.log('TCL: position', position);
+                // console.log('TCL: position', position);
                 const removeItemList = [];
-                iterateStorage(function(item, itemName, itemType, itemPosition, index){
-					// console.log('TCL: itemPosition', itemPosition);
-					// console.log('TCL: itemName', itemName);
-                    if(itemPosition.startsWith(position)){
+                iterateStorage(function (item, itemName, itemType, itemPosition, index) {
+                    // console.log('TCL: itemPosition', itemPosition);
+                    // console.log('TCL: itemName', itemName);
+                    if (itemPosition.startsWith(position)) {
                         removeItemList.push(itemName);
                     }
                 });
-                removeItemList.forEach((item) => {removeItemFromStorage(item)});
+                removeItemList.forEach((item) => {
+                    removeItemFromStorage(item)
+                });
                 // clear the representation of items in the window
                 clearAllItems();
                 displayItemPlaceholder(); // show placeholder
@@ -214,7 +234,7 @@ document.addEventListener("mouseout", toggleBtnHighlight)
 function createMenuItem(type) {
     removeItemPlaceholder();
     type = type.toLowerCase();
-	// // console.log('TCL: createNewMenuItem -> type', type);
+    // // console.log('TCL: createNewMenuItem -> type', type);
     if (type !== "folder" && type !== "file") {
         throw new TypeError(`menu item's type should be either folder or file, not ${type}`);
     }
@@ -263,8 +283,8 @@ function createItemNameInput(type) {
 }
 
 function createErrorMessage(target, message) {
-	// // console.log('TCL: createErrorMessage -> target', target);
-	// // console.log('TCL: createErrorMessage -> typeof target', typeof target);
+    // // console.log('TCL: createErrorMessage -> target', target);
+    // // console.log('TCL: createErrorMessage -> typeof target', typeof target);
     // delete all previous error message
     document.querySelectorAll(".error").forEach(
         el => {
@@ -287,7 +307,7 @@ function storeItem(itemNameInput, type, position) {
         "type": type
     };
     const itemName = `${position}/${itemNameInput.value}`;
-	// // console.log('TCL: storeItem -> itemName', itemName);
+    // // console.log('TCL: storeItem -> itemName', itemName);
     if (type === "file") {
         openFileEditField(itemName, itemInfo);
     } else {
@@ -351,18 +371,18 @@ function displayItem(itemName, type, itemPosition) {
             displayFile(newItem, itemName, itemInfo);
         } else {
             // set item location to the folder
-			// // console.log('TCL: displayItem -> position', position);
+            // // console.log('TCL: displayItem -> position', position);
             if (getItemFromStorage(itemName)) {
                 setPosition(itemName);
             } else {
                 appendPosition(itemName);
             }
-			// // console.log('TCL: displayItem -> position', position);
+            // // console.log('TCL: displayItem -> position', position);
         }
     });
     // console.log("displaying item...");
     if (itemPosition) {
-		// // console.log('TCL: displayItem -> position', itemPosition);
+        // // console.log('TCL: displayItem -> position', itemPosition);
         insertAfter(itemPosition, newItem);
     } else {
         system.appendChild(newItem);
@@ -415,8 +435,8 @@ function renameItem(itemLabel) {
         itemNameInput.value = getEndOfPosition(oldItemName);
         insertAfter(itemLabel, itemNameInput);
         itemNameInput.focus();
-		// // console.log('TCL: renameItem -> itemLabel', itemLabel);
-		// // console.log('TCL: renameItem -> itemLabel.parentNode', itemLabel.parentNode);
+        // // console.log('TCL: renameItem -> itemLabel', itemLabel);
+        // // console.log('TCL: renameItem -> itemLabel.parentNode', itemLabel.parentNode);
         itemLabel.remove();
         itemNameInput.addEventListener("keypress", (e) => {
             if (e.keyCode == 13) { // ENTER key
@@ -485,16 +505,43 @@ function insertAfter(referenceNode, newNode) {
     referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
 }
 
+function convertWordsToSymbols(str) {
+    for (const [key, value] of Object.entries(greekLetters)) {
+        str = str.replace(new RegExp(key, "g"), value);
+    }
+    return str;
+}
+
+function convertSymbolsToWords(str){
+    for (const [key, value] of Object.entries(greekLetters)) {
+        str = str.replace(new RegExp(value, "g"), key);
+    }
+    return str;
+}
+
+function decodeFileContent(fileContent){
+    let content = convertSpacesToNewlines(fileContent);
+    content = convertWordsToSymbols(content);
+    return content;
+}
+
+function encodeFileContent(fileContent){
+    let content = convertNewlinesToSpaces(fileContent);
+    content = convertSymbolsToWords(content);
+    return content;
+}
+
 function openFileEditField(itemName, itemInfo, position) {
     const editor = createFileEditor();
     editor.placeholder = "Write notes here"
     if (itemInfo.content !== undefined) {
-        editor.value = convertSpacesToNewlines(itemInfo.content);
+        editor.value = decodeFileContent(itemInfo.content);
         editor.setAttribute("data-item", itemName);
     }
     editor.addEventListener("input", () => {
+        editor.value = convertWordsToSymbols(editor.value);
         const content = editor.value.replace(/\n/g, "");
-		// // console.log('TCL: openFileEditField -> content.length', content.length);
+        // // console.log('TCL: openFileEditField -> content.length', content.length);
         if ((content.length - 1) % lineLength === 0 && content.length - 1 !== 0) {
             editor.value = insertString(editor.value, editor.value.length - 1, "\n", 0); // avoid word wrapping
         }
@@ -507,12 +554,12 @@ function openFileEditField(itemName, itemInfo, position) {
     submitBtn.addEventListener("click", () => {
         // return file content
         console.log("converting newlines to spaces");
-        editor.value = convertNewlinesToSpaces(editor.value);
+        editor.value = encodeFileContent(editor.value);
         itemInfo.content = editor.value;
         setItemInStorage(itemName, itemInfo);
         editField.remove();
     });
-    Mousetrap(editor).bind('mod+s', function(e, combo) {
+    Mousetrap(editor).bind('mod+s', function (e, combo) {
         submitBtn.click();
         return false; // prevent event's default behavior
     });
