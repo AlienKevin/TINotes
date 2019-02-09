@@ -8,32 +8,40 @@
     <!--Page stylesheet-->
     <link rel="stylesheet" type="text/css" href="style.css">
     <!--Use fallback.js to load all libraries, github: https://github.com/dolox/fallback/blob/master/README.md-->
-	<script src="fallback.js/fallback.min.js" type="text/javascript"></script>
+    <script src="fallback.js/fallback.min.js" type="text/javascript"></script>
     <script src="load.js" type="text/javascript"></script>
 </head>
 
 <body>
-    <h1>TINotes <i class="far fa-info-circle" id="infoBtn"></i></h1>
+    <h1 data-intro="Hi, welcome to TINotes. TINotes is a note management and viewing system for TI graphing calculators. 
+    You can create and store organized notes in a folder system in your TI calculators.">
+        TINotes <i class="far fa-info-circle" id="infoBtn"></i>
+    </h1>
     <div id="tools">
-        <div id="calculatorTypeSelector" data-intro="Select your calculator type">
+        <div id="calculatorTypeSelector" data-intro="Select your calculator's display type">
             <span>Calculator Type: </span>
-            <div>
+            <div data-intro="Select Monochrome if you are using TI-83, TI-83 Plus, TI-83 Plus Silver Edition, TI-84 Plus, or TI-84 Plus Silver Edition.">
                 <input type="radio" id="monochrome" name="calculatorType" value="monochrome">
                 <label for="monochrome">Monochrome</label>
             </div>
-            <div>
+            <div data-intro="Select Color if you are using TI-84 Plus C Silver Edition or TI-84 Plus CE.">
                 <input type="radio" id="color" name="calculatorType" value="color">
                 <label for="color">Color</label>
             </div>
         </div>
-        <div id="controlPanel">
-            <span class="btn" id="newFolderBtn">New Folder</span>
-            <span class="btn" id="newFileBtn">New File</span>
-            <span class="btn" id="generateScriptBtn">Generate TI Script</span>
-            <span class="btn" id="clearBtn">Clear</span>
-            <span class="btn" id="backBtn">Back</span>
+        <div id="controlPanel" data-intro="Here's the control panel of TINotes.">
+            <span class="btn" id="newFolderBtn" data-intro="Create a new folder in current directory">New Folder</span>
+            <span class="btn" id="newFileBtn" data-intro="Create a new file in current directory">New File</span>
+            <span class="btn" id="generateScriptBtn" data-intro="Generate text script for TI Calculators, 
+            <a href='https://github.com/AlienKevin/TINotes#export-notes'>see instructions here</a>
+             on how to load it onto your calculator">Generate
+                TI Script</span>
+            <span class="btn" id="clearBtn" data-intro="Clear all files and folders in the current directory.">Clear</span>
+            <span class="btn" id="backBtn" data-intro="Go back to parent folder">Back</span>
         </div>
-        <div id="navigationBar"></div>
+        <div id="navigationBar" data-intro="You can click on the folder name to navigate 
+        to that folder here. For more usage details, please refer to 
+        <a target='_blank' href='https://github.com/AlienKevin/TINotes#tinotes'>the GitHub page</a>."></div>
     </div>
     <div id="system"></div>
     <!-- Popup window for displaying generated TI script -->
