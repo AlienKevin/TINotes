@@ -13,10 +13,11 @@
 </head>
 
 <body>
-    <h1 data-intro="Hi, welcome to TINotes. TINotes is a note management and viewing system for TI graphing calculators. 
-    You can create and store organized notes in a folder system in your TI calculators.">
+    <h1>
         TINotes <i class="far fa-info-circle" id="infoBtn"></i>
     </h1>
+    <div id="main" data-intro="Hi, welcome to TINotes. TINotes is a note management and viewing system for TI graphing calculators. 
+    You can create and store organized notes in a folder system in your TI calculators.">
     <div id="tools">
         <div id="calculatorTypeSelector" data-intro="Select your calculator's display type">
             <span>Calculator Type: </span>
@@ -30,20 +31,21 @@
             </div>
         </div>
         <div id="controlPanel" data-intro="Here's the control panel of TINotes.">
-            <span class="btn" id="newFolderBtn" data-intro="Create a new folder in current directory">New Folder</span>
-            <span class="btn" id="newFileBtn" data-intro="Create a new file in current directory">New File</span>
+            <span class="btn" id="newFolderBtn" data-intro="Create a new folder in current directory (<span class='codeStyle'>Shift+f</span>)">New Folder</span>
+            <span class="btn" id="newFileBtn" data-intro="Create a new file in current directory (<span class='codeStyle'>Shift+t</span>)">New File</span>
             <span class="btn" id="generateScriptBtn" data-intro="Generate text script for TI Calculators, 
             <a href='https://github.com/AlienKevin/TINotes#export-notes'>see instructions here</a>
              on how to load it onto your calculator">Generate
                 TI Script</span>
             <span class="btn" id="clearBtn" data-intro="Clear all files and folders in the current directory.">Clear</span>
-            <span class="btn" id="backBtn" data-intro="Go back to parent folder">Back</span>
+            <span class="btn" id="backBtn" data-intro="Go back to parent folder (<span class='codeStyle'>Backspace</span>)">Back</span>
         </div>
         <div id="navigationBar" data-intro="You can click on the folder name to navigate 
         to that folder here. For more usage details, please refer to 
         <a target='_blank' href='https://github.com/AlienKevin/TINotes#tinotes'>the GitHub page</a>."></div>
     </div>
     <div id="system"></div>
+    </div>
     <!-- Popup window for displaying generated TI script -->
     <div id="popup" class="modal">
 

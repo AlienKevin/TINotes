@@ -4,6 +4,12 @@ body {
     margin: 2em;
 }
 
+.codeStyle{
+    color: rgb(197, 0, 0);
+    background:#eee;
+    font-family: Consolas, monaco, monospace;
+}
+
 i.fa-angle-right{
     position: relative;
     top: .1em;
