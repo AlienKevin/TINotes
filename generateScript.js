@@ -17,30 +17,39 @@ function exportScript() {
     viewer.value = script;
     viewer.readOnly = true;
     popupBody.appendChild(viewer);
+    // process linebreak
+    script = script.replace(/\n/g, "\r\n");
 }
 
-function selectAllItems(){
-    
+function selectAllItems() {
+
 }
 
 function generateScript() {
-    selectAllItems();
-    const homeMenuTitle = `NOTES`;
-    let homeMenu = `Menu("${homeMenuTitle}"`;
+    // selectAllItems();
+    script = generateScriptHelper("home");
+    script += `Lbl 0\n${baseScript}`;
+}
+
+function generateScriptHelper(position) {
+    let homeMenu = `Menu("${getEndOfPosition(position)}"`;
     let branching = ``;
-    iterateStorage(function (item, itemName, itemType, position, index) {
-        index += 1;
-        homeMenu += `,"${itemName}",${index}`;
-        branching += `Lbl ${index}\n`;
-        if (itemType === `file`) {
-            branching += `"${item.content}"→Str1\n`;
+    iterateStorage(function (item, itemName, itemType, itemPosition, index) {
+        if (itemPosition === position) {
+            index += 1;
+            homeMenu += `,"${getEndOfPosition(itemName)}",${index}`;
+            branching += `Lbl ${index}\n`;
+            if (itemType === `file`) {
+                branching += `"${item.content}"→Str1\n`;
+                branching += `Goto 0\n`;
+            } else {
+                branching += generateScriptHelper(itemName);
+            }
         }
-        branching += `Goto 0\n`;
     });
     homeMenu += `)`;
-    script = `${homeMenu}\n${branching}Lbl 0\n${baseScript}`;
-    script = script.replace(/\n/g, "\r\n");
-    // console.log('TCL: generateScript -> script', script);
+    script = `${homeMenu}\n${branching}`;
+    return script;
 }
 
 
