@@ -155,7 +155,14 @@ function iterateStorage(func) {
 
 // set up information button
 infoBtn.addEventListener("click", () => {
-    introJs().start();
+    const introjs = introJs().setOptions({
+        "tooltipPosition": "bottom",
+        "showStepNumbers": false,
+        "hidePrev": true,
+        "hideNext": true,
+        "showProgress": true,
+    });
+    introjs.start();
 });
 
 // create a new folder
