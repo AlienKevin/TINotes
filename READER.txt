@@ -6,12 +6,12 @@ Lbl S
 If N=0
 Then
 	N->|LA(W)
-	1->N
+	0->N
 Menu("NOTES","PHYSICS",1,"CHEMISTRY",2,"CALCULUS",3,"BIOLOGY",4)
 	Lbl 4:N+1->N
 	Lbl 3:N+1->N
 	Lbl 2:N+1->N
-	Lbl 1
+	Lbl 1:N+1->N
 	W+1->W
 End
 
@@ -75,8 +75,8 @@ For(I,S,D-L,L)
 		End
 		If (K=21)
 		Then
-			M->N
 			W-1->W
+			|LA(W)->N
 			Goto S
 		End
 		ClrHome
@@ -107,8 +107,8 @@ Then
 End
 If (K=21)
 Then
-	M->N
 	W-1->W
+	|LA(W)->N
 	Goto S
 End
 Lbl Q
