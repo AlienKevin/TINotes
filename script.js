@@ -332,10 +332,7 @@ function storeItem(itemNameInput, type, position) {
 // remove all labels of items and delete them in current item name list
 // DOES NOT REMOVE FROM STORAGE!!!
 function clearAllItems() {
-    Array.from(document.getElementsByClassName("item")).forEach(
-        (el) => {
-            el.remove();
-        })
+    removeAllChildren(system); // delete all children in system div
     itemNameList.length = 0; // clear the current item list
 }
 
