@@ -529,15 +529,26 @@ function convertSymbolsToWords(str){
     return str;
 }
 
+function convertSingleQuotesToDoubleQuotes(str){
+    return str.replace(new RegExp(`'`, "g"), `"`);
+}
+
+function convertDoubleQuotesToSingleQuotes(str){
+    return str.replace(new RegExp(`"`, "g"), `'`);
+}
+
 function decodeFileContent(fileContent){
     let content = convertSpacesToNewlines(fileContent);
     content = convertWordsToSymbols(content);
+    content = convertSingleQuotesToDoubleQuotes(content);
     return content;
 }
 
 function encodeFileContent(fileContent){
     let content = convertNewlinesToSpaces(fileContent);
     content = convertSymbolsToWords(content);
+    // double quotes cannot be in TI-BASIC's strings
+    content = convertDoubleQuotesToSingleQuotes(content);
     return content;
 }
 
