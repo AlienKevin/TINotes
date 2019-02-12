@@ -1,6 +1,18 @@
 # TINotes
 Notes management and viewing system built for TI graphing calculators. Users are able to store organized notes in a folder system in their TI calculators for reference later. You can use the graphic user interface to create files and folders and then TINotes will generate a script file for your TI calculators. You can easily send this file to your calculator and start viewing your notes. 
 
+Demo 1: Basic Usage 
+![Demo 1](https://raw.githubusercontent.com/AlienKevin/TINotes/master/Demos/Demo1.gif)
+
+Demo 2: TINotes have comprehensive step-by-step instructions 
+![Demo 2](https://raw.githubusercontent.com/AlienKevin/TINotes/master/Demos/Demo2.gif)
+
+Demo 3: All folders and files are stored locally. Refreshing/closing and reopening will not discard data.
+![Demo 3](https://raw.githubusercontent.com/AlienKevin/TINotes/master/Demos/Demo3.gif)
+
+Demo 4: Notes navigation in the calculator, showing how you can navigate back and forth both in the folder system and within individual files<br/>
+![Demo 4](https://raw.githubusercontent.com/AlienKevin/TINotes/master/Demos/Demo4.gif)
+
 ## Set up
 1. Download or clone this repository
 2. Lauch the `index.html` file by double click in your favorite browser
@@ -22,12 +34,23 @@ Notes management and viewing system built for TI graphing calculators. Users are
 3. Open up the generated script file, select all text and copy it.
 4. Open the TI Connect software and create a new program file. Paste the content in the new file. Name the TI file `TINOTES`.*
 5. Load the TI file to your calculator
+
 \* TINotes has been only been tested on TI Connect CE, so it should at least work for TI-84 Plus CE, TI-84 Plus C Silver Edition, TI-84 Plus Silver Edition, TI-84 Plus. For other older calculators, you may need to first compile the script and then load it using TI Connect to your calculator. For compilation, you may need to install softwares like [TokenIDE](https://www.ticalc.org/archives/files/fileinfo/433/43315.html) or online alternative [SourceCoder](https://www.cemetech.net/sc/)
 
 ### Keyboard Shortcuts
-1. `Shift+f` to create a new folder
-2. `Shift+t` to create a new file
-3. `Ctrl+s` or `Command+s` to save a file when the file editor is open
-4. `Backspace` to go back to parent folder
+1. <kbd>Shift</kbd>+<kbd>f</kbd> to create a new folder
+2. <kbd>Shift</kbd>+<kbd>t</kbd> to create a new file
+3. <kbd>Ctrl</kbd>+<kbd>s</kbd> or <kbd>⌘</kbd>+<kbd>s</kbd> to save a file when the file editor is open
+4. <kbd>Backspace</kbd> to go back to parent folder
+
+### Navigate in the calculator
+1. When the home menu appears with some folders and/or files, press <kbd>enter</kbd> to go into that folder/file
+2. If you are inside a file, 
+    - press <kbd>&#11208;</kbd> or <kbd>&#11205;</kbd> or <kbd>enter</kbd> to go to next page
+    - press <kbd>&#11207;</kbd> or <kbd>&#11206;</kbd> to go to previous page.
+    - press <kbd>2nd</kbd> to exit the file and go back to parent folder
+3. If you are inside a folder,
+    - select the "Back" option in the menu by either scrolling through options using arrow keys and press <kbd>enter</kbd> or pressing the menu item's number
+
 ## License
 This project is licensed under the terms of the MIT license.
