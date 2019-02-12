@@ -28,16 +28,19 @@ NOTE: As of currently, folder system is not supported but you can still create f
 \* TINotes has been only been tested on TI Connect CE, so it should at least work for TI-84 Plus CE, TI-84 Plus C Silver Edition, TI-84 Plus Silver Edition, TI-84 Plus. For other older calculators, you may need to first compile the script and then load it using TI Connect to your calculator. For compilation, you may need to install softwares like [TokenIDE](https://www.ticalc.org/archives/files/fileinfo/433/43315.html) or online alternative [SourceCoder](https://www.cemetech.net/sc/)
 
 ### Keyboard Shortcuts
-1. <kbd>Shift<kbd>+<kbd>f<kbd> to create a new folder
-2. `Shift+t` to create a new file
-3. `Ctrl+s` or `Command+s` to save a file when the file editor is open
+1. <kbd>Shift</kbd>+<kbd>f</kbd> to create a new folder
+2. <kbd>Shift</kbd>+<kbd>t</kbd> to create a new file
+3. <kbd>Ctrl</kbd>+<kbd>s</kbd> or <kbd>⌘</kbd>+<kbd>s</kbd> to save a file when the file editor is open
 4. `Backspace` to go back to parent folder
 
 ### Navigate in the calculator
 1. When the home menu appears with some folders and/or files, press <kbd>enter</kbd> to go into that folder/file
 2. If you are inside a file, 
-    - press <kbd>&#11208;<kbd> or <kbd>&#11205;<kbd> or <kbd>enter<kbd> to go to next page
+    - press <kbd>&#11208;</kbd> or <kbd>&#11205;</kbd> or <kbd>enter</kbd> to go to next page
     - press <kbd>&#11207;</kbd> or <kbd>&#11206;</kbd> to go to previous page.
+    - press <kbd>2nd</kbd> to exit the file and go back to parent folder
+3. If you are inside a folder,
+    - select the "Back" option in the menu by either scrolling through options using arrow keys and press <kbd>enter</kbd> or pressing the menu item's number
 
 ## License
 This project is licensed under the terms of the MIT license.
