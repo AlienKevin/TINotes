@@ -14,6 +14,8 @@ Demo 4: Notes navigation in the calculator, showing how you can navigate back an
 ![Demo 4](https://raw.githubusercontent.com/AlienKevin/TINotes/master/Demos/Demo4.gif)
 
 ## Set up
+I. Use online: go to https://alienkevin.github.io/TINotes/
+II. Download and use offline
 1. Download or clone this repository
 2. Lauch the `index.html` file by double click in your favorite browser
 3. Now you should be inside the TINotes user interface
