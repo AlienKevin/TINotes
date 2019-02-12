@@ -28,58 +28,47 @@ function selectAllItems() {
 function generateScript() {
     // selectAllItems();
     script = `0->N\n1->W\nLbl S\n`; // initialize variables
-    script += generateScriptHelper("home", 0, 0);
+    script += generateScriptHelper("home", 0);
     script += `${baseScript}`;
 }
 
-function generateScriptHelper(position, index, label) {
+function generateScriptHelper(position, index) {
     console.log('TCL: generateScriptHelper -> index', index);
     console.log('TCL: generateScriptHelper -> position', position);
-    let homeMenu;
-    if (index === 0) {
-        homeMenu = `If N=0\nThen\nN->|LA(W)\n0->N\n`;
-    } else {
-        homeMenu = `If N=${index - 1}\nThen\nN->|LA(W)\n${label}->N\n`;
-    }
+    let homeMenu = `If N=${index}\nThen\nN->|LA(W)\n`;
     homeMenu += `Menu("${getEndOfPosition(position)}"`;
     let branching = ``;
-    index++;
-    const oldIndex = index;
-    iterateStorage(function (item, itemName, itemType, itemPosition) {
+    const indexList = [];
+    iterateStorage(function (item, itemName, itemType, itemPosition, index) {
         if (itemPosition === position) {
-            homeMenu += `,"${getEndOfPosition(itemName)}",${index}`;
             index++;
+            homeMenu += `,"${getEndOfPosition(itemName)}",${index}`;
             if (itemType === `file`) {
-                branching += `If N=${index-1}\n`;
+                branching += `If N=${index}\n`;
                 branching += `"${item.content}"->Str1\n`;
             } else {
-                menuLength = 0;
-                iterateStorage(function (item, itemName, itemType, itemPosition) {
-                    if (itemPosition === position) {
-                        menuLength++;
-                    }
-                    console.log('TCL: generateScriptHelper -> position', position);
-                    console.log('TCL: generateScriptHelper -> menuLength', menuLength);
-                });
-                label += menuLength;
-                branching += generateScriptHelper(itemName, index, label);
+                branching += generateScriptHelper(itemName, index);
             }
+            indexList.push(index);
         }
     });
-    let startIndex;
-    if (position !== "home") {
-        homeMenu += `,"BACK",${index}`; // create back button
-        homeMenu += `)\n`;
-        homeMenu += `Lbl ${index}:\n`;
-        homeMenu += `|LA(W-1)->N\nGoto S\n`;
-        startIndex = index - 1;
-    } else {
-        homeMenu += `)\n`;
-        startIndex = index - 1;
-    }
-    for (let i = startIndex; i >= oldIndex; i--) {
-        homeMenu += `Lbl ${i}:N+1->N\n`;
-    }
+    homeMenu += `)\n`;
+    indexList.forEach(
+        (index, len) => {
+            homeMenu += `Lbl ${index}\n`;
+            if (len > 0) {
+                homeMenu += `If `;
+                for (let i = 0; i < len; i++) {
+                    if (i > 0) {
+                        homeMenu += ` and `;
+                    }
+                    homeMenu += `N!=${indexList[i]}`;
+                }
+                homeMenu += `\n`;
+            }
+            homeMenu += `${index}->N\n`;
+        }
+    )
     homeMenu += `W+1->W\nEnd\n`;
     script = `${homeMenu}\n${branching}`;
     return script;
