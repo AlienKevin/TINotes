@@ -10,7 +10,7 @@ Demo 2: TINotes have comprehensive step-by-step instructions
 Demo 3: All folders and files are stored locally. Refreshing/closing and reopening will not discard data.
 ![Demo 3](https://raw.githubusercontent.com/AlienKevin/TINotes/master/Demos/Demo3.gif)
 
-Demo 4: Notes navigation in the calculator, showing how you can navigate back and forth both in the folder system and within individual files 
+Demo 4: Notes navigation in the calculator, showing how you can navigate back and forth both in the folder system and within individual files<br/>
 ![Demo 4](https://raw.githubusercontent.com/AlienKevin/TINotes/master/Demos/Demo4.gif)
 
 ## Set up
