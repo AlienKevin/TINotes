@@ -28,11 +28,11 @@ fallback.load({
 
 });
 fallback.ready(function(){
-    dynamicallyLoadScript("script.js");
-    dynamicallyLoadScript("contextMenu.js");
+    dynamicallyLoadScript("js/script.js");
+    dynamicallyLoadScript("js/contextMenu.js");
     dynamicallyLoadScript("baseScript.txt");
-    dynamicallyLoadScript("generateScript.js");
-    dynamicallyLoadScript("popup.js");
+    dynamicallyLoadScript("js/generateScript.js");
+    dynamicallyLoadScript("js/popup.js");
 });
 function dynamicallyLoadScript(url) {
     var script = document.createElement("script");  // create a script DOM node
