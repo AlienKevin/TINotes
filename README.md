@@ -41,7 +41,7 @@ Demo 4: Notes navigation in the calculator, showing how you can navigate back an
 1. <kbd>Shift</kbd>+<kbd>f</kbd> to create a new folder
 2. <kbd>Shift</kbd>+<kbd>t</kbd> to create a new file
 3. <kbd>Ctrl</kbd>+<kbd>s</kbd> or <kbd>⌘</kbd>+<kbd>s</kbd> to save a file when the file editor is open
-4. `Backspace` to go back to parent folder
+4. <kbd>Backspace</kbd> to go back to parent folder
 
 ### Navigate in the calculator
 1. When the home menu appears with some folders and/or files, press <kbd>enter</kbd> to go into that folder/file
