@@ -2,9 +2,19 @@ const generateScriptBtn = document.getElementById("generateScriptBtn");
 generateScriptBtn.addEventListener("click", exportScript);
 const downloadScriptBtn = document.getElementById("downloadScriptBtn");
 let script;
+let itemSize = calculateItemSize();
 downloadScriptBtn.addEventListener("click", () => {
     download("TINOTES.txt", script);
 });
+
+function calculateItemSize() {
+    let itemSize = 0;
+    iterateStorage(function () {
+        itemSize++;
+    });
+    itemSize++;
+    return itemSize;
+}
 
 function exportScript() {
     generateScript();
@@ -27,6 +37,7 @@ function selectAllItems() {
 
 function generateScript() {
     // selectAllItems();
+    itemSize = calculateItemSize(); // reset item size
     script = `0->N\n1->W\nLbl S\n`; // initialize variables
     script += generateScriptHelper("home", 0);
     script += `${baseScript}`;
@@ -52,7 +63,15 @@ function generateScriptHelper(position, index) {
             indexList.push(index);
         }
     });
-    homeMenu += `)\n`;
+    if (position !== "home") { // not at home position
+        homeMenu += `,"Back",${itemSize}`;
+        homeMenu += `)\n`;
+        homeMenu += `Lbl ${itemSize}\n`;
+        homeMenu += `W-1->W\n|LA(W)->N\nGoto S\n`;
+        itemSize++;
+    } else { // at home position
+        homeMenu += `)\n`;
+    }
     indexList.forEach(
         (index, len) => {
             homeMenu += `Lbl ${index}\n`;
