@@ -1,6 +1,8 @@
 # TINotes
 Notes management and viewing system built for TI graphing calculators. Users are able to store organized notes in a folder system in their TI calculators for reference later. You can use the graphic user interface to create files and folders and then TINotes will generate a script file for your TI calculators. You can easily send this file to your calculator and start viewing your notes. 
 
+NOTE: As of currently, folder system is not supported but you can still create files.
+
 ## Set up
 1. Download or clone this repository
 2. Lauch the `index.html` file by double click in your favorite browser
@@ -22,12 +24,20 @@ Notes management and viewing system built for TI graphing calculators. Users are
 3. Open up the generated script file, select all text and copy it.
 4. Open the TI Connect software and create a new program file. Paste the content in the new file. Name the TI file `TINOTES`.*
 5. Load the TI file to your calculator
+
 \* TINotes has been only been tested on TI Connect CE, so it should at least work for TI-84 Plus CE, TI-84 Plus C Silver Edition, TI-84 Plus Silver Edition, TI-84 Plus. For other older calculators, you may need to first compile the script and then load it using TI Connect to your calculator. For compilation, you may need to install softwares like [TokenIDE](https://www.ticalc.org/archives/files/fileinfo/433/43315.html) or online alternative [SourceCoder](https://www.cemetech.net/sc/)
 
 ### Keyboard Shortcuts
-1. `Shift+f` to create a new folder
+1. <kbd>Shift<kbd>+<kbd>f<kbd> to create a new folder
 2. `Shift+t` to create a new file
 3. `Ctrl+s` or `Command+s` to save a file when the file editor is open
 4. `Backspace` to go back to parent folder
+
+### Navigate in the calculator
+1. When the home menu appears with some folders and/or files, press <kbd>enter</kbd> to go into that folder/file
+2. If you are inside a file, 
+    - press <kbd>&#11208;<kbd> or <kbd>&#11205;<kbd> or <kbd>enter<kbd> to go to next page
+    - press <kbd>&#11207;</kbd> or <kbd>&#11206;</kbd> to go to previous page.
+
 ## License
 This project is licensed under the terms of the MIT license.
