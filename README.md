@@ -28,7 +28,9 @@ II. Download and use offline
       - Select `Monochrome` display type if you are using: TI-83, TI-83 Plus, TI-83 Plus Silver Edition, TI-84 Plus, or TI-84 Plus Silver Edition
       - Select `Color` display type if you are using: TI-84 Plus C Silver Edition, TI-84 Plus CE
 2. Click on `New Folder` to create a new folder. Click on `New File` to create a new file. Due to the limited screen size, the number of characters allowed for file and folder names are restricted depending on your display type.
-3. If you cliked on `New File`, a text editor will pop up for you to enter notes, **all normal text should be in uppercase** because TI automatically convert some lowercase words into symbols. E.g. "shopping" -> "shopπng", "alphago" -> "αgo", etc.
+3. If you cliked on `New File`, a text editor will pop up for you to enter notes. **All normal text should be in uppercase** because:
+     * Some lowercase words are predefined as keywords, like "and", "sin(", etc. in TI. Thus, their length cannot be accurately determined because keywords all occupy one space in TI. **This can mess up note layout and hide some parts of the note.**
+     * Uppercase letters (1 byte each) take up **less space** than lowercase letters (2 bytes each).
 4. Right click on the files or folders to `rename` or `delete` them.
 5. In the end, you don't need to save anything before exiting the program, all files and folders are stored locally on your machine and will automatically load next time you lauched the program.
 
