@@ -575,6 +575,10 @@ function openFileEditField(itemName, itemInfo, position) {
         }
         // editor.value = editor.value.replace(/([\s\S]{80})/g, "$1\n");
     });
+
+    const controlDiv = document.createElement("div");
+    controlDiv.id = "editFieldControl";
+
     const submitBtn = document.createElement("span");
     submitBtn.id = "submitFileBtn";
     submitBtn.classList.add("btn");
@@ -600,7 +604,15 @@ function openFileEditField(itemName, itemInfo, position) {
         insertAfter(position, editField);
     }
     editField.appendChild(editor);
-    editField.appendChild(submitBtn);
+    editField.appendChild(controlDiv);
+    controlDiv.appendChild(submitBtn);
+    // add uppercase checkbox
+    controlDiv.insertAdjacentHTML("beforeend",
+    `<div id="uppercaseDiv">
+    <input type="checkbox" id="uppercaseCheckBox" checked>
+    <label for="uppercaseCheckBox">Uppercase</label>
+    </div>`);
+
     editor.focus();
 }
 
