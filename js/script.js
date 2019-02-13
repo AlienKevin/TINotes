@@ -14,7 +14,7 @@ const navigationBar = document.getElementById("navigationBar");
 const homePosition = "home";
 let position = homePosition; // default root location for the file system
 const itemNameList = [];
-let toUppercase = true; // default auto convert to uppercase
+let defaultToUppercase = true; // default auto convert to uppercase
 const conversionTable = {
     // greek letters
     alpha: "α",
@@ -576,9 +576,14 @@ function convertToUppercase(str) {
 function openFileEditField(itemName, itemInfo, position) {
     const editor = createFileEditor();
     editor.placeholder = "Write notes here"
+    toUppercase = defaultToUppercase; // reset uppercase setting
     if (itemInfo.content !== undefined) {
         editor.value = decodeFileContent(itemInfo.content);
         editor.setAttribute("data-item", itemName);
+        if (/[a-z]+/.test(editor.value)) { // contains lowercase
+            // turn off to uppercase
+            toUppercase = false;
+        }
     }
     editor.addEventListener("input", () => {
         console.log('TCL: openFileEditField -> editor.value', editor.value);
@@ -628,10 +633,11 @@ function openFileEditField(itemName, itemInfo, position) {
     // add uppercase checkbox
     controlDiv.insertAdjacentHTML("beforeend",
         `<div id="uppercaseDiv">
-    <input type="checkbox" id="uppercaseCheckBox" checked>
+    <input type="checkbox" id="uppercaseCheckBox">
     <label for="uppercaseCheckBox">Uppercase</label>
     </div>`);
     const uppercaseCheckBox = document.getElementById("uppercaseCheckBox");
+    uppercaseCheckBox.checked = toUppercase;
     uppercaseCheckBox.addEventListener("change", () => {
         if (uppercaseCheckBox.checked !== toUppercase) {
             toUppercase = uppercaseCheckBox.checked;
