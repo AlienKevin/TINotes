@@ -14,6 +14,7 @@ const navigationBar = document.getElementById("navigationBar");
 const homePosition = "home";
 let position = homePosition; // default root location for the file system
 const itemNameList = [];
+let convertToUppercase = true; // default auto convert to uppercase
 const conversionTable = {
     // greek letters
     alpha: "α",
@@ -568,6 +569,9 @@ function openFileEditField(itemName, itemInfo, position) {
     }
     editor.addEventListener("input", () => {
         editor.value = convertWordsToSymbols(editor.value);
+        if (convertToUppercase){
+            editor.value = editor.value.toUpperCase();
+        }
         const content = editor.value.replace(/\n/g, "");
         // // console.log('TCL: openFileEditField -> content.length', content.length);
         if ((content.length - 1) % lineLength === 0 && content.length - 1 !== 0) {
@@ -612,7 +616,13 @@ function openFileEditField(itemName, itemInfo, position) {
     <input type="checkbox" id="uppercaseCheckBox" checked>
     <label for="uppercaseCheckBox">Uppercase</label>
     </div>`);
-
+    const uppercaseCheckBox = document.getElementById("uppercaseCheckBox");
+    uppercaseCheckBox.addEventListener("change", () => {
+        if (uppercaseCheckBox.checked !== convertToUppercase){
+            convertToUppercase = uppercaseCheckBox.checked;
+            editor.value = editor.value.toUpperCase();
+        }
+    });
     editor.focus();
 }
 
