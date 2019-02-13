@@ -426,6 +426,10 @@ function displayFile(position, fileName, fileInfo) {
     // toggle file editor
     const editField = document.getElementById("editField");
     if (editField) {
+        const submitFileBtn = document.getElementById("submitFileBtn");
+        if (submitFileBtn){
+            submitFileBtn.click();
+        }
         editField.remove();
         const clickedItemName = editField.getAttribute("data-item");
         if (clickedItemName !== fileName) { // not the same file
