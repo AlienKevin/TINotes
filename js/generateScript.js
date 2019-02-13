@@ -26,10 +26,60 @@ function exportScript() {
     viewer = createFileEditor("viewer");
     viewer.value = script;
     viewer.readOnly = true;
-    popupBody.appendChild(viewer);
+    const scriptFormatSelector = document.getElementById("scriptFormatSelector");
+    popupBody.insertBefore(viewer, scriptFormatSelector);
+
+    // file type options
+    document.querySelectorAll('input[name="scriptFormat"]')
+        .forEach((el) => {
+            el.addEventListener("change", (e) => {
+                scriptFormat = e.target.value;
+				// console.log('TCL: exportScript -> scriptFormat', scriptFormat);
+                changeScriptFormat(scriptFormat);
+            })
+        });
+
+
     // process linebreak
     script = script.replace(/\n/g, "\r\n");
 }
+
+function changeScriptFormat(scriptFormat) {
+    // convert between cemetech's SourceCoder format and TI-BASIC's native format
+    const conversionTable = {
+        // left is TI-BASIC format, right is SourceCoder format
+        "→": "->",
+        "⌊": "|L", // left side should be a small capital "L", but is is technically an unicode "left floor"
+        "≠": "!=",
+    }
+    switch (scriptFormat) {
+        case "sourceCoder":
+			// console.log('TCL: changeScriptFormat -> scriptFormat', scriptFormat);
+            Object.entries(conversionTable).forEach(([key, value]) => {
+				// console.log('TCL: changeScriptFormat -> value', value);
+				// console.log('TCL: changeScriptFormat -> key', key);
+                script = script.replace(new RegExp(escapeRegExp(key), "g"), value);
+            })
+            break;
+        case "TIBasic":
+            Object.entries(conversionTable).forEach(([key, value]) => {
+				// console.log('TCL: changeScriptFormat -> value', value);
+				// console.log('TCL: changeScriptFormat -> key', key);
+                script = script.replace(new RegExp(escapeRegExp(value), "g"), key);
+            })
+            break;
+    }
+    // console.log('TCL: changeScriptFormat -> script', script);
+    // update the viewer with new script
+    let viewer = document.getElementById("viewer");
+    viewer.value = script;
+}
+
+// source: https://stackoverflow.com/a/3561711/6798201
+// Escape all special characters in a regular expression string
+function escapeRegExp(s) {
+    return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+};
 
 function selectAllItems() {
 
@@ -44,8 +94,8 @@ function generateScript() {
 }
 
 function generateScriptHelper(position, index) {
-    console.log('TCL: generateScriptHelper -> index', index);
-    console.log('TCL: generateScriptHelper -> position', position);
+	// console.log('TCL: generateScriptHelper -> index', index);
+	// console.log('TCL: generateScriptHelper -> position', position);
     let homeMenu = `If N=${index}\nThen\nN->|LA(W)\n`;
     homeMenu += `Menu("${getEndOfPosition(position)}"`;
     let branching = ``;

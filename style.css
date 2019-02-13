@@ -222,6 +222,10 @@ div#calculatorTypeSelector>div {
   
   /* Modal Body */
   .modal-body {padding: 1em 16px;}
+
+  div#scriptFormatSelector{
+    margin-top: 1em;
+  }
   
   /* Modal Footer */
   .modal-footer {
