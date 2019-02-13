@@ -427,7 +427,7 @@ function displayFile(position, fileName, fileInfo) {
     const editField = document.getElementById("editField");
     if (editField) {
         const submitFileBtn = document.getElementById("submitFileBtn");
-        if (submitFileBtn){
+        if (submitFileBtn) {
             submitFileBtn.click();
         }
         editField.remove();
@@ -617,6 +617,8 @@ function openFileEditField(itemName, itemInfo, position) {
         editor.value = encodeFileContent(editor.value);
         itemInfo.content = editor.value;
         setItemInStorage(itemName, itemInfo);
+        // update file size
+        updateFileSize(itemName, editor.value);
         editField.remove();
     });
     Mousetrap(editor).bind('mod+s', function (e, combo) {
@@ -661,6 +663,35 @@ function openFileEditField(itemName, itemInfo, position) {
         });
     });
     editor.focus();
+}
+
+function updateFileSize(itemName, content) {
+    const fileLabel = document.querySelector(`p[data-name="${itemName}"]`);
+    const size = countFileSize(content);
+    console.log('TCL: updateFileSize -> size', size);
+    // remove previous label
+    const sizeString = `${size} bits`;
+    const sizeLabel = fileLabel.getElementsByClassName("sizeLabel");
+    if (sizeLabel[0]) {
+        sizeLabel[0].innerHTML = sizeString;
+    } else {
+        fileLabel.insertAdjacentHTML("beforeend",
+            `<span style="float:right;" class="sizeLabel">${sizeString}</span>`);
+    }
+}
+
+function countFileSize(content) {
+    let size = 0;
+    for (let i = 0; i < content.length; i++) {
+        const char = content[i];
+        // one-byte characters
+        if (/[0-9A-Z{}()[\],.!?+\-*\/^:=<>≤≥≠π√ ]/.test(char)) {
+            size += 1;
+        } else { // all other symbols are two-bytes
+            size += 2;
+        }
+    }
+    return size * 8; // convert bytes to bits
 }
 
 function convertNewlinesToSpaces(inputStr) {
