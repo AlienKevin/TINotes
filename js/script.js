@@ -45,34 +45,8 @@ const conversionTable = {
 // show item navigation bar
 displayNavigationBar();
 
-function displayNavigationBar() {
-    removeAllChildren(navigationBar);
-    // // console.log('TCL: displayNavigationBar -> position', position);
-    const positions = position.split("/");
-    for (let i = 0; i < positions.length; i++) {
-        createPositionLabel(positions.slice(0, i + 1).join("/"));
-    }
-}
-
-function removeAllChildren(element) {
-    while (element.firstChild) {
-        element.removeChild(element.firstChild);
-    }
-}
-
-function createPositionLabel(position) {
-    // // console.log('TCL: createPositionLabel -> position', position);
-    const positionLabel = document.createElement("span");
-    positionLabel.classList.add("btn");
-    positionLabel.classList.add("positionLabel");
-    positionLabel.innerHTML = getEndOfPosition(position);
-    positionLabel.addEventListener("click", () => {
-        setPosition(position);
-        // // console.log('TCL: createPositionLabel -> position', position);
-    });
-    navigationBar.appendChild(positionLabel);
-    positionLabel.insertAdjacentHTML("afterend", `<i class="far fa-angle-right"></i>`);
-}
+// manage calculator type selection
+changeCalculatorType();
 
 document.querySelector(`input#${calculatorType}`).setAttribute("checked", true);
 document.querySelectorAll('input[name="calculatorType"]')
@@ -84,83 +58,26 @@ document.querySelectorAll('input[name="calculatorType"]')
         })
     });
 
-changeCalculatorType();
-
-function changeCalculatorType() {
-    // set up variables for different calculators
-    switch (calculatorType) {
-        case "monochrome": // e.g. TI-83
-            lineLength = 16;
-            rowLength = 8;
-            break;
-        case "color": // e.g. TI-84/CSE/CE
-            lineLength = 26;
-            rowLength = 10;
-            break;
-    }
-    menuTitleLength = lineLength;
-    menuItemLength = lineLength - 2;
-}
 // load items from last time in localStorage
-iterateStorage(function (item, itemName, type) {
-    if (item.position === homePosition) { // only show ones at home position
-        itemNameList.push(itemName);
-        displayItem(itemName, type);
-    }
-});
+updateAtPosition(homePosition);
 
+function updateAtPosition(currentPosition) {
+    iterateStorage(function (item, itemName, itemType) {
+		console.log('TCL: updateAtPosition -> item', item);
+        if (item.position === currentPosition) { // only show ones at home position
+            itemNameList.push(itemName);
+            displayItem(itemName, itemType);
+            if (itemType === "file"){
+                updateFileSize(itemName, item.content);
+            }
+        }
+    });
+}
+
+// Display file/folder placeholder (hint) in case home folder is empty
 displayItemPlaceholder();
 
-function removeItemPlaceholder() {
-    let placeholder = document.getElementById("newItemPlaceholder");
-    if (placeholder) { // remove previous placeholder
-        placeholder.remove();
-    }
-}
-
-function displayItemPlaceholder() {
-    removeItemPlaceholder();
-    if (itemNameList.length === 0) {
-        const placeholder = document.createElement("p");
-        placeholder.id = "newItemPlaceholder";
-        placeholder.classList.add("btn");
-        placeholder.innerHTML = "Create a New File or Folder";
-        placeholder.addEventListener("click", () => {
-            swal({
-                    title: "Create a file or folder?",
-                    buttons: {
-                        file: {
-                            text: "File",
-                            value: "file",
-                            className: "blurred centered",
-                        },
-                        folder: {
-                            text: "Folder",
-                            value: "folder",
-                            className: "blurred centered",
-                        },
-                    },
-                })
-                .then((value) => {
-                    // // console.log('TCL: displayNewItemPlaceholder -> value', value);
-                    if (value) {
-                        createMenuItem(value);
-                    }
-                });
-        });
-        system.appendChild(placeholder);
-    }
-}
-
-// iterate through storage for access
-// DO NOT DELETE ANY ITEMS IN STORAGE, THIS WILL MESS UP THE LOOP INDEX!!!
-function iterateStorage(func) {
-    for (let index = 0; index < localStorage.length; index++) {
-        const itemName = localStorage.key(index);
-        const item = getItemFromStorage(itemName);
-        func(item, itemName, item.type, item.position, index);
-    }
-}
+// set up buttons
 
 // set up information button
 appInfoBtn.addEventListener("click", () => {
@@ -242,6 +159,102 @@ clearBtn.addEventListener("click", () => {
             }
         });
 });
+
+function displayNavigationBar() {
+    removeAllChildren(navigationBar);
+    // // console.log('TCL: displayNavigationBar -> position', position);
+    const positions = position.split("/");
+    for (let i = 0; i < positions.length; i++) {
+        createPositionLabel(positions.slice(0, i + 1).join("/"));
+    }
+}
+
+function removeAllChildren(element) {
+    while (element.firstChild) {
+        element.removeChild(element.firstChild);
+    }
+}
+
+function createPositionLabel(position) {
+    // // console.log('TCL: createPositionLabel -> position', position);
+    const positionLabel = document.createElement("span");
+    positionLabel.classList.add("btn");
+    positionLabel.classList.add("positionLabel");
+    positionLabel.innerHTML = getEndOfPosition(position);
+    positionLabel.addEventListener("click", () => {
+        setPosition(position);
+        // // console.log('TCL: createPositionLabel -> position', position);
+    });
+    navigationBar.appendChild(positionLabel);
+    positionLabel.insertAdjacentHTML("afterend", `<i class="far fa-angle-right"></i>`);
+}
+
+function changeCalculatorType() {
+    // set up variables for different calculators
+    switch (calculatorType) {
+        case "monochrome": // e.g. TI-83
+            lineLength = 16;
+            rowLength = 8;
+            break;
+        case "color": // e.g. TI-84/CSE/CE
+            lineLength = 26;
+            rowLength = 10;
+            break;
+    }
+    menuTitleLength = lineLength;
+    menuItemLength = lineLength - 2;
+}
+
+function removeItemPlaceholder() {
+    let placeholder = document.getElementById("newItemPlaceholder");
+    if (placeholder) { // remove previous placeholder
+        placeholder.remove();
+    }
+}
+
+function displayItemPlaceholder() {
+    removeItemPlaceholder();
+    if (itemNameList.length === 0) {
+        const placeholder = document.createElement("p");
+        placeholder.id = "newItemPlaceholder";
+        placeholder.classList.add("btn");
+        placeholder.innerHTML = "Create a New File or Folder";
+        placeholder.addEventListener("click", () => {
+            swal({
+                    title: "Create a file or folder?",
+                    buttons: {
+                        file: {
+                            text: "File",
+                            value: "file",
+                            className: "blurred centered",
+                        },
+                        folder: {
+                            text: "Folder",
+                            value: "folder",
+                            className: "blurred centered",
+                        },
+                    },
+                })
+                .then((value) => {
+                    // // console.log('TCL: displayNewItemPlaceholder -> value', value);
+                    if (value) {
+                        createMenuItem(value);
+                    }
+                });
+        });
+        system.appendChild(placeholder);
+    }
+}
+
+// iterate through storage for access
+// DO NOT DELETE ANY ITEMS IN STORAGE, THIS WILL MESS UP THE LOOP INDEX!!!
+function iterateStorage(func) {
+    for (let index = 0; index < localStorage.length; index++) {
+        const itemName = localStorage.key(index);
+        const item = getItemFromStorage(itemName);
+        func(item, itemName, item.type, item.position, index);
+    }
+}
 
 function toggleBtnHighlight(e) {
     if (e.target.classList.contains("btn")) {
@@ -353,12 +366,7 @@ function appendPosition(newPosition) {
 function setPosition(newPosition) {
     position = newPosition;
     clearAllItems();
-    iterateStorage(function (item, itemName, itemType, itemPosition, index) {
-        if (itemPosition === newPosition) {
-            itemNameList.push(itemName);
-            displayItem(itemName, itemType);
-        }
-    });
+    updateAtPosition(newPosition);
     displayNavigationBar();
     displayItemPlaceholder();
 }
