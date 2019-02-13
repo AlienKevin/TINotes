@@ -1,10 +1,23 @@
 const generateScriptBtn = document.getElementById("generateScriptBtn");
 generateScriptBtn.addEventListener("click", exportScript);
 const downloadScriptBtn = document.getElementById("downloadScriptBtn");
+const copyScriptBtn = document.getElementById("copyScriptBtn");
 let script;
 let itemSize = calculateItemSize();
 downloadScriptBtn.addEventListener("click", () => {
     download("TINOTES.txt", script);
+});
+copyScriptBtn.addEventListener("click", () => {
+    /* Select the text field */
+    document.getElementById("viewer").select();
+    /* Copy the text inside the text field */
+    document.execCommand("copy");
+    swal({
+        title: "File Copied!",
+        icon: "success",
+        buttons: false,
+        timer: 800,
+    });
 });
 
 function calculateItemSize() {
@@ -34,7 +47,7 @@ function exportScript() {
         .forEach((el) => {
             el.addEventListener("change", (e) => {
                 scriptFormat = e.target.value;
-				// console.log('TCL: exportScript -> scriptFormat', scriptFormat);
+                // console.log('TCL: exportScript -> scriptFormat', scriptFormat);
                 changeScriptFormat(scriptFormat);
             })
         });
@@ -47,24 +60,24 @@ function exportScript() {
 function changeScriptFormat(scriptFormat) {
     // convert between cemetech's SourceCoder format and TI-BASIC's native format
     const conversionTable = {
-        // left is TI-BASIC format, right is SourceCoder format
+        // left is TI-BASIC format (used by TI Connect CE), right is SourceCoder format
         "→": "->",
         "⌊": "|L", // left side should be a small capital "L", but is is technically an unicode "left floor"
         "≠": "!=",
     }
     switch (scriptFormat) {
         case "sourceCoder":
-			// console.log('TCL: changeScriptFormat -> scriptFormat', scriptFormat);
+            // console.log('TCL: changeScriptFormat -> scriptFormat', scriptFormat);
             Object.entries(conversionTable).forEach(([key, value]) => {
-				// console.log('TCL: changeScriptFormat -> value', value);
-				// console.log('TCL: changeScriptFormat -> key', key);
+                // console.log('TCL: changeScriptFormat -> value', value);
+                // console.log('TCL: changeScriptFormat -> key', key);
                 script = script.replace(new RegExp(escapeRegExp(key), "g"), value);
             })
             break;
         case "TIBasic":
             Object.entries(conversionTable).forEach(([key, value]) => {
-				// console.log('TCL: changeScriptFormat -> value', value);
-				// console.log('TCL: changeScriptFormat -> key', key);
+                // console.log('TCL: changeScriptFormat -> value', value);
+                // console.log('TCL: changeScriptFormat -> key', key);
                 script = script.replace(new RegExp(escapeRegExp(value), "g"), key);
             })
             break;
@@ -94,8 +107,8 @@ function generateScript() {
 }
 
 function generateScriptHelper(position, index) {
-	// console.log('TCL: generateScriptHelper -> index', index);
-	// console.log('TCL: generateScriptHelper -> position', position);
+    // console.log('TCL: generateScriptHelper -> index', index);
+    // console.log('TCL: generateScriptHelper -> position', position);
     let homeMenu = `If N=${index}\nThen\nN->|LA(W)\n`;
     homeMenu += `Menu("${getEndOfPosition(position)}"`;
     let branching = ``;
