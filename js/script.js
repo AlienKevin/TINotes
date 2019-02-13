@@ -1,7 +1,8 @@
 // set up calculator type
 let calculatorType = "color";
 // maximum lengths allowed because of screen size limitation
-let lineLength, rowLength, menuTitleLength, menuItemLength;
+let 
+lineLength, rowLength, menuTitleLength, menuItemLength;
 // minimum length required, no empty string
 const minMenuItemLength = 1;
 const appInfoBtn = document.getElementById("appInfoBtn");
@@ -423,7 +424,9 @@ function createFileEditor(id) {
     }
     editor.classList.add("editor");
     editor.rows = rowLength;
-    editor.cols = lineLength;
+    // NOTE: cols are one character bigger than actual calculator's
+    // line lengths because that's the space for vertical scroll bar
+    editor.cols = lineLength + 1;
     editor.spellcheck = false;
     return editor;
 }
@@ -602,12 +605,13 @@ function openFileEditField(itemName, itemInfo, position) {
         if (toUppercase && editor.value.indexOf("\\") < 0) {
             editor.value = convertToUppercase(editor.value);
         }
-        const content = editor.value.replace(/\n/g, "");
-        // // console.log('TCL: openFileEditField -> content.length', content.length);
-        if ((content.length - 1) % lineLength === 0 && content.length - 1 !== 0) {
+        const content = editor.value;
+        const lastLineLength = content.length - content.lastIndexOf("\n") - 1;
+		console.log('TCL: openFileEditField -> lastLineLength', lastLineLength);
+        if (lastLineLength > lineLength){
             editor.value = insertString(editor.value, editor.value.length - 1, "\n", 0); // avoid word wrapping
         }
-        // editor.value = editor.value.replace(/([\s\S]{80})/g, "$1\n");
+        console.log('TCL: openFileEditField -> content.length', content.length);
     });
 
     const controlDiv = document.createElement("div");

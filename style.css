@@ -73,8 +73,13 @@ div#uppercaseDiv{
 }
 
 div#editFieldControl{
+    display: -webkit-inline-box;
+    display: -ms-inline-flexbox;
     display: inline-flex;
-    flex-direction: column-reverse;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: reverse;
+        -ms-flex-direction: column-reverse;
+            flex-direction: column-reverse;
     margin-left: 1em;
     position: relative;
     bottom: 1em;
@@ -151,6 +156,8 @@ div#calculatorTypeSelector>div {
 
 .editor {
     font-size: 1em;
+    overflow-y: scroll;
+    resize: none;
 }
 
 /* context menu */
