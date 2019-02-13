@@ -63,13 +63,11 @@ updateAtPosition(homePosition);
 
 function updateAtPosition(currentPosition) {
     iterateStorage(function (item, itemName, itemType) {
-		console.log('TCL: updateAtPosition -> item', item);
+        console.log('TCL: updateAtPosition -> item', item);
         if (item.position === currentPosition) { // only show ones at home position
             itemNameList.push(itemName);
             displayItem(itemName, itemType);
-            if (itemType === "file"){
-                updateFileSize(itemName, item.content);
-            }
+            updateItemSize(itemName);
         }
     });
 }
@@ -626,7 +624,7 @@ function openFileEditField(itemName, itemInfo, position) {
         itemInfo.content = editor.value;
         setItemInStorage(itemName, itemInfo);
         // update file size
-        updateFileSize(itemName, editor.value);
+        updateItemSize(itemName, editor.value);
         editField.remove();
     });
     Mousetrap(editor).bind('mod+s', function (e, combo) {
@@ -673,9 +671,9 @@ function openFileEditField(itemName, itemInfo, position) {
     editor.focus();
 }
 
-function updateFileSize(itemName, content) {
+function updateItemSize(itemName) {
     const fileLabel = document.querySelector(`p[data-name="${itemName}"]`);
-    const size = countFileSize(content);
+    const size = countItemSize(itemName);
     console.log('TCL: updateFileSize -> size', size);
     // remove previous label
     const sizeString = `${size} bits`;
@@ -686,6 +684,29 @@ function updateFileSize(itemName, content) {
         fileLabel.insertAdjacentHTML("beforeend",
             `<span style="float:right;" class="sizeLabel">${sizeString}</span>`);
     }
+}
+
+function countItemSize(itemName) {
+    const item = getItemFromStorage(itemName);
+    if (item.type === "file") {
+        return countFileSize(item.content);
+    } else {
+        return countFolderSize(itemName);
+    }
+}
+
+function countFolderSize(folderName) {
+    let size = 0;
+    iterateStorage(function (item, itemName, itemType, itemPosition, index) {
+        if (itemPosition === folderName) {
+            if (itemType === "file") {
+                size += countFileSize(item.content);
+            } else {
+                size += countFolderSize(itemName);
+            }
+        }
+    });
+    return size;
 }
 
 function countFileSize(content) {
