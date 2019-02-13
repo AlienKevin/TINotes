@@ -1,6 +1,8 @@
 # TINotes
 Notes management and viewing system built for TI graphing calculators. Users are able to store organized notes in a folder system in their TI calculators for reference later. You can use the graphic user interface to create files and folders and then TINotes will generate a script file for your TI calculators. You can easily send this file to your calculator and start viewing your notes. 
 
+Try TINotes here: https://alienkevin.github.io/TINotes/
+
 Demo 1: Basic Usage 
 ![Demo 1](https://raw.githubusercontent.com/AlienKevin/TINotes/master/Demos/Demo1.gif)
 
@@ -14,6 +16,8 @@ Demo 4: Notes navigation in the calculator, showing how you can navigate back an
 ![Demo 4](https://raw.githubusercontent.com/AlienKevin/TINotes/master/Demos/Demo4.gif)
 
 ## Set up
+I. Use online: go to https://alienkevin.github.io/TINotes/
+II. Download and use offline
 1. Download or clone this repository
 2. Lauch the `index.html` file by double click in your favorite browser
 3. Now you should be inside the TINotes user interface
