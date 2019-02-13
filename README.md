@@ -56,5 +56,30 @@ II. Download and use offline
 3. If you are inside a folder,
     - select the "Back" option in the menu by either scrolling through options using arrow keys and press <kbd>enter</kbd> or pressing the menu item's number
 
+### Insert special symbols
+You can insert special symbols by typing a "\\" (backward slash) and then the name of the symbol. E.g. "\alpha" produces "α"
+Here's a list of symbols supported:
+ * alpha: α
+ * beta: β
+ * gamma: γ
+ * Delta: Δ
+ * delta: δ
+ * epsilon: ε
+ * pi: π
+ * lambda: λ
+ * mu: μ
+ * Omega: Ω
+ * phat: p&#770; (p hat)
+ * Phi: Φ
+ * rho: ρ
+ * Sigma: Σ
+ * sigma: σ
+ * tau: τ
+ * sqrt(: √(
+ * integral: ∫
+ * \<=: ≤
+ * \>=: ≥
+ * !=: ≠
+
 ## License
 This project is licensed under the terms of the MIT license.
