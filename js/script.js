@@ -14,7 +14,7 @@ const navigationBar = document.getElementById("navigationBar");
 const homePosition = "home";
 let position = homePosition; // default root location for the file system
 const itemNameList = [];
-let convertToUppercase = true; // default auto convert to uppercase
+let toUppercase = true; // default auto convert to uppercase
 const conversionTable = {
     // greek letters
     alpha: "α",
@@ -560,6 +560,19 @@ function encodeFileContent(fileContent) {
     return content;
 }
 
+function convertToUppercase(str) {
+    let result = "";
+    for (let i = 0; i < str.length; i++) {
+        const char = str[i];
+        if (/^[a-zA-Z]*$/.test(char)) {
+            result += char.toUpperCase();
+        } else {
+            result += char;
+        }
+    }
+    return result;
+}
+
 function openFileEditField(itemName, itemInfo, position) {
     const editor = createFileEditor();
     editor.placeholder = "Write notes here"
@@ -568,9 +581,11 @@ function openFileEditField(itemName, itemInfo, position) {
         editor.setAttribute("data-item", itemName);
     }
     editor.addEventListener("input", () => {
+        console.log('TCL: openFileEditField -> editor.value', editor.value);
         editor.value = convertWordsToSymbols(editor.value);
-        if (convertToUppercase){
-            editor.value = editor.value.toUpperCase();
+        console.log('TCL: openFileEditField -> editor.value', editor.value);
+        if (toUppercase && editor.value.indexOf("\\") < 0) {
+            editor.value = convertToUppercase(editor.value);
         }
         const content = editor.value.replace(/\n/g, "");
         // // console.log('TCL: openFileEditField -> content.length', content.length);
@@ -612,15 +627,15 @@ function openFileEditField(itemName, itemInfo, position) {
     controlDiv.appendChild(submitBtn);
     // add uppercase checkbox
     controlDiv.insertAdjacentHTML("beforeend",
-    `<div id="uppercaseDiv">
+        `<div id="uppercaseDiv">
     <input type="checkbox" id="uppercaseCheckBox" checked>
     <label for="uppercaseCheckBox">Uppercase</label>
     </div>`);
     const uppercaseCheckBox = document.getElementById("uppercaseCheckBox");
     uppercaseCheckBox.addEventListener("change", () => {
-        if (uppercaseCheckBox.checked !== convertToUppercase){
-            convertToUppercase = uppercaseCheckBox.checked;
-            editor.value = editor.value.toUpperCase();
+        if (uppercaseCheckBox.checked !== toUppercase) {
+            toUppercase = uppercaseCheckBox.checked;
+            editor.value = convertToUppercase(editor.value);
         }
     });
     editor.focus();
