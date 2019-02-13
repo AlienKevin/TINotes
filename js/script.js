@@ -14,7 +14,8 @@ const navigationBar = document.getElementById("navigationBar");
 const homePosition = "home";
 let position = homePosition; // default root location for the file system
 const itemNameList = [];
-const greekLetters = {
+const conversionTable = {
+    // greek letters
     alpha: "α",
     beta: "β",
     gamma: "γ",
@@ -31,6 +32,13 @@ const greekLetters = {
     Sigma: "Σ",
     sigma: "σ",
     tau: "τ",
+
+    // other symbols
+    "sqrt(": "√(",
+    "integral": "∫",
+    "<=": "≤",
+    ">=": "≥",
+    "!=": "≠",
 }
 
 // show item navigation bar
@@ -516,37 +524,36 @@ function insertAfter(referenceNode, newNode) {
 }
 
 function convertWordsToSymbols(str) {
-    for (const [key, value] of Object.entries(greekLetters)) {
-        str = str.replace(new RegExp(key, "g"), value);
+    for (const [key, value] of Object.entries(conversionTable)) {
+        str = str.replace(new RegExp(escapeRegExp("\\" + key), "g"), value);
     }
     return str;
 }
 
-function convertSymbolsToWords(str){
-    for (const [key, value] of Object.entries(greekLetters)) {
-        str = str.replace(new RegExp(value, "g"), key);
+function convertSymbolsToWords(str) {
+    for (const [key, value] of Object.entries(conversionTable)) {
+        str = str.replace(new RegExp(escapeRegExp(value), "g"), "\\" + key);
     }
     return str;
 }
 
-function convertSingleQuotesToDoubleQuotes(str){
+function convertSingleQuotesToDoubleQuotes(str) {
     return str.replace(new RegExp(`'`, "g"), `"`);
 }
 
-function convertDoubleQuotesToSingleQuotes(str){
+function convertDoubleQuotesToSingleQuotes(str) {
     return str.replace(new RegExp(`"`, "g"), `'`);
 }
 
-function decodeFileContent(fileContent){
+function decodeFileContent(fileContent) {
     let content = convertSpacesToNewlines(fileContent);
     content = convertWordsToSymbols(content);
     content = convertSingleQuotesToDoubleQuotes(content);
     return content;
 }
 
-function encodeFileContent(fileContent){
+function encodeFileContent(fileContent) {
     let content = convertNewlinesToSpaces(fileContent);
-    content = convertSymbolsToWords(content);
     // double quotes cannot be in TI-BASIC's strings
     content = convertDoubleQuotesToSingleQuotes(content);
     return content;

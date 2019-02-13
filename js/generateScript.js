@@ -2,6 +2,7 @@ const generateScriptBtn = document.getElementById("generateScriptBtn");
 generateScriptBtn.addEventListener("click", exportScript);
 const downloadScriptBtn = document.getElementById("downloadScriptBtn");
 const copyScriptBtn = document.getElementById("copyScriptBtn");
+const defaultScriptFormat = "sourceCoder";
 let script;
 let itemSize = calculateItemSize();
 downloadScriptBtn.addEventListener("click", () => {
@@ -31,6 +32,7 @@ function calculateItemSize() {
 
 function exportScript() {
     generateScript();
+    changeScriptFormat(defaultScriptFormat);
     const popupBody = document.querySelector('#popup div.modal-body');
     let viewer = document.getElementById("viewer")
     if (viewer) {
@@ -73,6 +75,7 @@ function changeScriptFormat(scriptFormat) {
                 // console.log('TCL: changeScriptFormat -> key', key);
                 script = script.replace(new RegExp(escapeRegExp(key), "g"), value);
             })
+            script = convertSymbolsToWords(script);
             break;
         case "TIBasic":
             Object.entries(conversionTable).forEach(([key, value]) => {
@@ -80,12 +83,15 @@ function changeScriptFormat(scriptFormat) {
                 // console.log('TCL: changeScriptFormat -> key', key);
                 script = script.replace(new RegExp(escapeRegExp(value), "g"), key);
             })
+            script = convertWordsToSymbols(script);
             break;
     }
     // console.log('TCL: changeScriptFormat -> script', script);
     // update the viewer with new script
     let viewer = document.getElementById("viewer");
-    viewer.value = script;
+    if (viewer) {
+        viewer.value = script;
+    }
 }
 
 // source: https://stackoverflow.com/a/3561711/6798201
