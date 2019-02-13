@@ -4,7 +4,7 @@ let calculatorType = "color";
 let lineLength, rowLength, menuTitleLength, menuItemLength;
 // minimum length required, no empty string
 const minMenuItemLength = 1;
-const infoBtn = document.getElementById("infoBtn");
+const appInfoBtn = document.getElementById("appInfoBtn");
 const newFolderBtn = document.getElementById("newFolderBtn");
 const newFileBtn = document.getElementById("newFileBtn");
 const backBtn = document.getElementById("backBtn");
@@ -163,7 +163,7 @@ function iterateStorage(func) {
 }
 
 // set up information button
-infoBtn.addEventListener("click", () => {
+appInfoBtn.addEventListener("click", () => {
     const introjs = introJs().setOptions({
         "tooltipPosition": "bottom",
         "showStepNumbers": false,
@@ -630,12 +630,14 @@ function openFileEditField(itemName, itemInfo, position) {
     editField.appendChild(editor);
     editField.appendChild(controlDiv);
     controlDiv.appendChild(submitBtn);
-    // add uppercase checkbox
+
+    // add uppercase checkbox and info button
     controlDiv.insertAdjacentHTML("beforeend",
         `<div id="uppercaseDiv">
-    <input type="checkbox" id="uppercaseCheckBox">
-    <label for="uppercaseCheckBox">Uppercase</label>
-    </div>`);
+            <input type="checkbox" id="uppercaseCheckBox">
+            <label for="uppercaseCheckBox">Uppercase</label>
+            <i class="far fa-info-circle infoBtn" id="uppercaseInfoBtn"></i>
+        </div>`);
     const uppercaseCheckBox = document.getElementById("uppercaseCheckBox");
     uppercaseCheckBox.checked = toUppercase;
     uppercaseCheckBox.addEventListener("change", () => {
@@ -643,6 +645,16 @@ function openFileEditField(itemName, itemInfo, position) {
             toUppercase = uppercaseCheckBox.checked;
             editor.value = convertToUppercase(editor.value);
         }
+    });
+    const uppercaseInfoBtn = document.getElementById("uppercaseInfoBtn");
+    uppercaseInfoBtn.addEventListener("click", () => {
+        swal({
+            title: "Why does the text need to be in uppercase?",
+            text: `1. Some lowercase words are predefined as keywords, like "and", "sin(", etc. in TI. Thus, their length cannot be accurately determined because keywords all occupy one space in TI. This can mess up note layout and hide some parts of the note. 
+            2. Uppercase letters (1 byte each) take up less spaces than lowercase letters (2 bytes each).
+            Sugguestion: You should stick with uppercase in all your notes.`,
+            buttons: "okay",
+        });
     });
     editor.focus();
 }

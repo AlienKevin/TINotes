@@ -37,15 +37,22 @@ i.fa-angle-right{
     background: #ddd;
 }
 
-#infoBtn{
+.infoBtn{
     cursor: pointer;
     font-size: .5em;
+}
+
+.infoBtn:hover{
+    color: #888;
+}
+
+#appInfoBtn{
     position: relative;
     bottom: .25em;
 }
 
-#infoBtn:hover{
-    color: #888;
+#uppercaseInfoBtn{
+    font-size: .8em;
 }
 
 .blurred:focus{
