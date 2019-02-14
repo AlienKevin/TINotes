@@ -56,7 +56,7 @@ document.querySelectorAll('input[name="calculatorType"]')
         el.addEventListener("change", (e) => {
             calculatorType = e.target.value;
             changeCalculatorType();
-            // // console.log('TCL: e.target', e.target);
+            // console.log('TCL: e.target', e.target);
         })
     });
 
@@ -65,7 +65,7 @@ updateAtPosition(homePosition);
 
 function updateAtPosition(currentPosition) {
     iterateStorage(function (item, itemName, itemType) {
-        console.log('TCL: updateAtPosition -> item', item);
+        // console.log('TCL: updateAtPosition -> item', item);
         if (item.position === currentPosition) { // only show ones at home position
             itemNameList.push(itemName);
             displayItem(itemName, itemType);
@@ -162,7 +162,7 @@ clearBtn.addEventListener("click", () => {
 
 function displayNavigationBar() {
     removeAllChildren(navigationBar);
-    // // console.log('TCL: displayNavigationBar -> position', position);
+    // console.log('TCL: displayNavigationBar -> position', position);
     const positions = position.split("/");
     for (let i = 0; i < positions.length; i++) {
         createPositionLabel(positions.slice(0, i + 1).join("/"));
@@ -176,14 +176,14 @@ function removeAllChildren(element) {
 }
 
 function createPositionLabel(position) {
-    // // console.log('TCL: createPositionLabel -> position', position);
+    // console.log('TCL: createPositionLabel -> position', position);
     const positionLabel = document.createElement("span");
     positionLabel.classList.add("btn");
     positionLabel.classList.add("positionLabel");
     positionLabel.innerHTML = getEndOfPosition(position);
     positionLabel.addEventListener("click", () => {
         setPosition(position);
-        // // console.log('TCL: createPositionLabel -> position', position);
+        // console.log('TCL: createPositionLabel -> position', position);
     });
     navigationBar.appendChild(positionLabel);
     positionLabel.insertAdjacentHTML("afterend", `<i class="far fa-angle-right"></i>`);
@@ -236,7 +236,7 @@ function displayItemPlaceholder() {
                     },
                 })
                 .then((value) => {
-                    // // console.log('TCL: displayNewItemPlaceholder -> value', value);
+                    // console.log('TCL: displayNewItemPlaceholder -> value', value);
                     if (value) {
                         createMenuItem(value);
                     }
@@ -269,7 +269,7 @@ document.addEventListener("mouseout", toggleBtnHighlight)
 function createMenuItem(type) {
     removeItemPlaceholder();
     type = type.toLowerCase();
-    // // console.log('TCL: createNewMenuItem -> type', type);
+    // console.log('TCL: createNewMenuItem -> type', type);
     if (type !== "folder" && type !== "file") {
         throw new TypeError(`menu item's type should be either folder or file, not ${type}`);
     }
@@ -318,8 +318,8 @@ function createItemNameInput(type) {
 }
 
 function createErrorMessage(target, message) {
-    // // console.log('TCL: createErrorMessage -> target', target);
-    // // console.log('TCL: createErrorMessage -> typeof target', typeof target);
+    // console.log('TCL: createErrorMessage -> target', target);
+    // console.log('TCL: createErrorMessage -> typeof target', typeof target);
     // delete all previous error message
     document.querySelectorAll(".error").forEach(
         el => {
@@ -342,7 +342,7 @@ function storeItem(itemNameInput, type, position) {
         "type": type
     };
     const itemName = `${position}/${itemNameInput.value}`;
-    // // console.log('TCL: storeItem -> itemName', itemName);
+    // console.log('TCL: storeItem -> itemName', itemName);
     if (type === "file") {
         openFileEditField(itemName, itemInfo);
     } else {
@@ -398,18 +398,18 @@ function displayItem(itemName, type, itemPosition) {
             displayFile(newItem, itemName, itemInfo);
         } else {
             // set item location to the folder
-            // // console.log('TCL: displayItem -> position', position);
+            // console.log('TCL: displayItem -> position', position);
             if (getItemFromStorage(itemName)) {
                 setPosition(itemName);
             } else {
                 appendPosition(itemName);
             }
-            // // console.log('TCL: displayItem -> position', position);
+            // console.log('TCL: displayItem -> position', position);
         }
     });
     // console.log("displaying item...");
     if (itemPosition) {
-        // // console.log('TCL: displayItem -> position', itemPosition);
+        // console.log('TCL: displayItem -> position', itemPosition);
         insertAfter(itemPosition, newItem);
     } else {
         system.appendChild(newItem);
@@ -468,8 +468,8 @@ function renameItem(itemLabel) {
         itemNameInput.value = getEndOfPosition(oldItemName);
         insertAfter(itemLabel, itemNameInput);
         itemNameInput.focus();
-        // // console.log('TCL: renameItem -> itemLabel', itemLabel);
-        // // console.log('TCL: renameItem -> itemLabel.parentNode', itemLabel.parentNode);
+        // console.log('TCL: renameItem -> itemLabel', itemLabel);
+        // console.log('TCL: renameItem -> itemLabel.parentNode', itemLabel.parentNode);
         itemLabel.remove();
         itemNameInput.addEventListener("keypress", (e) => {
             if (e.keyCode == 13) { // ENTER key
@@ -601,11 +601,16 @@ function openFileEditField(itemName, itemInfo, position) {
     }
     editor.addEventListener("input", () => {
         let content = editor.value;
-		console.log('TCL: openFileEditField -> content', content);
+        // content conversion
         content = convertWordsToSymbols(content);
         if (toUppercase && content.indexOf("\\") < 0) {
             content = convertToUppercase(content);
         }
+
+        // update file size label
+        updateItemSize(itemName, content);
+
+        console.log('TCL: openFileEditField -> content', content);
         // pasting in more than one line of content
         if (content.length - lastFileContent.length > lineLength) {
             let start = lastFileContent.lastIndexOf("\n");
@@ -618,14 +623,14 @@ function openFileEditField(itemName, itemInfo, position) {
             }
         } else if (content.length >= lastFileContent.length) { // typing individual characters
             const lastLineLength = content.length - content.lastIndexOf("\n") - 1;
-            console.log('TCL: openFileEditField -> lastLineLength', lastLineLength);
+            // console.log('TCL: openFileEditField -> lastLineLength', lastLineLength);
             if (lastLineLength > lineLength) {
                 content = insertSubstring(content, content.length - 1, "\n", 0); // avoid word wrapping
             }
-            console.log('TCL: openFileEditField -> content.length', content.length);
+            // console.log('TCL: openFileEditField -> content.length', content.length);
         } else { // deleting contents
             // const cursorPosition = editor.selectionStart;
-			// console.log('TCL: openFileEditField -> cursorPosition', cursorPosition);
+            // console.log('TCL: openFileEditField -> cursorPosition', cursorPosition);
             // let previousNewline = content.substring(0, cursorPosition)
             //     .lastIndexOf("\n");
             // console.log('TCL: openFileEditField -> previousNewline', previousNewline)
@@ -633,7 +638,7 @@ function openFileEditField(itemName, itemInfo, position) {
             // if (previousNewline === -1){
             //     previousNewline = 0;
             // }
-			// console.log('TCL: openFileEditField -> nextNewline', nextNewline);
+            // console.log('TCL: openFileEditField -> nextNewline', nextNewline);
             // if (nextNewline - previousNewline < lineLength){
             //     content = deleteSubstring(content, nextNewline, 1);
             //     content = insertSubstring(content, previousNewline + lineLength, "\n");
@@ -704,10 +709,10 @@ function openFileEditField(itemName, itemInfo, position) {
     editor.focus();
 }
 
-function updateItemSize(itemName) {
+function updateItemSize(itemName, content) {
     const fileLabel = document.querySelector(`p[data-name="${itemName}"]`);
-    const size = countItemSize(itemName);
-    console.log('TCL: updateFileSize -> size', size);
+    const size = countItemSize(itemName, content);
+    // console.log('TCL: updateFileSize -> size', size);
     // remove previous label
     const sizeString = `${size} bits`;
     const sizeLabel = fileLabel.getElementsByClassName("sizeLabel");
@@ -719,10 +724,13 @@ function updateItemSize(itemName) {
     }
 }
 
-function countItemSize(itemName) {
+function countItemSize(itemName, content) {
     const item = getItemFromStorage(itemName);
+    if (content === undefined) {
+        content = item.content;
+    }
     if (item.type === "file") {
-        return countFileSize(item.content);
+        return countFileSize(content);
     } else {
         return countFolderSize(itemName);
     }
@@ -800,6 +808,6 @@ function insertSubstring(str, index, insertedString, deleteLength = 0) {
     return str.slice(0, index) + insertedString + str.slice(index + deleteLength);
 }
 
-function deleteSubstring(str, index, deleteLength = 0){
+function deleteSubstring(str, index, deleteLength = 0) {
     return insertSubstring(str, index, "", deleteLength);
 }
