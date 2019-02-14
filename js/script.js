@@ -1,8 +1,8 @@
 // set up calculator type
 let calculatorType = "color";
 // maximum lengths allowed because of screen size limitation
-let 
-lineLength, rowLength, menuTitleLength, menuItemLength;
+let
+    lineLength, rowLength, menuTitleLength, menuItemLength;
 // minimum length required, no empty string
 const minMenuItemLength = 1;
 const appInfoBtn = document.getElementById("appInfoBtn");
@@ -16,6 +16,7 @@ const homePosition = "home";
 let position = homePosition; // default root location for the file system
 const itemNameList = [];
 let defaultToUppercase = true; // default auto convert to uppercase
+let lastFileContent = ""; // file editor's previous content
 const conversionTable = {
     // greek letters
     alpha: "α",
@@ -599,19 +600,47 @@ function openFileEditField(itemName, itemInfo, position) {
         }
     }
     editor.addEventListener("input", () => {
-        console.log('TCL: openFileEditField -> editor.value', editor.value);
-        editor.value = convertWordsToSymbols(editor.value);
-        console.log('TCL: openFileEditField -> editor.value', editor.value);
-        if (toUppercase && editor.value.indexOf("\\") < 0) {
-            editor.value = convertToUppercase(editor.value);
+        let content = editor.value;
+		console.log('TCL: openFileEditField -> content', content);
+        content = convertWordsToSymbols(content);
+        if (toUppercase && content.indexOf("\\") < 0) {
+            content = convertToUppercase(content);
         }
-        const content = editor.value;
-        const lastLineLength = content.length - content.lastIndexOf("\n") - 1;
-		console.log('TCL: openFileEditField -> lastLineLength', lastLineLength);
-        if (lastLineLength > lineLength){
-            editor.value = insertString(editor.value, editor.value.length - 1, "\n", 0); // avoid word wrapping
+        // pasting in more than one line of content
+        if (content.length - lastFileContent.length > lineLength) {
+            let start = lastFileContent.lastIndexOf("\n");
+            for (let end = 0; end < content.length; end++) {
+                if (end - start === lineLength) {
+                    content = insertSubstring(content, end + 1, "\n");
+                    end++; // move to the newly inserted "\n"
+                    start = end;
+                }
+            }
+        } else if (content.length >= lastFileContent.length) { // typing individual characters
+            const lastLineLength = content.length - content.lastIndexOf("\n") - 1;
+            console.log('TCL: openFileEditField -> lastLineLength', lastLineLength);
+            if (lastLineLength > lineLength) {
+                content = insertSubstring(content, content.length - 1, "\n", 0); // avoid word wrapping
+            }
+            console.log('TCL: openFileEditField -> content.length', content.length);
+        } else { // deleting contents
+            // const cursorPosition = editor.selectionStart;
+			// console.log('TCL: openFileEditField -> cursorPosition', cursorPosition);
+            // let previousNewline = content.substring(0, cursorPosition)
+            //     .lastIndexOf("\n");
+            // console.log('TCL: openFileEditField -> previousNewline', previousNewline)
+            // const nextNewline = content.indexOf("\n", cursorPosition);
+            // if (previousNewline === -1){
+            //     previousNewline = 0;
+            // }
+			// console.log('TCL: openFileEditField -> nextNewline', nextNewline);
+            // if (nextNewline - previousNewline < lineLength){
+            //     content = deleteSubstring(content, nextNewline, 1);
+            //     content = insertSubstring(content, previousNewline + lineLength, "\n");
+            // }
         }
-        console.log('TCL: openFileEditField -> content.length', content.length);
+        editor.value = content;
+        lastFileContent = content;
     });
 
     const controlDiv = document.createElement("div");
@@ -757,16 +786,20 @@ function convertSpacesToNewlines(inputStr) {
     let index = lineLength - 1;
     while (index < str.length) {
         if (str[index] === " ") {
-            str = insertString(str, index, "", 1);
+            str = deleteSubstring(str, index, 1);
             index--;
         } else {
-            str = insertString(str, index + 1, "\n", 0);
+            str = insertSubstring(str, index + 1, "\n", 0);
             index += lineLength + 1;
         }
     }
     return str;
 }
 
-function insertString(str, index, insertedString, deleteLength = 0) {
+function insertSubstring(str, index, insertedString, deleteLength = 0) {
     return str.slice(0, index) + insertedString + str.slice(index + deleteLength);
+}
+
+function deleteSubstring(str, index, deleteLength = 0){
+    return insertSubstring(str, index, "", deleteLength);
 }
