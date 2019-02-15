@@ -385,10 +385,13 @@ function displayItem(itemName, type, itemPosition) {
     const newItem = document.createElement("p");
     const displayedName = getEndOfPosition(itemName);
     if (type === "file") {
-        newItem.innerHTML = `📝${displayedName}`;
+        newItem.innerHTML = `📝`;
+    } else if (type === "folder") {
+        newItem.innerHTML = `📁`;
     } else {
-        newItem.innerHTML = `📁${displayedName}`;
+        newItem.innerHTML = `<i class="far fa-calculator"></i>`;
     }
+    newItem.innerHTML += displayedName;
     newItem.classList.add(type);
     newItem.classList.add("btn");
     newItem.classList.add("item");

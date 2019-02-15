@@ -15,6 +15,10 @@ i.fa-angle-right{
     top: .1em;
     padding: 0 .5em;
 }
+i.fa-calculator{
+    margin-right:.2em;
+    margin-left: .2em;
+}
 
 .btn {
     -webkit-transition: -webkit-box-shadow .3s;
