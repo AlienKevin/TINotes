@@ -25,6 +25,12 @@ fallback.load({
                 '//cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/intro.min.js',
                 'introjs/intro.min.js'
             ],
+
+            // load Nerdamer as a computer algebra system
+            'nerdamer': [
+                '//cdn.jsdelivr.net/npm/nerdamer@0.8.4/nerdamer.core.min.js',
+                'nerdamer/nerdamer.core.js'
+            ],
             'script': 'js/script.js',
 
         }, {

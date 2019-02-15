@@ -32,9 +32,9 @@ function createEquationEditor(id) {
     editor.classList.add("editor");
     editor.insertAdjacentHTML("afterbegin", 
     `
-    <label>Equation: </label>
-    <input type="text" size="15"></input><br/>
-    <label>Variables: </label>
+    <label for="eqInput">Equation: </label>
+    <input id="eqInput" type="text" size="15"></input><br/>
+    <label for="equationVars">Variables: </label>
     <span id="equationVars"></span>
     `);
     return editor;
@@ -44,4 +44,12 @@ function openEquationEditField(eqName, eqInfo, position){
     const editor = createEquationEditor();
     editor.setAttribute("data-item", eqName);
     insertAfter(position, editor);
+
+    const eqInput = document.getElementById("eqInput");
+    eqInput.addEventListener("input", () => {
+        const eq = eqInput.value;
+        const vars = nerdamer(eq).variables();
+        console.log('TCL: createEquationEditor -> vars', vars);
+        
+    })
 }
