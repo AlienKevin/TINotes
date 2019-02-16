@@ -58,7 +58,7 @@ document.querySelectorAll('input[name="calculatorType"]')
         el.addEventListener("change", (e) => {
             calculatorType = e.target.value;
             changeCalculatorType();
-			// console.log('TCL: e.target', e.target);
+            // console.log('TCL: e.target', e.target);
         })
     });
 
@@ -67,7 +67,7 @@ updateAtPosition(homePosition);
 
 function updateAtPosition(currentPosition) {
     iterateStorage(function (item, itemName, itemType) {
-		// console.log('TCL: updateAtPosition -> item', item);
+        // console.log('TCL: updateAtPosition -> item', item);
         if (item.position === currentPosition) { // only show ones at home position
             itemNameList.push(itemName);
             displayItem(itemName, itemType);
@@ -143,11 +143,11 @@ clearBtn.addEventListener("click", () => {
                 // itemNameList.forEach(item => {
                 //     removeItemFromStorage(item);
                 // });
-				// console.log('TCL: position', position);
+                // console.log('TCL: position', position);
                 const removeItemList = [];
                 iterateStorage(function (item, itemName, itemType, itemPosition, index) {
-					// console.log('TCL: itemPosition', itemPosition);
-					// console.log('TCL: itemName', itemName);
+                    // console.log('TCL: itemPosition', itemPosition);
+                    // console.log('TCL: itemName', itemName);
                     if (itemPosition.startsWith(position)) {
                         removeItemList.push(itemName);
                     }
@@ -164,7 +164,7 @@ clearBtn.addEventListener("click", () => {
 
 function displayNavigationBar() {
     removeAllChildren(navigationBar);
-	// console.log('TCL: displayNavigationBar -> position', position);
+    // console.log('TCL: displayNavigationBar -> position', position);
     const positions = position.split("/");
     for (let i = 0; i < positions.length; i++) {
         createPositionLabel(positions.slice(0, i + 1).join("/"));
@@ -178,14 +178,14 @@ function removeAllChildren(element) {
 }
 
 function createPositionLabel(position) {
-	// console.log('TCL: createPositionLabel -> position', position);
+    // console.log('TCL: createPositionLabel -> position', position);
     const positionLabel = document.createElement("span");
     positionLabel.classList.add("btn");
     positionLabel.classList.add("positionLabel");
     positionLabel.innerHTML = getEndOfPosition(position);
     positionLabel.addEventListener("click", () => {
         setPosition(position);
-		// console.log('TCL: createPositionLabel -> position', position);
+        // console.log('TCL: createPositionLabel -> position', position);
     });
     navigationBar.appendChild(positionLabel);
     positionLabel.insertAdjacentHTML("afterend", `<i class="far fa-angle-right"></i>`);
@@ -238,7 +238,7 @@ function displayItemPlaceholder() {
                     },
                 })
                 .then((value) => {
-					// console.log('TCL: displayNewItemPlaceholder -> value', value);
+                    // console.log('TCL: displayNewItemPlaceholder -> value', value);
                     if (value) {
                         createMenuItem(value);
                     }
@@ -286,7 +286,7 @@ function createMenuItem(type) {
                 } else {
                     itemNameList.push(fullItemName);
                     displayItem(fullItemName, type, itemNameInput);
-                    storeItem(itemNameInput, type, position);
+                    storeNewItem(itemNameInput, type, position);
                     // remove item name input
                     itemNameInput.remove();
                 }
@@ -319,8 +319,8 @@ function createItemNameInput(type) {
 }
 
 function createErrorMessage(target, message) {
-	// console.log('TCL: createErrorMessage -> target', target);
-	// console.log('TCL: createErrorMessage -> typeof target', typeof target);
+    // console.log('TCL: createErrorMessage -> target', target);
+    // console.log('TCL: createErrorMessage -> typeof target', typeof target);
     // delete all previous error message
     document.querySelectorAll(".error").forEach(
         el => {
@@ -336,14 +336,15 @@ function createErrorMessage(target, message) {
     insertAfter(target, popup);
 }
 
-function storeItem(itemNameInput, type, position) {
+function storeNewItem(itemNameInput, type, position) {
+    console.log('TCL: storeItem -> storeItem');
     // store new item with the inputed name
     const itemInfo = {
         "position": position,
         "type": type
     };
     const itemName = `${position}/${itemNameInput.value}`;
-	// console.log('TCL: storeItem -> itemName', itemName);
+    // console.log('TCL: storeItem -> itemName', itemName);
     if (type === "file") {
         openFileEditField(itemName, itemInfo);
     } else {
@@ -380,45 +381,63 @@ function getEndOfPosition(itemName) {
 }
 
 // display item labels
-function displayItem(itemName, type, itemPosition) {
+function displayItem(itemName, itemType, itemPosition) {
     // replace input with label
     const itemLabel = document.createElement("p");
     const displayedName = getEndOfPosition(itemName);
-    if (type === "file") {
+    if (itemType === "file") {
         itemLabel.innerHTML = `📝`;
-    } else if (type === "folder") {
+    } else if (itemType === "folder") {
         itemLabel.innerHTML = `📁`;
     } else {
         itemLabel.innerHTML = `<i class="far fa-calculator"></i>`;
     }
     itemLabel.innerHTML += displayedName;
-    itemLabel.classList.add(type);
+    itemLabel.classList.add(itemType);
     itemLabel.classList.add("btn");
     itemLabel.classList.add("item");
     itemLabel.setAttribute("data-name", itemName);
     itemLabel.addEventListener("click", () => {
         const itemInfo = getItemFromStorage(itemName);
-        if (type === "file") {
+        const editField = document.getElementById("editField");
+        if (editField) { // has previous item's editor open
+            const previousItemName = editField.getAttribute("data-item");
+            storeItem(previousItemName);
+        }
+        if (itemType === "file") {
             displayFile(itemLabel, itemName, itemInfo);
-        } else if (type === "folder"){
+        } else if (itemType === "folder") {
             // set item location to the folder
-			// console.log('TCL: displayItem -> position', position);
+            // console.log('TCL: displayItem -> position', position);
             if (getItemFromStorage(itemName)) {
                 setPosition(itemName);
             } else {
                 appendPosition(itemName);
             }
-			// console.log('TCL: displayItem -> position', position);
-        } else if (type === "equation"){
+            // console.log('TCL: displayItem -> position', position);
+        } else if (itemType === "equation") {
             displayEquation(itemLabel, itemName, itemInfo);
         }
     });
     // console.log("displaying item...");
     if (itemPosition) {
-		// console.log('TCL: displayItem -> position', itemPosition);
+        // console.log('TCL: displayItem -> position', itemPosition);
         insertAfter(itemPosition, itemLabel);
     } else {
         system.appendChild(itemLabel);
+    }
+}
+
+function storeItem(itemName) {
+    const item = getItemFromStorage(itemName);
+    const itemType = item.type;
+    switch (itemType) {
+        case "file":
+            storeFile(itemName, item);
+            break;
+        case "equation":
+            storeEquation(itemName, item);
+            break;
     }
 }
 
@@ -430,6 +449,7 @@ function createFileEditor(id) {
         editor.id = "editor";
     }
     editor.classList.add("editor");
+    editor.setAttribute("data-type", "file");
     editor.rows = rowLength;
     // NOTE: cols are one character bigger than actual calculator's
     // line lengths because that's the space for vertical scroll bar
@@ -442,10 +462,6 @@ function displayFile(position, fileName, fileInfo) {
     // toggle file editor
     const editField = document.getElementById("editField");
     if (editField) {
-        const submitFileBtn = document.getElementById("submitFileBtn");
-        if (submitFileBtn) {
-            submitFileBtn.click();
-        }
         editField.remove();
         const clickedItemName = editField.getAttribute("data-item");
         if (clickedItemName !== fileName) { // not the same file
@@ -474,8 +490,8 @@ function renameItem(itemLabel) {
         itemNameInput.value = getEndOfPosition(oldItemName);
         insertAfter(itemLabel, itemNameInput);
         itemNameInput.focus();
-		// console.log('TCL: renameItem -> itemLabel', itemLabel);
-		// console.log('TCL: renameItem -> itemLabel.parentNode', itemLabel.parentNode);
+        // console.log('TCL: renameItem -> itemLabel', itemLabel);
+        // console.log('TCL: renameItem -> itemLabel.parentNode', itemLabel.parentNode);
         itemLabel.remove();
         itemNameInput.addEventListener("keypress", (e) => {
             if (e.keyCode == 13) { // ENTER key
@@ -616,7 +632,7 @@ function openFileEditField(itemName, itemInfo, position) {
         // update file size label
         updateItemSize(itemName, content);
 
-		// console.log('TCL: openFileEditField -> content', content);
+        // console.log('TCL: openFileEditField -> content', content);
         // pasting in more than one line of content
         if (content.length - lastFileContent.length > lineLength) {
             let start = lastFileContent.lastIndexOf("\n");
@@ -629,22 +645,22 @@ function openFileEditField(itemName, itemInfo, position) {
             }
         } else if (content.length >= lastFileContent.length) { // typing individual characters
             const lastLineLength = content.length - content.lastIndexOf("\n") - 1;
-			// console.log('TCL: openFileEditField -> lastLineLength', lastLineLength);
+            // console.log('TCL: openFileEditField -> lastLineLength', lastLineLength);
             if (lastLineLength > lineLength) {
                 content = insertSubstring(content, content.length - 1, "\n", 0); // avoid word wrapping
             }
-			// console.log('TCL: openFileEditField -> content.length', content.length);
+            // console.log('TCL: openFileEditField -> content.length', content.length);
         } else { // deleting contents
             // const cursorPosition = editor.selectionStart;
-			// console.log('TCL: openFileEditField -> cursorPosition', cursorPosition);
+            // console.log('TCL: openFileEditField -> cursorPosition', cursorPosition);
             // let previousNewline = content.substring(0, cursorPosition)
             //     .lastIndexOf("\n");
-			// console.log('TCL: openFileEditField -> previousNewline', previousNewline)
+            // console.log('TCL: openFileEditField -> previousNewline', previousNewline)
             // const nextNewline = content.indexOf("\n", cursorPosition);
             // if (previousNewline === -1){
             //     previousNewline = 0;
             // }
-			// console.log('TCL: openFileEditField -> nextNewline', nextNewline);
+            // console.log('TCL: openFileEditField -> nextNewline', nextNewline);
             // if (nextNewline - previousNewline < lineLength){
             //     content = deleteSubstring(content, nextNewline, 1);
             //     content = insertSubstring(content, previousNewline + lineLength, "\n");
@@ -662,13 +678,7 @@ function openFileEditField(itemName, itemInfo, position) {
     submitBtn.classList.add("btn");
     submitBtn.innerHTML = "Submit";
     submitBtn.addEventListener("click", () => {
-        // return file content
-        console.log("converting newlines to spaces");
-        editor.value = encodeFileContent(editor.value);
-        itemInfo.content = editor.value;
-        setItemInStorage(itemName, itemInfo);
-        // update file size
-        updateItemSize(itemName, editor.value);
+        storeFile(itemName, itemInfo);
         editField.remove();
     });
     Mousetrap(editor).bind('mod+s', function (e, combo) {
@@ -715,10 +725,20 @@ function openFileEditField(itemName, itemInfo, position) {
     editor.focus();
 }
 
+function storeFile(itemName, itemInfo) {
+    let content = document.getElementById("editor").value;
+    console.log('TCL: storeFile -> content', content);
+    content = encodeFileContent(content);
+    itemInfo.content = content;
+    setItemInStorage(itemName, itemInfo);
+    // update file size
+    updateItemSize(itemName, content);
+}
+
 function updateItemSize(itemName, content) {
     const fileLabel = document.querySelector(`p[data-name="${itemName}"]`);
     const size = countItemSize(itemName, content);
-	// console.log('TCL: updateFileSize -> size', size);
+    // console.log('TCL: updateFileSize -> size', size);
     // remove previous label
     const sizeString = `${size} bits`;
     const sizeLabel = fileLabel.getElementsByClassName("sizeLabel");
