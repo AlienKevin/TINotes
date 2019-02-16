@@ -8,18 +8,21 @@ Mousetrap.bind("shift+e", (e) => { // keyboard shortcut
     newEquationBtn.click();
     return false;
 });
-function displayEquation(position, fileName, fileInfo){
+function displayEquation(position, eqName, eqInfo){
     console.log("displaying equation...");
     // toggle file editor
     const equationField = document.getElementById("editField");
     if (equationField) {
+        const eqInput = document.getElementById("eqInput");
+        eqInfo.equation = eqInput.value;
+        setItemInStorage(eqName, eqInfo);
         equationField.remove();
         const clickedItemName = equationField.getAttribute("data-item");
-        if (clickedItemName !== fileName) { // not the same file
-            displayEquation(position, fileName, fileInfo);
+        if (clickedItemName !== eqName) { // not the same file
+            displayEquation(position, eqName, eqInfo);
         }
     } else {
-        openEquationEditField(fileName, fileInfo, position);
+        openEquationEditField(eqName, eqInfo, position);
     }
 }
 
@@ -70,4 +73,10 @@ function openEquationEditField(eqName, eqInfo, position){
         varTable.innerHTML = tableStr;
         editor.appendChild(varTable);
     });
+
+    if (eqInfo !== undefined) {
+        if (eqInfo.equation){
+            eqInput.value = eqInfo.equation;
+        }
+    }
 }
