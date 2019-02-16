@@ -337,18 +337,22 @@ function createErrorMessage(target, message) {
 }
 
 function storeNewItem(itemNameInput, type, position) {
-    console.log('TCL: storeItem -> storeItem');
+    console.log('TCL: storeNewItem -> storeNewItem');
     // store new item with the inputed name
     const itemInfo = {
         "position": position,
         "type": type
     };
     const itemName = `${position}/${itemNameInput.value}`;
-    // console.log('TCL: storeItem -> itemName', itemName);
-    if (type === "file") {
-        openFileEditField(itemName, itemInfo);
-    } else {
-        setItemInStorage(itemName, itemInfo);
+    console.log('TCL: storeNewItem -> itemName', itemName);
+    setItemInStorage(itemName, itemInfo);
+    switch (type) {
+        case "file":
+            openFileEditField(itemName, itemInfo);
+            break;
+        case "equation":
+            openEquationEditField(itemName, itemInfo);
+            break;
     }
     return itemName;
 }
@@ -429,8 +433,11 @@ function displayItem(itemName, itemType, itemPosition) {
 }
 
 function storeItem(itemName) {
+    console.log('TCL: storeItem -> itemName', itemName);
     const item = getItemFromStorage(itemName);
+    console.log('TCL: storeItem -> item', item);
     const itemType = item.type;
+    console.log('TCL: storeItem -> itemType', itemType);
     switch (itemType) {
         case "file":
             storeFile(itemName, item);

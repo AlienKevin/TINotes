@@ -57,7 +57,11 @@ function createEquationEditor() {
 function openEquationEditField(eqName, eqInfo, position) {
     const editor = createEquationEditor();
     editor.setAttribute("data-item", eqName);
-    insertAfter(position, editor);
+    if (position === undefined) {
+        system.appendChild(editor);
+    } else {
+        insertAfter(position, editor);
+    }
 
     const eqInput = document.getElementById("eqInput");
     eqInput.classList.add("eqInput");
