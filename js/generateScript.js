@@ -176,27 +176,24 @@ function generateEquationScript(index, item){
     // display equation
     str += `Disp "${eq}"\nPause\n0->L\n`;
     // add menu
-    str += `Menu("Solve For"`; // start menu
-    for (let label = 1; label <= varLength; label++){
-        const varName = varNames[label - 1];
-        str += `,"${varName}",${label}`;
-    }
-    str += `)\n`; // end menu
-    // convert menu item's label to number
-    for (let label = varLength; label >= 1; label--){
-        str += `Lbl ${label}:L+1->L\n`;
-    }
-    // prompt values for known variables
-    for (let label = 1; label <= varLength; label++){
-        const varName = varNames[label - 1];
-        str += `If (L!=${label})\nInput "${varName}=",${varName}\n`;
-    }
-    // calculate and display the solution
+    let menu = `Menu("Solve For"`; // start menu
+    let conversion = ``;
+    let prompt = ``;
+    let solution = ``;
     for (let label = 1; label <= varLength; label++){
         const varName = varNames[label - 1];
         const varEquation = vars[varName];
-        str += `If L=${label}\nDisp "${varName}=",${varEquation}\n`;
+        // add menu item (equation variables)
+        menu += `,"${varName}",${label}`;
+        // convert menu item's label to number
+        conversion += `Lbl ${varLength - label + 1}:L+1->L\n`;
+        // prompt values for known variables
+        prompt += `If (L!=${label})\nInput "${varName}=",${varName}\n`;
+        // calculate and display the solution
+        solution += `If L=${label}\nDisp "${varName}=",${varEquation}\n`;
     }
+    menu += `)\n`; // end menu
+    str += menu + conversion + prompt + solution;
     str += "End\n"
     return str;
 }
