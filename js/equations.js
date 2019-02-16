@@ -50,10 +50,6 @@ function createEquationEditor() {
     <label for="eqInput">Equation: </label>
     <input id="eqInput" type="text" size="${eqLength}" spellcheck="false"></input>
     </div>
-    <div id="varArea">
-    <label for="equationVars">Variables: </label>
-    <span id="equationVars"></span>
-    </div>
     `);
     return editor;
 }
@@ -84,37 +80,50 @@ function openEquationEditField(eqName, eqInfo, position) {
         const vars = nerdamer(eq.replace(/\=/g, " ")).variables();
         console.log('TCL: createEquationEditor -> vars', vars);
         let varTable = document.getElementById("varTable");
-        let tableStr = `
+        if (vars.length > 0) {
+            let tableStr = `
+        <div id="varArea">
+        <label for="equationVars">Variables: </label>
+        <span id="equationVars"></span>
+        </div>
         <tr>
             <th>Vars</th>
             <th>Equations</th>
         </tr>`;
-        vars.forEach((variable) => {
-            tableStr += `<tr>
-            <th>${variable}</th>
-            <td><input type="text" size="${eqLength}" class="eqInput" data-var="${variable}" spellcheck="false"></input></td>
-            </tr>`;
-        });
-        if (!varTable) {
-            varTable = document.createElement("table");
-            varTable.id = "varTable";
-        }
-        varTable.innerHTML = tableStr;
-        editor.appendChild(varTable);
+            vars.forEach((variable) => {
+                const previousVar = document.querySelector(`.eqInput[data-var="${variable}"`);
+                tableStr += `<tr><th>${variable}</th><td>`;
+                tableStr += `<input type="text" size="${eqLength}" class="eqInput" data-var="${variable}" spellcheck="false" `;
+                if (previousVar){
+                    tableStr += `value="${previousVar.value}"`;
+                }
+                tableStr += `></input></td></tr>`;
+            });
+            if (!varTable) {
+                varTable = document.createElement("table");
+                varTable.id = "varTable";
+            }
+            varTable.innerHTML = tableStr;
+            editor.appendChild(varTable);
 
-        if (varsInfo !== undefined) {
-            // load var equations if specified
-            Array.from(document.getElementsByClassName("eqInput")).forEach(
-                (input) => {
-                    const variable = input.getAttribute("data-var");
-                    if (variable) {
-                        const varEquation = varsInfo[variable];
-                        if (varEquation) { // not undefined or empty string
-                            input.value = varEquation;
+            if (varsInfo !== undefined) {
+                // load var equations if specified
+                Array.from(document.getElementsByClassName("eqInput")).forEach(
+                    (input) => {
+                        const variable = input.getAttribute("data-var");
+                        if (variable) {
+                            const varEquation = varsInfo[variable];
+                            if (varEquation) { // not undefined or empty string
+                                input.value = varEquation;
+                            }
                         }
                     }
-                }
-            )
+                )
+            }
+        } else if (eq === "") {
+            if (varTable) {
+                removeAllChildren(varTable);
+            }
         }
     }
 }
