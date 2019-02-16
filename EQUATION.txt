@@ -1,0 +1,35 @@
+Disp "F=G*m*M/R^2"
+Pause
+0->L
+
+// Let the user choose which variable to solve
+Menu("Solve For","F",1,"G",2,"A",3,"B",4,"R",5)
+Lbl 5:L+1->L
+Lbl 4:L+1->L
+Lbl 3:L+1->L
+Lbl 2:L+1->L
+Lbl 1:L+1->L
+
+// Prompt all other variables that are needed to solve one variable
+If (L!=1)
+Input "F=",F
+If (L!=2)
+Input "G=",G
+If (L!=3)
+Input "A=",A
+If (L!=4)
+Input "B=",B
+If (L!=5)
+Input "R=",R
+
+// Calculate and display the solution
+If L=1
+Disp "F=",G*A*B/R^2
+If L=2
+Disp "G=",6.67408*10^~11
+If L=3
+Disp "A=",F/G/B*R^2
+If L=4
+Disp "B=",F/G/A*R^2
+If L=5
+Disp "R=",sqrt(G*A*B/F)
