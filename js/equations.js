@@ -1,5 +1,6 @@
 // button for creating a new equation
 const newEquationBtn = document.getElementById("newEquationBtn");
+const eqLength = 15;
 newEquationBtn.addEventListener("click", () => {
     createMenuItem("equation");
 })
@@ -33,7 +34,7 @@ function createEquationEditor(id) {
     editor.insertAdjacentHTML("afterbegin", 
     `
     <label for="eqInput">Equation: </label>
-    <input id="eqInput" type="text" size="15"></input><br/>
+    <input id="eqInput" type="text" size="${eqLength}"></input><br/>
     <label for="equationVars">Variables: </label>
     <span id="equationVars"></span>
     `);
@@ -50,6 +51,23 @@ function openEquationEditField(eqName, eqInfo, position){
         const eq = eqInput.value;
         const vars = nerdamer(eq).variables();
         console.log('TCL: createEquationEditor -> vars', vars);
-        
-    })
+        let varTable = document.getElementById("varTable");
+        let tableStr = `
+        <tr>
+            <th>Vars</th>
+            <th>Equations</th>
+        </tr>`;
+        vars.forEach((variable) => {
+            tableStr += `<tr>
+            <th>${variable}</th>
+            <td><input type="text" size="${eqLength}"></input></td>
+            </tr>`;
+        });
+        if (!varTable){
+            varTable = document.createElement("table");
+            varTable.id = "varTable";
+        }
+        varTable.innerHTML = tableStr;
+        editor.appendChild(varTable);
+    });
 }
