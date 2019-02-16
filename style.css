@@ -164,6 +164,26 @@ div#calculatorTypeSelector>div {
     resize: none;
 }
 
+/* equation editor */
+
+.eqInput{
+    height: 2em;
+    font-size: 1em;
+    font-family: "Computer Modern Serif", serif;
+}
+
+#varArea{
+    margin-top: .8em;
+}
+
+#varTable{
+    text-align: center;
+}
+
+#varTable td{
+    padding: .3em 1em;
+}
+
 /* context menu */
 
 .context-menu {

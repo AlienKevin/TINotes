@@ -1,6 +1,6 @@
 // button for creating a new equation
 const newEquationBtn = document.getElementById("newEquationBtn");
-const eqLength = 15;
+const eqLength = 20;
 newEquationBtn.addEventListener("click", () => {
     createMenuItem("equation");
 })
@@ -8,7 +8,8 @@ Mousetrap.bind("shift+e", (e) => { // keyboard shortcut
     newEquationBtn.click();
     return false;
 });
-function displayEquation(position, eqName, eqInfo){
+
+function displayEquation(position, eqName, eqInfo) {
     console.log("displaying equation...");
     // toggle file editor
     const equationField = document.getElementById("editField");
@@ -34,25 +35,37 @@ function createEquationEditor(id) {
         editor.id = "editField";
     }
     editor.classList.add("editor");
-    editor.insertAdjacentHTML("afterbegin", 
-    `
+    editor.insertAdjacentHTML("afterbegin",
+        `<div>
     <label for="eqInput">Equation: </label>
-    <input id="eqInput" type="text" size="${eqLength}"></input><br/>
+    <input id="eqInput" type="text" size="${eqLength}"></input>
+    </div>
+    <div id="varArea">
     <label for="equationVars">Variables: </label>
     <span id="equationVars"></span>
+    </div>
     `);
     return editor;
 }
 
-function openEquationEditField(eqName, eqInfo, position){
+function openEquationEditField(eqName, eqInfo, position) {
     const editor = createEquationEditor();
     editor.setAttribute("data-item", eqName);
     insertAfter(position, editor);
 
     const eqInput = document.getElementById("eqInput");
-    eqInput.addEventListener("input", () => {
+    eqInput.classList.add("eqInput");
+    if (eqInfo !== undefined) {
+        if (eqInfo.equation) {
+            eqInput.value = eqInfo.equation;
+            updateVarTable();
+        }
+    }
+    eqInput.addEventListener("input", updateVarTable);
+
+    function updateVarTable() {
         const eq = eqInput.value;
-        const vars = nerdamer(eq).variables();
+        const vars = nerdamer(eq.replace(/\=/g,"")).variables();
         console.log('TCL: createEquationEditor -> vars', vars);
         let varTable = document.getElementById("varTable");
         let tableStr = `
@@ -63,20 +76,14 @@ function openEquationEditField(eqName, eqInfo, position){
         vars.forEach((variable) => {
             tableStr += `<tr>
             <th>${variable}</th>
-            <td><input type="text" size="${eqLength}"></input></td>
+            <td><input type="text" size="${eqLength}" class="eqInput"></input></td>
             </tr>`;
         });
-        if (!varTable){
+        if (!varTable) {
             varTable = document.createElement("table");
             varTable.id = "varTable";
         }
         varTable.innerHTML = tableStr;
         editor.appendChild(varTable);
-    });
-
-    if (eqInfo !== undefined) {
-        if (eqInfo.equation){
-            eqInput.value = eqInfo.equation;
-        }
     }
 }

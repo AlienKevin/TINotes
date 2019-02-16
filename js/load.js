@@ -2,7 +2,8 @@
 fallback.load({
             // Include your stylesheets, this can be an array of stylesheets or a string!
             page_css: 'fontawesome/css/all.css', // load local font awesome library
-            global_css: 'introjs/introjs.min.css', // load introjs css
+            global_css: ['introjs/introjs.min.css',  // load introjs css
+            'https://cdn.rawgit.com/dreampulse/computer-modern-web-font/master/fonts.css'],
 
             // JavaScript library. THE KEY MUST BE THE LIBRARIES WINDOW VARIABLE!
             // load sweet alert for beautiful popups: https://github.com/t4t5/sweetalert
