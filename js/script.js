@@ -436,15 +436,17 @@ function storeItem(itemName) {
     console.log('TCL: storeItem -> itemName', itemName);
     const item = getItemFromStorage(itemName);
     console.log('TCL: storeItem -> item', item);
-    const itemType = item.type;
-    console.log('TCL: storeItem -> itemType', itemType);
-    switch (itemType) {
-        case "file":
-            storeFile(itemName, item);
-            break;
-        case "equation":
-            storeEquation(itemName, item);
-            break;
+    if (item) { // item exists
+        const itemType = item.type;
+        console.log('TCL: storeItem -> itemType', itemType);
+        switch (itemType) {
+            case "file":
+                storeFile(itemName, item);
+                break;
+            case "equation":
+                storeEquation(itemName, item);
+                break;
+        }
     }
 }
 

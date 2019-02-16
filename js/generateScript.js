@@ -174,8 +174,8 @@ function generateEquationScript(index, item){
     const varLength = varNames.length;
 	console.log('TCL: generateEquationScript -> varLength', varLength);
     let str = `If N=${index}\nThen\n`;
-    // display equation
-    str += `Disp "${eq}"\nPause \n${equationIndex - 1}->L\n`;
+    // display equation and initiate variables
+    str += `Disp "${eq}"\nPause \n${equationIndex - 1}->L\nN->|LA(W)\n`;
     // add menu
     let menu = `Menu("Solve For"`; // start menu
     let conversion = ``;
@@ -196,8 +196,10 @@ function generateEquationScript(index, item){
         solution += `If L=${label}\nDisp "${varName}=",${varEquation}\n`;
     }
     menu += `)\n`; // end menu
-    str += menu + conversion + prompt + solution;
-    str += "Pause \nEnd\n" // pause to let user see solution
+    // press 2nd key to go back to parent folder
+    let back = `Repeat K=21\ngetKey->K\nEnd\nW-1->W\n|LA(W)->N\nGoto S\n`;
+    str += menu + conversion + prompt + solution + back;
+    str += "End\n" // pause to let user see solution
     // increase equationIndex
     equationIndex += varLength + 1;
     return str;
