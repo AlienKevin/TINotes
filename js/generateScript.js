@@ -5,6 +5,7 @@ const copyScriptBtn = document.getElementById("copyScriptBtn");
 const defaultScriptFormat = "sourceCoder";
 let script;
 let itemSize = calculateItemSize();
+let equationIndex;
 downloadScriptBtn.addEventListener("click", () => {
     download("TINOTES.txt", script);
 });
@@ -107,7 +108,7 @@ function selectAllItems() {
 function generateScript() {
     // selectAllItems();
     itemSize = calculateItemSize(); // reset item size
-    let equationIndex = itemSize + 1;
+    equationIndex = itemSize;
     script = `0->N\n1->W\nLbl S\n`; // initialize variables
     script += generateScriptHelper("home", 0);
     script += `${baseScript}`;
@@ -174,19 +175,21 @@ function generateEquationScript(index, item){
 	console.log('TCL: generateEquationScript -> varLength', varLength);
     let str = `If N=${index}\nThen\n`;
     // display equation
-    str += `Disp "${eq}"\nPause\n0->L\n`;
+    str += `Disp "${eq}"\nPause \n${equationIndex - 1}->L\n`;
     // add menu
     let menu = `Menu("Solve For"`; // start menu
     let conversion = ``;
     let prompt = ``;
     let solution = ``;
-    for (let label = 1; label <= varLength; label++){
-        const varName = varNames[label - 1];
+    const startIndex = equationIndex;
+    const endIndex = equationIndex + varLength;
+    for (let label = startIndex; label < endIndex; label++){
+        const varName = varNames[label - startIndex];
         const varEquation = vars[varName];
         // add menu item (equation variables)
         menu += `,"${varName}",${label}`;
         // convert menu item's label to number
-        conversion += `Lbl ${varLength - label + 1}:L+1->L\n`;
+        conversion += `Lbl ${startIndex - 1 + endIndex - label}:L+1->L\n`;
         // prompt values for known variables
         prompt += `If (L!=${label})\nInput "${varName}=",${varName}\n`;
         // calculate and display the solution
@@ -194,7 +197,9 @@ function generateEquationScript(index, item){
     }
     menu += `)\n`; // end menu
     str += menu + conversion + prompt + solution;
-    str += "End\n"
+    str += "Pause \nEnd\n" // pause to let user see solution
+    // increase equationIndex
+    equationIndex += varLength + 1;
     return str;
 }
 
