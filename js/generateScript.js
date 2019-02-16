@@ -107,6 +107,7 @@ function selectAllItems() {
 function generateScript() {
     // selectAllItems();
     itemSize = calculateItemSize(); // reset item size
+    let equationIndex = itemSize + 1;
     script = `0->N\n1->W\nLbl S\n`; // initialize variables
     script += generateScriptHelper("home", 0);
     script += `${baseScript}`;
@@ -124,8 +125,9 @@ function generateScriptHelper(position, index) {
             index++;
             homeMenu += `,"${getEndOfPosition(itemName)}",${index}`;
             if (itemType === `file`) {
-                branching += `If N=${index}\n`;
-                branching += `"${item.content}"->Str1\n`;
+                branching += generateFileScript(index, item.content);
+            } else if (itemType === `equation`) {
+                branching += generateEquationScript(index, item);
             } else {
                 branching += generateScriptHelper(itemName, index);
             }
@@ -162,9 +164,46 @@ function generateScriptHelper(position, index) {
     return script;
 }
 
+function generateEquationScript(index, item){
+    const eq = item.equation;
+    const vars = item.vars;
+	console.log('TCL: generateEquationScript -> vars', vars);
+    const varNames = Object.keys(vars);
+	console.log('TCL: generateEquationScript -> varNames', varNames);
+    const varLength = varNames.length;
+	console.log('TCL: generateEquationScript -> varLength', varLength);
+    let str = `If N=${index}\nThen\n`;
+    // display equation
+    str += `Disp "${eq}"\nPause\n0->L\n`;
+    // add menu
+    str += `Menu("Solve For"`; // start menu
+    for (let label = 1; label <= varLength; label++){
+        const varName = varNames[label - 1];
+        str += `,"${varName}",${label}`;
+    }
+    str += `)\n`; // end menu
+    // convert menu item's label to number
+    for (let label = varLength; label >= 1; label--){
+        str += `Lbl ${label}:L+1->L\n`;
+    }
+    // prompt values for known variables
+    for (let label = 1; label <= varLength; label++){
+        const varName = varNames[label - 1];
+        str += `If (L!=${label})\nInput "${varName}=",${varName}\n`;
+    }
+    // calculate and display the solution
+    for (let label = 1; label <= varLength; label++){
+        const varName = varNames[label - 1];
+        const varEquation = vars[varName];
+        str += `If L=${label}\nDisp "${varName}=",${varEquation}\n`;
+    }
+    str += "End\n"
+    return str;
+}
 
-
-
+function generateFileScript(index, content){
+    return `If N=${index}\n"${content}"->Str1\n`;
+}
 
 // Source: https://ourcodeworld.com/articles/read/189/how-to-create-a-file-and-generate-a-download-with-javascript-in-the-browser-without-a-server
 // Start downloading a file in browser
