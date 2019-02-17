@@ -5,6 +5,7 @@ const copyScriptBtn = document.getElementById("copyScriptBtn");
 const defaultScriptFormat = "sourceCoder";
 let script;
 let itemSize = calculateItemSize();
+let startEquationIndex;
 let equationIndex;
 downloadScriptBtn.addEventListener("click", () => {
     download("TINOTES.txt", script);
@@ -31,14 +32,24 @@ function calculateItemSize() {
     return itemSize;
 }
 
-function calculateFolderSize(){
+function calculateFolderSize() {
     let folderSize = 0;
     iterateStorage(function (item, itemName, itemType) {
-        if (itemType === "folder"){
+        if (itemType === "folder") {
             folderSize += 1;
         }
     });
     return folderSize;
+}
+
+function calculateEquationVarSize(){
+    let varSize = 0;
+    iterateStorage(function (item, itemName, itemType) {
+        if (itemType === "equation") {
+            varSize += Object.keys(item.vars).length;
+        }
+    });
+    return varSize;
 }
 
 function exportScript() {
@@ -119,8 +130,12 @@ function generateScript() {
     // selectAllItems();
     itemSize = calculateItemSize(); // reset item size
     const folderSize = calculateFolderSize(); // all folders have "back" button which need labels
-    equationIndex = itemSize + folderSize + 1;
+    const equationVarSize = calculateEquationVarSize();
+    startEquationIndex = itemSize + folderSize + 1;
+    equationIndex = startEquationIndex;
     script = `0->N\n1->W\nLbl S\n`; // initialize variables
+    // initiate equation var list
+    script += `{0${",0".repeat(equationVarSize - 1)}}->|LV\n`;
     script += generateScriptHelper("home", 0);
     script += `${baseScript}`;
 }
@@ -176,14 +191,27 @@ function generateScriptHelper(position, index) {
     return script;
 }
 
-function generateEquationScript(index, item){
+function generateEquationScript(index, item) {
     const eq = item.equation;
     const vars = item.vars;
-	console.log('TCL: generateEquationScript -> vars', vars);
-    const varNames = Object.keys(vars);
-	console.log('TCL: generateEquationScript -> varNames', varNames);
-    const varLength = varNames.length;
-	console.log('TCL: generateEquationScript -> varLength', varLength);
+    console.log('TCL: generateEquationScript -> vars', vars);
+    const userVarNames = Object.keys(vars);
+    const varLength = userVarNames.length;
+    console.log('TCL: generateEquationScript -> varLength', varLength);
+    const tiVarNames = [];
+    const startIndex = equationIndex;
+    const endIndex = equationIndex + varLength;
+    for (let i = startIndex; i < endIndex; i++) {
+        // LV is a list in ti-basic where "L" is the command for denoting
+        // a custom list and "V" is the name of the list and stands for
+        // "variable"
+        if (startIndex === startEquationIndex){
+            tiVarNames.push(`LV${i - startEquationIndex + 1}`);
+        } else{
+            tiVarNames.push(`LV${i - startEquationIndex}`);
+        }
+    }
+    console.log('TCL: generateEquationScript -> varNames', userVarNames);
     let str = `If N=${index}\nThen\n`;
     // display equation and initiate variables
     str += `Disp "${eq}"\nPause \n${equationIndex - 1}->L\nN->|LA(W)\n`;
@@ -192,19 +220,26 @@ function generateEquationScript(index, item){
     let conversion = ``;
     let prompt = ``;
     let solution = ``;
-    const startIndex = equationIndex;
-    const endIndex = equationIndex + varLength;
-    for (let label = startIndex; label < endIndex; label++){
-        const varName = varNames[label - startIndex];
-        const varEquation = vars[varName];
+    for (let label = startIndex; label < endIndex; label++) {
+        const userVarName = userVarNames[label - startIndex];
+        let tiVarNameIndex;
+        if (startIndex === startEquationIndex) {
+            tiVarNameIndex = label - startEquationIndex + 1;
+        } else{
+            tiVarNameIndex = label - startEquationIndex;
+        }
+        const tiVarName = `|LV(${tiVarNameIndex})`;
+        const varEquation = substituteVarNames(vars[userVarName], userVarNames, tiVarNames);
         // add menu item (equation variables)
-        menu += `,"${varName}",${label}`;
+        menu += `,"${userVarName}",${label}`;
         // convert menu item's label to number
         conversion += `Lbl ${startIndex - 1 + endIndex - label}:L+1->L\n`;
         // prompt values for known variables
-        prompt += `If (L!=${label})\nInput "${varName}=",${varName}\n`;
+        prompt += `If (L!=${label})\nThen\nInput "${userVarName}=",T\n`;
+        // use T as a temporary variable (input doesn't accept L1(2) syntax)
+        prompt += `T->${tiVarName}\nEnd\n`;
         // calculate and display the solution
-        solution += `If L=${label}\nThen\n"${varName}="->Str2\n${varEquation}->V\nEnd\n`;
+        solution += `If L=${label}\nThen\n"${userVarName}="->Str2\n${varEquation}->V\nEnd\n`;
     }
     menu += `)\n`; // end menu
     // convert result from number to string for display
@@ -214,7 +249,7 @@ function generateEquationScript(index, item){
     solution += `Disp Str2+Str1\n`;
     // display a division line at end of solution
     solution += `Disp "`;
-    for (let i = 0; i < lineLength; i++){
+    for (let i = 0; i < lineLength; i++) {
         solution += "~";
     }
     solution += `"\n`;
@@ -227,7 +262,27 @@ function generateEquationScript(index, item){
     return str;
 }
 
-function generateFileScript(index, content){
+function substituteVarNames(equation, oldVarNames, newVarNames) {
+    const varMap = {};
+    for (let i = 0; i < oldVarNames.length; i++) {
+        varMap[oldVarNames[i]] = newVarNames[i];
+    }
+    let newEquation = nerdamer(equation, varMap).toString();
+    // add in sourcecoder notation of a list
+    newEquation = newEquation.replace(/LV([0-9]+)/g, "|LV($1)");
+    newEquation = convertMinusesToNegations(newEquation);
+    return newEquation;
+}
+
+function convertMinusesToNegations(eq){
+    if (eq[0] === "-"){
+        eq = "~" + eq.substring(1);
+    }
+    eq = eq.replace(/\(\-/g, "(~");
+    return eq;
+}
+
+function generateFileScript(index, content) {
     return `If N=${index}\n"${content}"->Str1\n`;
 }
 
