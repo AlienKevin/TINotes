@@ -1,6 +1,7 @@
 // button for creating a new equation
 const newEquationBtn = document.getElementById("newEquationBtn");
 const eqLength = 20;
+const varDescriptionLength = 20;
 newEquationBtn.addEventListener("click", () => {
     createMenuItem("equation");
 })
@@ -93,15 +94,22 @@ function openEquationEditField(eqName, eqInfo, position) {
         <tr>
             <th>Vars</th>
             <th>Equations</th>
+            <th>Description</th>
         </tr>`;
             vars.forEach((variable) => {
                 const previousVar = document.querySelector(`.eqInput[data-var="${variable}"`);
+                // add variable name column
                 tableStr += `<tr><th>${variable}</th><td>`;
+                // add variable equation column
                 tableStr += `<input type="text" size="${eqLength}" class="eqInput" data-var="${variable}" spellcheck="false" `;
                 if (previousVar){
                     tableStr += `value="${previousVar.value}"`;
                 }
-                tableStr += `></input></td></tr>`;
+                tableStr += `></input></td>`;
+                // add variable description column
+                tableStr += `<td><input type="text" class="descriptionInput" 
+                size=${varDescriptionLength} data-var="${variable} spellcheck="false"</td>`;
+                tableStr += `</tr>`;
             });
             if (!varTable) {
                 varTable = document.createElement("table");

@@ -165,10 +165,11 @@ div#calculatorTypeSelector>div {
 }
 
 /* equation editor */
-
-.eqInput{
+div#editField[data-type="equation"] input{
     height: 2em;
     font-size: 1em;
+}
+.eqInput{
     font-family: "Computer Modern Serif", serif;
 }
 
