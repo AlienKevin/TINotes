@@ -32,13 +32,6 @@ fallback.load({
                 '//cdn.jsdelivr.net/npm/nerdamer@0.8.4/nerdamer.core.min.js',
                 'nerdamer/nerdamer.core.js'
             ],
-
-            // load jQuery
-            '$': [
-                '//code.jquery.com/jquery-3.3.1.min.js',
-                '//cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js',
-                '//ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js'
-            ],
             'script': 'js/script.js',
 
         }, {
