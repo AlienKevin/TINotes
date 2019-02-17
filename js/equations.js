@@ -98,8 +98,11 @@ function openEquationEditField(eqName, eqInfo, position) {
                 const previousVar = document.querySelector(`.eqInput[data-var="${variable}"`);
                 tableStr += `<tr><th>${variable}</th><td>`;
                 tableStr += `<input type="text" size="${eqLength}" class="eqInput" data-var="${variable}" spellcheck="false" `;
-                if (previousVar){
+                if (previousVar) {
                     tableStr += `value="${previousVar.value}"`;
+                } else {
+                    const alternateEquation = solveEquation(eq, variable);
+                    tableStr += `value="${alternateEquation}"`;
                 }
                 tableStr += `></input></td></tr>`;
             });
@@ -130,4 +133,39 @@ function openEquationEditField(eqName, eqInfo, position) {
             }
         }
     }
+}
+
+function solveEquation(equation, variable) {
+    // const baseUrl = "https://quickmath.com/webMathematica3/quickmath/equations/solve/intermediate.jsp#c=solve_basicsolveequation";
+    // const v1 = `&v1=${encodeURI(equation)}`;
+    // const v2 = `&v2=${encodeURI(variable)}`;
+    // // const url = baseUrl + v1 + v2;
+    // const webUrl = "https://quickmath.com/webMathematica3/quickmath/equations/solve/intermediate.jsp#c=solve_basicsolveequation&v1=sin%2528x%2529%253D3&v2=x";
+    const webUrl = "https://quickmath.com/webMathematica3/quickmath/equations/solve/intermediate.jsp#c=solve_basicsolveequation&v1=sin%2528x%2529%253D3&v2=x";
+    const webUrlWithoutHttps = "quickmath.com/webMathematica3/quickmath/equations/solve/intermediate.jsp#c=solve_basicsolveequation&v1=sin%2528x%2529%253D3&v2=x";
+    const whateverorigin = "http://www.whateverorigin.org/get?url=";
+    const anyorigin = "http://anyorigin.com/go?url=";
+    const crossorigin = "https://crossorigin.me/";
+    const allorigins = "http://api.allorigins.ml/get?url="; // working
+    const corsproxy = "https://cors-escape.herokuapp.com/";
+    let url = allorigins + webUrl + "&callback=?";
+
+    $.get(url, function (response) {
+        console.log("url fetching succeeded!");
+        console.log(response);
+        var iframe = document.createElement('iframe');
+        iframe.width = "100%";
+        iframe.height = "100%";
+        var html = response.contents;
+    	console.log('TCL: solveEquation -> html', html);
+        html = html.replace("</body>", `<script src="https://quickmath.com/msolver/js.20180720220910.js"></script>
+        <script src="https://quickmath.com/msolver/js9.js.php?v=20180720220910"></script>
+        <style href="https://quickmath.com/msolver/css.20180720220910.css"></script>
+        </body>`);
+    	console.log('TCL: solveEquation -> html', html);
+        document.body.appendChild(iframe);
+        iframe.contentWindow.document.open();
+        iframe.contentWindow.document.write(html);
+        iframe.contentWindow.document.close();
+    });
 }
