@@ -25,10 +25,20 @@ copyScriptBtn.addEventListener("click", () => {
 function calculateItemSize() {
     let itemSize = 0;
     iterateStorage(function () {
-        itemSize++;
+        itemSize += 1;
     });
     itemSize++;
     return itemSize;
+}
+
+function calculateFolderSize(){
+    let folderSize = 0;
+    iterateStorage(function (item, itemName, itemType) {
+        if (itemType === "folder"){
+            folderSize += 1;
+        }
+    });
+    return folderSize;
 }
 
 function exportScript() {
@@ -108,7 +118,8 @@ function selectAllItems() {
 function generateScript() {
     // selectAllItems();
     itemSize = calculateItemSize(); // reset item size
-    equationIndex = itemSize;
+    const folderSize = calculateFolderSize(); // all folders have "back" button which need labels
+    equationIndex = itemSize + folderSize + 1;
     script = `0->N\n1->W\nLbl S\n`; // initialize variables
     script += generateScriptHelper("home", 0);
     script += `${baseScript}`;
@@ -193,7 +204,7 @@ function generateEquationScript(index, item){
         // prompt values for known variables
         prompt += `If (L!=${label})\nInput "${varName}=",${varName}\n`;
         // calculate and display the solution
-        solution += `If L=${label}\n"${varName}="->Str2\n${varEquation}->V\n`;
+        solution += `If L=${label}\nThen\n"${varName}="->Str2\n${varEquation}->V\nEnd\n`;
     }
     menu += `)\n`; // end menu
     // convert result from number to string for display
