@@ -27,18 +27,40 @@ function displayEquation(position, eqName, eqInfo) {
 
 function storeEquation(eqName, eqInfo) {
     const eqInput = document.getElementById("eqInput");
+
+    // storing main equation
     eqInfo.equation = eqInput.value;
-    const vars = {};
-    Array.from(document.getElementsByClassName("eqInput")).forEach(
-        (input) => {
-            const variable = input.getAttribute("data-var");
-            if (variable) {
-                vars[variable] = input.value;
-            }
-        }
-    )
-    eqInfo.vars = vars;
+
+    // storing variable equations
+    eqInfo.varEquations = getVarEquations();
+
+    // storing variable descriptions
+    eqInfo.varDescriptions = getVarDescriptions();
+
+    // load all equation info into storage
     setItemInStorage(eqName, eqInfo);
+}
+
+function getVarDescriptions() {
+    const varDescriptions = {};
+    Array.from(document.getElementsByClassName("descriptionInput")).forEach((input) => {
+        const variable = input.getAttribute("data-var");
+        if (variable) {
+            varDescriptions[variable] = input.value;
+        }
+    });
+    return varDescriptions;
+}
+
+function getVarEquations() {
+    const varEquations = {};
+    Array.from(document.getElementsByClassName("eqInput")).forEach((input) => {
+        const variable = input.getAttribute("data-var");
+        if (variable) {
+            varEquations[variable] = input.value;
+        }
+    });
+    return varEquations;
 }
 
 function createEquationEditor() {
@@ -73,14 +95,10 @@ function openEquationEditField(eqName, eqInfo, position) {
         if (eqInfo.equation) {
             eqInput.value = eqInfo.equation;
         }
-        if (eqInfo.vars) {
-            updateVarTable(eqInfo.vars)
-        } else {
-            updateVarTable();
-        }
+        updateVarTable(eqInfo);
     }
 
-    function updateVarTable(varsInfo) {
+    function updateVarTable(varInfo) {
         const eq = eqInput.value;
         const vars = nerdamer(eq.replace(/\=/g, " ")).variables();
         console.log('TCL: createEquationEditor -> vars', vars);
@@ -97,18 +115,25 @@ function openEquationEditField(eqName, eqInfo, position) {
             <th>Description</th>
         </tr>`;
             vars.forEach((variable) => {
-                const previousVar = document.querySelector(`.eqInput[data-var="${variable}"`);
+                const previousVarEquation = document.querySelector(`.eqInput[data-var="${variable}"`);
+
                 // add variable name column
                 tableStr += `<tr><th>${variable}</th><td>`;
                 // add variable equation column
                 tableStr += `<input type="text" size="${eqLength}" class="eqInput" data-var="${variable}" spellcheck="false" `;
-                if (previousVar){
-                    tableStr += `value="${previousVar.value}"`;
+                if (previousVarEquation) {
+                    tableStr += `value="${previousVarEquation.value}"`;
                 }
                 tableStr += `></input></td>`;
+
                 // add variable description column
                 tableStr += `<td><input type="text" class="descriptionInput" 
-                size=${varDescriptionLength} data-var="${variable} spellcheck="false"</td>`;
+                size=${varDescriptionLength} data-var="${variable}" spellcheck="false"`;
+                const previousVarDescription = document.querySelector(`.descriptionInput[data-var="${variable}"`);
+                if (previousVarDescription) {
+                    tableStr += `value="${previousVarDescription.value}"`;
+                }
+                tableStr += `></input></td>`;
                 tableStr += `</tr>`;
             });
             if (!varTable) {
@@ -118,19 +143,17 @@ function openEquationEditField(eqName, eqInfo, position) {
             varTable.innerHTML = tableStr;
             editor.appendChild(varTable);
 
-            if (varsInfo !== undefined) {
+            if (varInfo !== undefined) {
+                const varEquations = varInfo.varEquations;
+                const varDescriptions = varInfo.varDescriptions;
                 // load var equations if specified
-                Array.from(document.getElementsByClassName("eqInput")).forEach(
-                    (input) => {
-                        const variable = input.getAttribute("data-var");
-                        if (variable) {
-                            const varEquation = varsInfo[variable];
-                            if (varEquation) { // not undefined or empty string
-                                input.value = varEquation;
-                            }
-                        }
-                    }
-                )
+                if (varEquations) {
+                    loadVarEquations(varEquations);
+                }
+                // load var descriptions if specified
+                if (varDescriptions) {
+                    loadVarDescriptions(varDescriptions);
+                }
             }
         } else if (eq === "") {
             if (varTable) {
@@ -138,4 +161,28 @@ function openEquationEditField(eqName, eqInfo, position) {
             }
         }
     }
+}
+
+function loadVarDescriptions(varDescriptions) {
+    Array.from(document.getElementsByClassName("descriptionInput")).forEach((input) => {
+        const variable = input.getAttribute("data-var");
+        if (variable) {
+            const varEquation = varDescriptions[variable];
+            if (varEquation) { // not undefined or empty string
+                input.value = varEquation;
+            }
+        }
+    });
+}
+
+function loadVarEquations(varEquations) {
+    Array.from(document.getElementsByClassName("eqInput")).forEach((input) => {
+        const variable = input.getAttribute("data-var");
+        if (variable) {
+            const varEquation = varEquations[variable];
+            if (varEquation) { // not undefined or empty string
+                input.value = varEquation;
+            }
+        }
+    });
 }

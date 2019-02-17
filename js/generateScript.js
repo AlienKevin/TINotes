@@ -46,7 +46,7 @@ function calculateEquationVarSize(){
     let varSize = 0;
     iterateStorage(function (item, itemName, itemType) {
         if (itemType === "equation") {
-            varSize += Object.keys(item.vars).length;
+            varSize += Object.keys(item.varEquations).length;
         }
     });
     return varSize;
@@ -193,9 +193,9 @@ function generateScriptHelper(position, index) {
 
 function generateEquationScript(index, item) {
     const eq = item.equation;
-    const vars = item.vars;
-    console.log('TCL: generateEquationScript -> vars', vars);
-    const userVarNames = Object.keys(vars);
+    const varEquations = item.varEquations;
+    console.log('TCL: generateEquationScript -> vars', varEquations);
+    const userVarNames = Object.keys(varEquations);
     const varLength = userVarNames.length;
     console.log('TCL: generateEquationScript -> varLength', varLength);
     const tiVarNames = [];
@@ -229,7 +229,7 @@ function generateEquationScript(index, item) {
             tiVarNameIndex = label - startEquationIndex;
         }
         const tiVarName = `|LV(${tiVarNameIndex})`;
-        const varEquation = substituteVarNames(vars[userVarName], userVarNames, tiVarNames);
+        const varEquation = substituteVarNames(varEquations[userVarName], userVarNames, tiVarNames);
         // add menu item (equation variables)
         menu += `,"${userVarName}",${label}`;
         // convert menu item's label to number
