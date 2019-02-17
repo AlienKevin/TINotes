@@ -193,9 +193,20 @@ function generateEquationScript(index, item){
         // prompt values for known variables
         prompt += `If (L!=${label})\nInput "${varName}=",${varName}\n`;
         // calculate and display the solution
-        solution += `If L=${label}\nDisp "${varName}=",${varEquation}\n`;
+        solution += `If L=${label}\n"${varName}="->Str2\n${varEquation}->V\n`;
     }
     menu += `)\n`; // end menu
+    // convert result from number to string for display
+    solution += `{0,.5,1->L1\nVL1->L2\nMed-Med {Y1}\nEqu>String({Y1},Str1\nsub(Str1,1,length(Str1)-3->Str1\n`;
+    // clean up unused variables from the routine
+    solution += `DelVar L1DelVar L2DelVar {Y1}\n`;
+    solution += `Disp Str2+Str1\n`;
+    // display a division line at end of solution
+    solution += `Disp "`;
+    for (let i = 0; i < lineLength; i++){
+        solution += "~";
+    }
+    solution += `"\n`;
     // press 2nd key to go back to parent folder
     let back = `Repeat K=21\ngetKey->K\nEnd\nW-1->W\n|LA(W)->N\nGoto S\n`;
     str += menu + conversion + prompt + solution + back;
