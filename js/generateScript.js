@@ -196,6 +196,7 @@ function generateEquationScript(index, item) {
     const varEquations = item.varEquations;
     console.log('TCL: generateEquationScript -> vars', varEquations);
     const userVarNames = Object.keys(varEquations);
+    const userVarDescriptions = item.varDescriptions;
     const varLength = userVarNames.length;
     console.log('TCL: generateEquationScript -> varLength', varLength);
     const tiVarNames = [];
@@ -222,6 +223,7 @@ function generateEquationScript(index, item) {
     let solution = ``;
     for (let label = startIndex; label < endIndex; label++) {
         const userVarName = userVarNames[label - startIndex];
+        const userVarDescription = userVarDescriptions[userVarName];
         let tiVarNameIndex;
         if (startIndex === startEquationIndex) {
             tiVarNameIndex = label - startEquationIndex + 1;
@@ -231,7 +233,7 @@ function generateEquationScript(index, item) {
         const tiVarName = `|LV(${tiVarNameIndex})`;
         const varEquation = substituteVarNames(varEquations[userVarName], userVarNames, tiVarNames);
         // add menu item (equation variables)
-        menu += `,"${userVarName}",${label}`;
+        menu += `,"${userVarName}-${userVarDescription}",${label}`;
         // convert menu item's label to number
         conversion += `Lbl ${startIndex - 1 + endIndex - label}:L+1->L\n`;
         // prompt values for known variables
