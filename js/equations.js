@@ -154,10 +154,6 @@ function openEquationEditField(eqName, eqInfo, position) {
         let varTable = document.getElementById("varTable");
         if (vars.length > 0) {
             let tableStr = `
-            <div id="varArea">
-            <label for="equationVars">Variables: </label>
-            <span id="equationVars"></span>
-            </div>
             <thead>
             <tr>
                 <th>Vars</th>

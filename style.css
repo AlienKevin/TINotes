@@ -178,11 +178,8 @@ div#editField[data-type="equation"] input{
     width: 25vw;
 }
 
-#varArea{
-    margin-top: 1.5em;
-}
-
 #varTable{
+    margin-top: 1em;
     text-align: center;
 }
 
