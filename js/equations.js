@@ -2,6 +2,12 @@
 const newEquationBtn = document.getElementById("newEquationBtn");
 const eqLength = 20;
 let guppyInput;
+// Add guppyOSK mobile keyboard
+guppyOSK = new GuppyOSK();
+Guppy.use_osk(new GuppyOSK({
+    "goto_tab": "arithmetic",
+    "attach": "focus"
+}));
 newEquationBtn.addEventListener("click", () => {
     createMenuItem("equation");
 })
@@ -66,17 +72,18 @@ function getVarEquations() {
     return varEquations;
 }
 
-function getEquation(format){
+function getEquation(format) {
     return guppyInput.engine.get_content(format);
 }
 
-function setEquation(equation){
-    if (equation){
-		console.log('TCL: setEquation -> equation', equation);
+function setEquation(equation) {
+    if (equation) {
+        console.log('TCL: setEquation -> equation', equation);
         guppyInput.import_text(equation);
         guppyInput.engine.end();
         guppyInput.activate();
         guppyInput.render(true);
+        removeExtraGuppyOSKTabs();
     }
 }
 
@@ -94,6 +101,23 @@ function createEquationEditor() {
     return editor;
 }
 
+function removeExtraGuppyOSKTabs() {
+    // remove extra tabs
+    document.querySelector('#guppy_osk_tab_calculus').remove();
+    document.querySelector('#guppy_osk_tab_array').remove();
+    document.querySelector('#guppy_osk_tab_editor').remove();
+    document.querySelector('#guppy_osk_tab_emoji').remove();
+    document.querySelector('#guppy_osk_tab_operations').remove();
+
+    // remove extra functions in tabs
+    document.querySelector('#functions > span:nth-child(1)').remove();
+    document.querySelector('#functions > span:nth-child(2)').remove();
+    document.querySelector('#functions > span:nth-child(4)').remove();
+    for (let i = 0; i < 4; i++) {
+        document.querySelector('#functions > span:nth-child(8)').remove();
+    }
+}
+
 function openEquationEditField(eqName, eqInfo, position) {
     const editor = createEquationEditor();
     editor.setAttribute("data-item", eqName);
@@ -109,15 +133,19 @@ function openEquationEditField(eqName, eqInfo, position) {
     guppyInput = new Guppy("eqInput");
     guppyInput.configure("blacklist", ["norm", "utf8", "eval", "integral", "defintegral", "derivative", "summation", "product", "root", "vector", "point", "matrix", "infinity", "banana", "pineapple", "kiwi", "mango"]);
     guppyInput.configure("cliptype", "text");
-    guppyInput.configure("button", ["osk","settings","symbols","controls"]);
-    guppyOSK = new GuppyOSK();
-    Guppy.use_osk(new GuppyOSK({"goto_tab":"arithmetic","attach":"focus"}));
+    guppyInput.configure("button", ["osk", "settings", "symbols", "controls"]);
     guppyInput.event("change", updateVarTable);
     const previousEquation = eqInfo.textEquation;
-    if(previousEquation){
-		console.log('TCL: previousEquation', previousEquation);
+    if (previousEquation) {
+        console.log('TCL: previousEquation', previousEquation);
         setEquation(previousEquation);
     }
+    guppyInput.event("focus", (focusedObj) => {
+        if (focusedObj.focused) {
+            console.log('TCL: focused', focusedObj);
+            removeExtraGuppyOSKTabs();
+        }
+    })
 
     // load equation info from storage
     if (eqInfo !== undefined) {
@@ -129,11 +157,11 @@ function openEquationEditField(eqName, eqInfo, position) {
 
     function updateVarTable() {
         const eq = guppyInput.engine.get_content("asciimath");
-		console.log('TCL: updateVarTable -> eq', eq);
+        console.log('TCL: updateVarTable -> eq', eq);
         const vars = getEquationVars(eq);
-		console.log('TCL: updateVarTable -> vars', vars);
+        console.log('TCL: updateVarTable -> vars', vars);
         let varTable = document.getElementById("varTable");
-		console.log('TCL: updateVarTable -> varTable', varTable);
+        console.log('TCL: updateVarTable -> varTable', varTable);
         if (varTable) {
             const rows = varTable.querySelectorAll(`tbody tr`);
             const rowVars = [];
@@ -142,7 +170,7 @@ function openEquationEditField(eqName, eqInfo, position) {
                     rowVars.push(row.getAttribute("data-var"));
                 }
             );
-			console.log('TCL: updateVarTable -> rowVars', rowVars);
+            console.log('TCL: updateVarTable -> rowVars', rowVars);
             vars.forEach(
                 (variable) => {
                     if (rowVars.indexOf(variable) < 0) {
@@ -181,8 +209,8 @@ function openEquationEditField(eqName, eqInfo, position) {
     }
 
     // Source: https://stackoverflow.com/a/9792947/6798201
-    function deleteStrInArray(str, array){
-        for (var i=array.length-1; i>=0; i--) {
+    function deleteStrInArray(str, array) {
+        for (var i = array.length - 1; i >= 0; i--) {
             if (array[i] === str) {
                 array.splice(i, 1);
             }
@@ -192,7 +220,7 @@ function openEquationEditField(eqName, eqInfo, position) {
     function createVarTable(varInfo) {
         const eq = guppyInput.engine.get_content("asciimath");
         const vars = getEquationVars(eq);
-		console.log('TCL: createEquationEditor -> vars', vars);
+        console.log('TCL: createEquationEditor -> vars', vars);
         let varTable = document.getElementById("varTable");
         if (vars.length > 0) {
             let tableStr = `
