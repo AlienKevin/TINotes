@@ -1,0 +1,22 @@
+{
+  "name": "textreader",
+  "version": "1.0.0",
+  "description": "Notes management and viewing system built for TI graphing calculators. Users are able to store organized notes in a folder system in their TI calculators for reference later. You can use the graphic user interface to create files and folders and then TINotes will generate a script file for your TI calculators. You can easily send this file to your calculator and start viewing your notes.",
+  "main": "fallback.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AlienKevin/TINotes.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AlienKevin/TINotes/issues"
+  },
+  "homepage": "https://github.com/AlienKevin/TINotes#readme",
+  "dependencies": {
+    "guppy-js": "^2.0.0-beta.3"
+  }
+}
