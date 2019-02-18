@@ -70,7 +70,7 @@ function createEquationEditor() {
     editor.insertAdjacentHTML("afterbegin",
         `<div>
     <label for="eqInput">Equation: </label>
-    <input id="eqInput" type="text" size="${eqLength}" spellcheck="false"></input>
+    <div id="eqInput" type="text" size="${eqLength}" spellcheck="false"></div>
     </div>
     `);
     return editor;
@@ -86,6 +86,7 @@ function openEquationEditField(eqName, eqInfo, position) {
     }
 
     const eqInput = document.getElementById("eqInput");
+    const guppyInput = new Guppy("eqInput");
     eqInput.classList.add("eqInput");
     eqInput.addEventListener("input", updateVarTable);
 

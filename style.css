@@ -173,8 +173,13 @@ div#editField[data-type="equation"] input{
     font-family: "Computer Modern Serif", serif;
 }
 
+#eqInput{
+    display: inline-block;
+    width: 25vw;
+}
+
 #varArea{
-    margin-top: .8em;
+    margin-top: 1.5em;
 }
 
 #varTable{
