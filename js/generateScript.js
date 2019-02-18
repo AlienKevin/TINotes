@@ -135,7 +135,9 @@ function generateScript() {
     equationIndex = startEquationIndex;
     script = `0->N\n1->W\nLbl S\n`; // initialize variables
     // initiate equation var list
-    script += `{0${",0".repeat(equationVarSize - 1)}}->|LV\n`;
+    if (equationVarSize > 0) {
+        script += `{0${",0".repeat(equationVarSize - 1)}}->|LV\n`;
+    }
     script += generateScriptHelper("home", 0);
     script += `${baseScript}`;
 }
@@ -232,7 +234,7 @@ function generateEquationScript(index, item) {
         }
         const tiVarName = `|LV(${tiVarNameIndex})`;
         const varEquation = substituteVarNames(varEquations[userVarName], userVarNames, tiVarNames);
-		console.log('TCL: generateEquationScript -> varEquation', varEquation);
+        console.log('TCL: generateEquationScript -> varEquation', varEquation);
         if (isFinite(varEquation)) { // var is a constant
             console.log('TCL: generateEquationScript -> varEquation' + varEquation + ' is finite');
             prompt += `${varEquation}->${tiVarName}\n`;
