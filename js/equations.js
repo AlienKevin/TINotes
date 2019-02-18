@@ -108,6 +108,7 @@ function openEquationEditField(eqName, eqInfo, position) {
     // convert div to guppy editor
     guppyInput = new Guppy("eqInput");
     guppyInput.configure("blacklist", ["norm", "utf8", "eval", "integral", "defintegral", "derivative", "summation", "product", "root", "vector", "point", "matrix", "infinity", "banana", "pineapple", "kiwi", "mango"]);
+    guppyInput.configure("cliptype", "text");
     guppyInput.event("change", updateVarTable);
     const previousEquation = eqInfo.textEquation;
     if(previousEquation){
