@@ -3,7 +3,8 @@ fallback.load({
             // Include your stylesheets, this can be an array of stylesheets or a string!
             page_css: 'fontawesome/css/all.css', // load local font awesome library
             global_css: ['introjs/introjs.min.css',  // load introjs css
-            'https://cdn.rawgit.com/dreampulse/computer-modern-web-font/master/fonts.css'],
+            'https://cdn.rawgit.com/dreampulse/computer-modern-web-font/master/fonts.css',
+            '/node_modules/guppy-js/style/guppy-default.min.css'],
 
             // JavaScript library. THE KEY MUST BE THE LIBRARIES WINDOW VARIABLE!
             // load sweet alert for beautiful popups: https://github.com/t4t5/sweetalert
@@ -31,6 +32,10 @@ fallback.load({
             'nerdamer': [
                 '//cdn.jsdelivr.net/npm/nerdamer@0.8.4/nerdamer.core.min.js',
                 'nerdamer/nerdamer.core.js'
+            ],
+            'Guppy': [
+                '//cdn.jsdelivr.net/npm/guppy-js@2.0.0-beta.3/guppy.min.js',
+                '/node_modules/guppy-js/guppy.min.js',
             ],
             'script': 'js/script.js',
 
