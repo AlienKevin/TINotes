@@ -46,7 +46,7 @@ fallback.load({
         }); fallback.ready(function () {
             dynamicallyLoadScript("js/equations.js");
             dynamicallyLoadScript("js/contextMenu.js");
-            dynamicallyLoadScript("baseScript.txt");
+            dynamicallyLoadScript("TI-BASIC/baseScript.txt");
             dynamicallyLoadScript("js/generateScript.js");
             dynamicallyLoadScript("js/popup.js");
         });
