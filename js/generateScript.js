@@ -42,7 +42,7 @@ function calculateFolderSize() {
     return folderSize;
 }
 
-function calculateEquationVarSize(){
+function calculateEquationVarSize() {
     let varSize = 0;
     iterateStorage(function (item, itemName, itemType) {
         if (itemType === "equation") {
@@ -206,9 +206,9 @@ function generateEquationScript(index, item) {
         // LV is a list in ti-basic where "L" is the command for denoting
         // a custom list and "V" is the name of the list and stands for
         // "variable"
-        if (startIndex === startEquationIndex){
+        if (startIndex === startEquationIndex) {
             tiVarNames.push(`LV${i - startEquationIndex + 1}`);
-        } else{
+        } else {
             tiVarNames.push(`LV${i - startEquationIndex}`);
         }
     }
@@ -227,21 +227,27 @@ function generateEquationScript(index, item) {
         let tiVarNameIndex;
         if (startIndex === startEquationIndex) {
             tiVarNameIndex = label - startEquationIndex + 1;
-        } else{
+        } else {
             tiVarNameIndex = label - startEquationIndex;
         }
         const tiVarName = `|LV(${tiVarNameIndex})`;
         const varEquation = substituteVarNames(varEquations[userVarName], userVarNames, tiVarNames);
-        // add menu item (equation variables)
-        menu += `,"${userVarName}-${userVarDescription}",${label}`;
+		console.log('TCL: generateEquationScript -> varEquation', varEquation);
+        if (isFinite(varEquation)) { // var is a constant
+            console.log('TCL: generateEquationScript -> varEquation' + varEquation + ' is finite');
+            prompt += `${varEquation}->${tiVarName}\n`;
+        } else { // var is a true variable
+            // add menu item (equation variables)
+            menu += `,"${userVarName}-${userVarDescription}",${label}`;
+            // prompt values for known variables
+            prompt += `If (L!=${label})\nThen\nInput "${userVarName}=",T\n`;
+            // use T as a temporary variable (input doesn't accept L1(2) syntax)
+            prompt += `T->${tiVarName}\nEnd\n`;
+            // calculate and display the solution
+            solution += `If L=${label}\nThen\n"${userVarName}="->Str2\n${varEquation}->V\nEnd\n`;
+        }
         // convert menu item's label to number
         conversion += `Lbl ${startIndex - 1 + endIndex - label}:L+1->L\n`;
-        // prompt values for known variables
-        prompt += `If (L!=${label})\nThen\nInput "${userVarName}=",T\n`;
-        // use T as a temporary variable (input doesn't accept L1(2) syntax)
-        prompt += `T->${tiVarName}\nEnd\n`;
-        // calculate and display the solution
-        solution += `If L=${label}\nThen\n"${userVarName}="->Str2\n${varEquation}->V\nEnd\n`;
     }
     menu += `)\n`; // end menu
     // convert result from number to string for display
@@ -269,15 +275,15 @@ function substituteVarNames(equation, oldVarNames, newVarNames) {
     for (let i = 0; i < oldVarNames.length; i++) {
         varMap[oldVarNames[i]] = newVarNames[i];
     }
-    let newEquation = nerdamer(equation, varMap).toString();
+    let newEquation = nerdamer(equation, varMap).text("decimals");
     // add in sourcecoder notation of a list
     newEquation = newEquation.replace(/LV([0-9]+)/g, "|LV($1)");
     newEquation = convertMinusesToNegations(newEquation);
     return newEquation;
 }
 
-function convertMinusesToNegations(eq){
-    if (eq[0] === "-"){
+function convertMinusesToNegations(eq) {
+    if (eq[0] === "-") {
         eq = "~" + eq.substring(1);
     }
     eq = eq.replace(/\(\-/g, "(~");
