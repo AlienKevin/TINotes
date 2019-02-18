@@ -104,8 +104,10 @@ function openEquationEditField(eqName, eqInfo, position) {
     }
 
     const eqInput = document.getElementById("eqInput");
-    guppyInput = new Guppy("eqInput");
     eqInput.classList.add("eqInput");
+    // convert div to guppy editor
+    guppyInput = new Guppy("eqInput");
+    guppyInput.configure("blacklist", ["norm", "utf8", "eval", "integral", "defintegral", "derivative", "summation", "product", "root", "vector", "point", "matrix", "infinity", "banana", "pineapple", "kiwi", "mango"]);
     guppyInput.event("change", updateVarTable);
     const previousEquation = eqInfo.textEquation;
     if(previousEquation){
