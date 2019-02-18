@@ -157,7 +157,7 @@ function openEquationEditField(eqName, eqInfo, position) {
             }
             if (eq === "") {
                 if (varTable) {
-                    removeAllChildren(varTable);
+                    varTable.remove();
                 }
             }
         } else {
