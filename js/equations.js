@@ -116,14 +116,7 @@ function openEquationEditField(eqName, eqInfo, position) {
             vars.forEach(
                 (variable) => {
                     if (rowVars.indexOf(variable) < 0) {
-                        let newRow = `<tr data-var="${variable}"><th>${variable}</th><td>`;
-                        // add variable equation column
-                        newRow += `<input type="text" size="${eqLength}" class="eqInput" data-var="${variable}" spellcheck="false"></td>`;
-                        // add variable description column
-                        const varDescriptionLength = lineLength - variable.length - 1;
-                        newRow += `<td><input type="text" class="descriptionInput" 
-                size=${varDescriptionLength} maxlength=${varDescriptionLength} data-var="${variable}" spellcheck="false"`;
-                        newRow += `</tr>`;
+                        const newRow = createNewRowHTML(variable);
                         varTable.getElementsByTagName("tbody")[0].insertAdjacentHTML("beforeend", newRow);
                     }
                 }
@@ -160,39 +153,19 @@ function openEquationEditField(eqName, eqInfo, position) {
         let varTable = document.getElementById("varTable");
         if (vars.length > 0) {
             let tableStr = `
-        <div id="varArea">
-        <label for="equationVars">Variables: </label>
-        <span id="equationVars"></span>
-        </div>
-        <thead>
-        <tr>
-            <th>Vars</th>
-            <th>Equations</th>
-            <th>Description</th>
-        </tr>
-        </thead>`;
+            <div id="varArea">
+            <label for="equationVars">Variables: </label>
+            <span id="equationVars"></span>
+            </div>
+            <thead>
+            <tr>
+                <th>Vars</th>
+                <th>Equations</th>
+                <th>Description</th>
+            </tr>
+            </thead>`;
             vars.forEach((variable) => {
-                const previousVarEquation = document.querySelector(`.eqInput[data-var="${variable}"`);
-
-                // add variable name column
-                tableStr += `<tr data-var="${variable}"><th>${variable}</th><td>`;
-                // add variable equation column
-                tableStr += `<input type="text" size="${eqLength}" class="eqInput" data-var="${variable}" spellcheck="false" `;
-                if (previousVarEquation) {
-                    tableStr += `value="${previousVarEquation.value}"`;
-                }
-                tableStr += `></input></td>`;
-
-                // add variable description column
-                const varDescriptionLength = lineLength - variable.length - 1;
-                tableStr += `<td><input type="text" class="descriptionInput" 
-                size=${varDescriptionLength} maxlength=${varDescriptionLength} data-var="${variable}" spellcheck="false"`;
-                const previousVarDescription = document.querySelector(`.descriptionInput[data-var="${variable}"`);
-                if (previousVarDescription) {
-                    tableStr += `value="${previousVarDescription.value}"`;
-                }
-                tableStr += `></input></td>`;
-                tableStr += `</tr>`;
+                tableStr += createNewRowHTML(variable);
             });
             if (!varTable) {
                 varTable = document.createElement("table");
@@ -215,6 +188,18 @@ function openEquationEditField(eqName, eqInfo, position) {
             }
         }
     }
+}
+
+function createNewRowHTML(variable){
+    let newRow = `<tr data-var="${variable}"><th>${variable}</th><td>`;
+    // add variable equation column
+    newRow += `<input type="text" size="${eqLength}" class="eqInput" data-var="${variable}" spellcheck="false"></td>`;
+    // add variable description column
+    const varDescriptionLength = lineLength - variable.length - 1;
+    newRow += `<td><input type="text" class="descriptionInput" 
+size=${varDescriptionLength} maxlength=${varDescriptionLength} data-var="${variable}" spellcheck="false"`;
+    newRow += `</tr>`;
+    return newRow;
 }
 
 function loadVarDescriptions(varDescriptions) {
