@@ -34,13 +34,17 @@ fallback.load({
             ],
             'Guppy': [
                 '//guppy.js.org/build/guppy.js',
-                '/node_modules/guppy-js/guppy.min.js',
+                '/node_modules/guppy-js/guppy.js',
+            ],
+            'GuppyOSK': [
+                '//guppy.js.org/build/guppy_osk.js',
+                '/node_modules/guppy-js/guppy_osk.js',
             ],
             'script': 'js/script.js',
 
         }, {
             shim: {
-                'script': ['Mousetrap','swal','introJs']
+                'script': ['Mousetrap','swal','introJs'],
             },
         }); fallback.ready(function () {
             dynamicallyLoadScript("js/equations.js");
