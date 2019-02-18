@@ -94,12 +94,68 @@ function openEquationEditField(eqName, eqInfo, position) {
         if (eqInfo.equation) {
             eqInput.value = eqInfo.equation;
         }
-        updateVarTable(eqInfo);
+        createVarTable(eqInfo);
     }
 
-    function updateVarTable(varInfo) {
+    function updateVarTable() {
         const eq = eqInput.value;
-        const vars = nerdamer(eq.replace(/\=/g, " ")).variables();
+		console.log('TCL: updateVarTable -> eq', eq);
+        const vars = getEquationVars(eq);
+        console.log('TCL: updateVarTable -> vars', vars);
+        let varTable = document.getElementById("varTable");
+        console.log('TCL: updateVarTable -> varTable', varTable);
+        if (varTable) {
+            const rows = varTable.querySelectorAll(`tbody tr`);
+            const rowVars = [];
+            rows.forEach(
+                (row) => {
+                    rowVars.push(row.getAttribute("data-var"));
+                }
+            );
+            console.log('TCL: updateVarTable -> rowVars', rowVars);
+            vars.forEach(
+                (variable) => {
+                    if (rowVars.indexOf(variable) < 0) {
+                        let newRow = `<tr data-var="${variable}"><th>${variable}</th><td>`;
+                        // add variable equation column
+                        newRow += `<input type="text" size="${eqLength}" class="eqInput" data-var="${variable}" spellcheck="false"></td>`;
+                        // add variable description column
+                        const varDescriptionLength = lineLength - variable.length - 1;
+                        newRow += `<td><input type="text" class="descriptionInput" 
+                size=${varDescriptionLength} maxlength=${varDescriptionLength} data-var="${variable}" spellcheck="false"`;
+                        newRow += `</tr>`;
+                        varTable.getElementsByTagName("tbody")[0].insertAdjacentHTML("beforeend", newRow);
+                    }
+                }
+            )
+            if (vars.length > 0) {
+                rows.forEach(
+                    (row) => {
+                        const rowVar = row.getAttribute("data-var");
+                        if (vars.indexOf(rowVar) < 0) {
+                            row.remove();
+                        }
+                    }
+                );
+            }
+            if (eq === "") {
+                if (varTable) {
+                    removeAllChildren(varTable);
+                }
+            }
+        } else {
+            createVarTable();
+            updateVarTable();
+        }
+    }
+
+    function getEquationVars(equation) {
+        return nerdamer(equation.replace(/\=/g, " ")).variables();
+    }
+
+    function createVarTable(varInfo) {
+        const eq = eqInput.value;
+        const vars = getEquationVars(eq);
         console.log('TCL: createEquationEditor -> vars', vars);
         let varTable = document.getElementById("varTable");
         if (vars.length > 0) {
@@ -108,16 +164,18 @@ function openEquationEditField(eqName, eqInfo, position) {
         <label for="equationVars">Variables: </label>
         <span id="equationVars"></span>
         </div>
+        <thead>
         <tr>
             <th>Vars</th>
             <th>Equations</th>
             <th>Description</th>
-        </tr>`;
+        </tr>
+        </thead>`;
             vars.forEach((variable) => {
                 const previousVarEquation = document.querySelector(`.eqInput[data-var="${variable}"`);
 
                 // add variable name column
-                tableStr += `<tr><th>${variable}</th><td>`;
+                tableStr += `<tr data-var="${variable}"><th>${variable}</th><td>`;
                 // add variable equation column
                 tableStr += `<input type="text" size="${eqLength}" class="eqInput" data-var="${variable}" spellcheck="false" `;
                 if (previousVarEquation) {
@@ -154,10 +212,6 @@ function openEquationEditField(eqName, eqInfo, position) {
                 if (varDescriptions) {
                     loadVarDescriptions(varDescriptions);
                 }
-            }
-        } else if (eq === "") {
-            if (varTable) {
-                removeAllChildren(varTable);
             }
         }
     }
