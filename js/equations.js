@@ -88,7 +88,7 @@ function openEquationEditField(eqName, eqInfo, position) {
     const eqInput = document.getElementById("eqInput");
     const guppyInput = new Guppy("eqInput");
     eqInput.classList.add("eqInput");
-    eqInput.addEventListener("input", updateVarTable);
+    guppyInput.event("change", updateVarTable);
 
     // load equation info from storage
     if (eqInfo !== undefined) {
@@ -99,12 +99,12 @@ function openEquationEditField(eqName, eqInfo, position) {
     }
 
     function updateVarTable() {
-        const eq = eqInput.value;
-		console.log('TCL: updateVarTable -> eq', eq);
+        const eq = guppyInput.engine.get_content("asciimath");
+        console.log('TCL: updateVarTable -> eq', eq);
         const vars = getEquationVars(eq);
-        console.log('TCL: updateVarTable -> vars', vars);
+        // console.log('TCL: updateVarTable -> vars', vars);
         let varTable = document.getElementById("varTable");
-        console.log('TCL: updateVarTable -> varTable', varTable);
+        // console.log('TCL: updateVarTable -> varTable', varTable);
         if (varTable) {
             const rows = varTable.querySelectorAll(`tbody tr`);
             const rowVars = [];
@@ -113,7 +113,7 @@ function openEquationEditField(eqName, eqInfo, position) {
                     rowVars.push(row.getAttribute("data-var"));
                 }
             );
-            console.log('TCL: updateVarTable -> rowVars', rowVars);
+            // console.log('TCL: updateVarTable -> rowVars', rowVars);
             vars.forEach(
                 (variable) => {
                     if (rowVars.indexOf(variable) < 0) {
@@ -144,13 +144,27 @@ function openEquationEditField(eqName, eqInfo, position) {
     }
 
     function getEquationVars(equation) {
-        return nerdamer(equation.replace(/\=/g, " ")).variables();
+        let variables = [];
+        try {
+            variables = nerdamer(equation.replace(/\=/g, " ")).variables();
+            deleteStrInArray("ln", variables);
+        } catch (e) {}
+        return variables;
+    }
+
+    // Source: https://stackoverflow.com/a/9792947/6798201
+    function deleteStrInArray(str, array){
+        for (var i=array.length-1; i>=0; i--) {
+            if (array[i] === str) {
+                array.splice(i, 1);
+            }
+        }
     }
 
     function createVarTable(varInfo) {
         const eq = eqInput.value;
         const vars = getEquationVars(eq);
-        console.log('TCL: createEquationEditor -> vars', vars);
+        // console.log('TCL: createEquationEditor -> vars', vars);
         let varTable = document.getElementById("varTable");
         if (vars.length > 0) {
             let tableStr = `
@@ -187,7 +201,7 @@ function openEquationEditField(eqName, eqInfo, position) {
     }
 }
 
-function createNewRowHTML(variable){
+function createNewRowHTML(variable) {
     let newRow = `<tr data-var="${variable}"><th>${variable}</th><td>`;
     // add variable equation column
     newRow += `<input type="text" size="${eqLength}" class="eqInput" data-var="${variable}" spellcheck="false"></td>`;
