@@ -149,8 +149,12 @@ function openEquationEditField(eqName, eqInfo, position) {
         if (focusedObj.focused) {
             console.log('TCL: focused', focusedObj);
             removeExtraGuppyOSKTabs();
+            editor.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
         }
     })
+
+    // Scroll editor into view
+    editor.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
 
     // load equation info from storage
     if (eqInfo !== undefined) {
