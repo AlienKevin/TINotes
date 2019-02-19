@@ -116,6 +116,11 @@ function removeExtraGuppyOSKTabs() {
     for (let i = 0; i < 4; i++) {
         document.querySelector('#functions > span:nth-child(8)').remove();
     }
+
+    // remove extra control buttons
+    document.querySelector('body > div.guppy_osk > div.tabbar > div.scroller-left').remove();
+    document.querySelector('body > div.guppy_osk > div.tabbar > div.scroller-right').remove();
+
 }
 
 function openEquationEditField(eqName, eqInfo, position) {
