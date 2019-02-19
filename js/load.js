@@ -42,6 +42,7 @@ fallback.load({
                 'script': ['Mousetrap','swal','introJs'],
             },
         }); fallback.ready(function () {
+            dynamicallyLoadScript("js/utils.js");
             dynamicallyLoadScript("js/equations.js");
             dynamicallyLoadScript("js/contextMenu.js");
             dynamicallyLoadScript("TI-BASIC/baseScript.txt");

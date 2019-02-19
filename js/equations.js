@@ -231,15 +231,6 @@ function openEquationEditField(eqName, eqInfo, position) {
         return variables;
     }
 
-    // Source: https://stackoverflow.com/a/9792947/6798201
-    function deleteStrInArray(str, array) {
-        for (var i = array.length - 1; i >= 0; i--) {
-            if (array[i] === str) {
-                array.splice(i, 1);
-            }
-        }
-    }
-
     function createVarTable(varInfo) {
         const eq = guppyInput.engine.get_content("asciimath");
         const vars = getEquationVars(eq);
