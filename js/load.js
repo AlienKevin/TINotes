@@ -27,11 +27,6 @@ fallback.load({
                 'introjs/intro.min.js'
             ],
 
-            // load Nerdamer as a computer algebra system
-            'nerdamer': [
-                '//cdn.jsdelivr.net/npm/nerdamer@0.8.4/nerdamer.core.min.js',
-                'nerdamer/nerdamer.core.js'
-            ],
             'Guppy': [
                 '//guppy.js.org/build/guppy.js',
                 '/node_modules/guppy-js/guppy.js',
