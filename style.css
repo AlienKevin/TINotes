@@ -204,6 +204,11 @@ div.guppy_osk .guppy_osk_key{
     height: 1.5em;
 }
 
+div.guppy_osk > div.tabbar > ul{
+    width: 100%;
+    margin: 0;
+}
+
 /* context menu */
 
 .context-menu {
