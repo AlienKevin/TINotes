@@ -37,9 +37,6 @@ function storeEquation(eqName, eqInfo) {
     // storing equation in asciimath
     eqInfo.equation = getEquation("asciimath");
 
-    // storing equation in latex
-    eqInfo.textEquation = getEquation("text");
-
     // storing variable equations
     eqInfo.varEquations = getVarEquations();
 
@@ -72,14 +69,31 @@ function getVarEquations() {
     return varEquations;
 }
 
-function getEquation(format) {
-    return guppyInput.engine.get_content(format);
+const equationTextToSymbol = {
+    "absolutevalue(": "abs(",
+    "squareroot(": "sqrt(",
+}
+
+function convertTextToSymbol(textEquation){
+    Object.entries(equationTextToSymbol).forEach(([text, symbol]) => {
+        textEquation = textEquation.replace(new RegExp(text, "g"), symbol);
+    });
+}
+
+function convertSymbolToText(symbolEquation){
+    Object.entries(equationTextToSymbol).forEach(([text, symbol]) => {
+        symbolEquation = symbolEquation.replace(new RegExp(symbol, "g"), text);
+    });
+}
+
+function getEquation() {
+    return convertTextToSymbol(guppyInput.engine.get_content("text"));
 }
 
 function setEquation(equation) {
     if (equation) {
         console.log('TCL: setEquation -> equation', equation);
-        guppyInput.import_text(equation);
+        guppyInput.import_text(convertSymbolToText(equation));
         guppyInput.engine.end();
         guppyInput.activate();
         guppyInput.render(true);
@@ -140,7 +154,7 @@ function openEquationEditField(eqName, eqInfo, position) {
     guppyInput.configure("cliptype", "text");
     guppyInput.configure("button", ["osk", "settings", "symbols", "controls"]);
     guppyInput.event("change", updateVarTable);
-    const previousEquation = eqInfo.textEquation;
+    const previousEquation = eqInfo.equation;
     if (previousEquation) {
         console.log('TCL: previousEquation', previousEquation);
         setEquation(previousEquation);
