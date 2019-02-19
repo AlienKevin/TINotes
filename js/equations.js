@@ -35,7 +35,7 @@ function storeEquation(eqName, eqInfo) {
     const eqInput = document.getElementById("eqInput");
 
     // storing equation in asciimath
-    eqInfo.equation = getEquation("asciimath");
+    eqInfo.equation = getEquation();
 
     // storing variable equations
     eqInfo.varEquations = getVarEquations();
@@ -76,14 +76,17 @@ const equationTextToSymbol = {
 
 function convertTextToSymbol(textEquation){
     Object.entries(equationTextToSymbol).forEach(([text, symbol]) => {
-        textEquation = textEquation.replace(new RegExp(text, "g"), symbol);
+        textEquation = textEquation.replace(new RegExp(RegExp.escape(text), "g"), symbol);
     });
+    console.log('TCL: convertTextToSymbol -> textEquation', textEquation);
+    return textEquation;
 }
 
 function convertSymbolToText(symbolEquation){
     Object.entries(equationTextToSymbol).forEach(([text, symbol]) => {
-        symbolEquation = symbolEquation.replace(new RegExp(symbol, "g"), text);
+        symbolEquation = symbolEquation.replace(new RegExp(RegExp.escape(symbol), "g"), text);
     });
+    return symbolEquation;
 }
 
 function getEquation() {
@@ -179,7 +182,7 @@ function openEquationEditField(eqName, eqInfo, position) {
     }
 
     function updateVarTable() {
-        const eq = guppyInput.engine.get_content("asciimath");
+        const eq = getEquation();
         console.log('TCL: updateVarTable -> eq', eq);
         const vars = getEquationVars(eq);
         console.log('TCL: updateVarTable -> vars', vars);
@@ -232,7 +235,7 @@ function openEquationEditField(eqName, eqInfo, position) {
     }
 
     function createVarTable(varInfo) {
-        const eq = guppyInput.engine.get_content("asciimath");
+        const eq = getEquation();
         const vars = getEquationVars(eq);
         console.log('TCL: createEquationEditor -> vars', vars);
         let varTable = document.getElementById("varTable");

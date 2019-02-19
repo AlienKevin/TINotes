@@ -13,7 +13,7 @@ function deleteStrInArray(str, array) {
 
 // source: https://stackoverflow.com/a/3561711/6798201
 // Escape all special characters in a regular expression string
-function escapeRegExp(s) {
+RegExp.escape = function(s) {
     return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 };
 
