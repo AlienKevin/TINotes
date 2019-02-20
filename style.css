@@ -179,6 +179,23 @@ div#editField[data-type="equation"] input{
     width: 25vw;
 }
 
+/* warning sign */
+.warning{
+    margin-left: 1em;
+    font-size: 1.3em;
+    animation: fadeIn 0.3s ease-in;
+}
+
+/* fade in animation */
+@keyframes fadeIn{
+    0%{
+        opacity: 0
+    }
+    100%{
+        opacity: 1
+    }
+}
+
 #varTable{
     margin-top: 1em;
     text-align: center;

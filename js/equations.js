@@ -2,6 +2,7 @@
 const newEquationBtn = document.getElementById("newEquationBtn");
 const eqLength = 20;
 let guppyInput;
+let warningTimerId; // timer id for settimeout of warning sign
 // Add guppyOSK mobile keyboard
 guppyOSK = new GuppyOSK();
 Guppy.use_osk(new GuppyOSK({
@@ -78,7 +79,7 @@ function convertTextToSymbol(textEquation){
     Object.entries(equationTextToSymbol).forEach(([text, symbol]) => {
         textEquation = textEquation.replace(new RegExp(RegExp.escape(text), "g"), symbol);
     });
-    console.log('TCL: convertTextToSymbol -> textEquation', textEquation);
+	console.log('TCL: convertTextToSymbol -> textEquation', textEquation);
     return textEquation;
 }
 
@@ -90,12 +91,41 @@ function convertSymbolToText(symbolEquation){
 }
 
 function getEquation() {
-    return convertTextToSymbol(guppyInput.engine.get_content("text"));
+    try{
+        const equation = convertTextToSymbol(guppyInput.engine.get_content("text"));
+        detachWarning(eqInput);
+        return equation;
+    } catch(e){
+        warningTimerId = setTimeout(() => {AttachWarning(eqInput)}, 500);
+		console.log('TCL: timerId -> timerId', warningTimerId);
+    }
+    return ""; // no equation found
+}
+
+function AttachWarning(element){
+	console.log('TCL: AttachWarning -> AttachWarning');
+    const warningSign = element.parentNode.querySelector(`.warning`);
+    if (!warningSign){
+        element.insertAdjacentHTML("afterend", `<i class="fa fa-exclamation-triangle warning" aria-hidden="true"></i>`);
+    }
+}
+
+function detachWarning(element){
+	console.log('TCL: detachWarning -> detachWarning');
+	console.log('TCL: detachWarning -> timerId', warningTimerId);
+    const warningSign = element.parentNode.querySelector(`.warning`);
+    // clearTimeout(timerId);
+    if (warningSign){
+		console.log('TCL: detachWarning -> removing warningSign', warningSign);
+        warningSign.remove();
+    } else{
+        clearTimeout(warningTimerId);
+    }
 }
 
 function setEquation(equation) {
     if (equation) {
-        console.log('TCL: setEquation -> equation', equation);
+		console.log('TCL: setEquation -> equation', equation);
         guppyInput.import_text(convertSymbolToText(equation));
         guppyInput.engine.end();
         guppyInput.activate();
@@ -159,12 +189,12 @@ function openEquationEditField(eqName, eqInfo, position) {
     guppyInput.event("change", updateVarTable);
     const previousEquation = eqInfo.equation;
     if (previousEquation) {
-        console.log('TCL: previousEquation', previousEquation);
+		console.log('TCL: previousEquation', previousEquation);
         setEquation(previousEquation);
     }
     guppyInput.event("focus", (focusedObj) => {
         if (focusedObj.focused) {
-            console.log('TCL: focused', focusedObj);
+			console.log('TCL: focused', focusedObj);
             removeExtraGuppyOSKTabs();
             editor.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
         }
@@ -183,11 +213,11 @@ function openEquationEditField(eqName, eqInfo, position) {
 
     function updateVarTable() {
         const eq = getEquation();
-        console.log('TCL: updateVarTable -> eq', eq);
+		console.log('TCL: updateVarTable -> eq', eq);
         const vars = getEquationVars(eq);
-        console.log('TCL: updateVarTable -> vars', vars);
+		console.log('TCL: updateVarTable -> vars', vars);
         let varTable = document.getElementById("varTable");
-        console.log('TCL: updateVarTable -> varTable', varTable);
+		console.log('TCL: updateVarTable -> varTable', varTable);
         if (varTable) {
             const rows = varTable.querySelectorAll(`tbody tr`);
             const rowVars = [];
@@ -196,7 +226,7 @@ function openEquationEditField(eqName, eqInfo, position) {
                     rowVars.push(row.getAttribute("data-var"));
                 }
             );
-            console.log('TCL: updateVarTable -> rowVars', rowVars);
+			console.log('TCL: updateVarTable -> rowVars', rowVars);
             vars.forEach(
                 (variable) => {
                     if (rowVars.indexOf(variable) < 0) {
@@ -236,8 +266,9 @@ function openEquationEditField(eqName, eqInfo, position) {
 
     function createVarTable(varInfo) {
         const eq = getEquation();
+        detachWarning(eqInput);
         const vars = getEquationVars(eq);
-        console.log('TCL: createEquationEditor -> vars', vars);
+		console.log('TCL: createEquationEditor -> vars', vars);
         let varTable = document.getElementById("varTable");
         if (vars.length > 0) {
             let tableStr = `
