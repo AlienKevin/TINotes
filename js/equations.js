@@ -75,15 +75,15 @@ const equationTextToSymbol = {
     "squareroot(": "sqrt(",
 }
 
-function convertTextToSymbol(textEquation){
+function convertTextToSymbol(textEquation) {
     Object.entries(equationTextToSymbol).forEach(([text, symbol]) => {
         textEquation = textEquation.replace(new RegExp(RegExp.escape(text), "g"), symbol);
     });
-	console.log('TCL: convertTextToSymbol -> textEquation', textEquation);
+    console.log('TCL: convertTextToSymbol -> textEquation', textEquation);
     return textEquation;
 }
 
-function convertSymbolToText(symbolEquation){
+function convertSymbolToText(symbolEquation) {
     Object.entries(equationTextToSymbol).forEach(([text, symbol]) => {
         symbolEquation = symbolEquation.replace(new RegExp(RegExp.escape(symbol), "g"), text);
     });
@@ -91,41 +91,43 @@ function convertSymbolToText(symbolEquation){
 }
 
 function getEquation() {
-    try{
+    try {
         const equation = convertTextToSymbol(guppyInput.engine.get_content("text"));
         detachWarning(eqInput);
         return equation;
-    } catch(e){
-        warningTimerId = setTimeout(() => {AttachWarning(eqInput)}, 500);
-		console.log('TCL: timerId -> timerId', warningTimerId);
+    } catch (e) {
+        warningTimerId = setTimeout(() => {
+            AttachWarning(eqInput)
+        }, 500);
+        console.log('TCL: timerId -> timerId', warningTimerId);
     }
     return ""; // no equation found
 }
 
-function AttachWarning(element){
-	console.log('TCL: AttachWarning -> AttachWarning');
+function AttachWarning(element) {
+    console.log('TCL: AttachWarning -> AttachWarning');
     const warningSign = element.parentNode.querySelector(`.warning`);
-    if (!warningSign){
+    if (!warningSign) {
         element.insertAdjacentHTML("afterend", `<i class="fa fa-exclamation-triangle warning" aria-hidden="true"></i>`);
     }
 }
 
-function detachWarning(element){
-	console.log('TCL: detachWarning -> detachWarning');
-	console.log('TCL: detachWarning -> timerId', warningTimerId);
+function detachWarning(element) {
+    console.log('TCL: detachWarning -> detachWarning');
+    console.log('TCL: detachWarning -> timerId', warningTimerId);
     const warningSign = element.parentNode.querySelector(`.warning`);
     // clearTimeout(timerId);
-    if (warningSign){
-		console.log('TCL: detachWarning -> removing warningSign', warningSign);
+    if (warningSign) {
+        console.log('TCL: detachWarning -> removing warningSign', warningSign);
         warningSign.remove();
-    } else{
+    } else {
         clearTimeout(warningTimerId);
     }
 }
 
 function setEquation(equation) {
     if (equation) {
-		console.log('TCL: setEquation -> equation', equation);
+        console.log('TCL: setEquation -> equation', equation);
         guppyInput.import_text(convertSymbolToText(equation));
         guppyInput.engine.end();
         guppyInput.activate();
@@ -149,6 +151,7 @@ function createEquationEditor() {
 }
 
 function removeExtraGuppyOSKTabs() {
+    console.log('TCL: removeExtraGuppyOSKTabs -> removeExtraGuppyOSKTabs');
     // remove extra tabs
     document.querySelector('#guppy_osk_tab_calculus').remove();
     document.querySelector('#guppy_osk_tab_array').remove();
@@ -156,18 +159,39 @@ function removeExtraGuppyOSKTabs() {
     document.querySelector('#guppy_osk_tab_emoji').remove();
     document.querySelector('#guppy_osk_tab_operations').remove();
 
-    // remove extra functions in tabs
-    document.querySelector('#functions > span:nth-child(1)').remove();
-    document.querySelector('#functions > span:nth-child(2)').remove();
-    document.querySelector('#functions > span:nth-child(4)').remove();
-    for (let i = 0; i < 4; i++) {
-        document.querySelector('#functions > span:nth-child(8)').remove();
-    }
-
     // remove extra control buttons
     document.querySelector('body > div.guppy_osk > div.tabbar > div.scroller-left').remove();
     document.querySelector('body > div.guppy_osk > div.tabbar > div.scroller-right').remove();
 
+    setTimeout(function () { // use settimeout to avoid obstructing the program flow
+
+        // remove extra functions in tabs
+        document.querySelector('#functions > span:nth-child(1)').remove();
+        document.querySelector('#functions > span:nth-child(2)').remove();
+        document.querySelector('#functions > span:nth-child(4)').remove();
+        for (let i = 0; i < 4; i++) {
+            document.querySelector('#functions > span:nth-child(8)').remove();
+        }
+
+        // remove extra greek letters
+        console.log("removing extra greek letters...");
+        document.querySelectorAll('#greek span > span.katex-mathml > math > semantics > mrow > mi').forEach(cell => {
+            console.log('TCL: removeExtraGuppyOSKTabs -> cell', cell);
+            const letter = cell.innerHTML;
+            if (Object.values(conversionTable).indexOf(letter) < 0) {
+                cell.closest("span.guppy_osk_key").remove();
+            }
+        })
+
+        // remove extra trig functions
+        document.querySelectorAll('#trigonometry span > span > span.katex-mathml > math > semantics > mrow > mi').forEach(cell => {
+            const funcName = cell.innerHTML;
+            const allowedTrigFunctions = ["cos", "sin", "tan", "arccos", "arcsin", "arctan", "log", "ln"];
+            if (allowedTrigFunctions.indexOf(funcName) < 0) {
+                cell.closest("span.guppy_osk_key").remove();
+            }
+        })
+    }, 100);
 }
 
 function openEquationEditField(eqName, eqInfo, position) {
@@ -189,19 +213,27 @@ function openEquationEditField(eqName, eqInfo, position) {
     guppyInput.event("change", updateVarTable);
     const previousEquation = eqInfo.equation;
     if (previousEquation) {
-		console.log('TCL: previousEquation', previousEquation);
+        console.log('TCL: previousEquation', previousEquation);
         setEquation(previousEquation);
     }
     guppyInput.event("focus", (focusedObj) => {
         if (focusedObj.focused) {
-			console.log('TCL: focused', focusedObj);
+            console.log('TCL: focused', focusedObj);
             removeExtraGuppyOSKTabs();
-            editor.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+            editor.scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+                inline: "nearest"
+            });
         }
     })
 
     // Scroll editor into view
-    editor.scrollIntoView({behavior: "smooth", block: "start", inline: "nearest"});
+    editor.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+        inline: "nearest"
+    });
 
     // load equation info from storage
     if (eqInfo !== undefined) {
@@ -213,11 +245,11 @@ function openEquationEditField(eqName, eqInfo, position) {
 
     function updateVarTable() {
         const eq = getEquation();
-		console.log('TCL: updateVarTable -> eq', eq);
+        console.log('TCL: updateVarTable -> eq', eq);
         const vars = getEquationVars(eq);
-		console.log('TCL: updateVarTable -> vars', vars);
+        console.log('TCL: updateVarTable -> vars', vars);
         let varTable = document.getElementById("varTable");
-		console.log('TCL: updateVarTable -> varTable', varTable);
+        console.log('TCL: updateVarTable -> varTable', varTable);
         if (varTable) {
             const rows = varTable.querySelectorAll(`tbody tr`);
             const rowVars = [];
@@ -226,7 +258,7 @@ function openEquationEditField(eqName, eqInfo, position) {
                     rowVars.push(row.getAttribute("data-var"));
                 }
             );
-			console.log('TCL: updateVarTable -> rowVars', rowVars);
+            console.log('TCL: updateVarTable -> rowVars', rowVars);
             vars.forEach(
                 (variable) => {
                     if (rowVars.indexOf(variable) < 0) {
@@ -268,7 +300,7 @@ function openEquationEditField(eqName, eqInfo, position) {
         const eq = getEquation();
         detachWarning(eqInput);
         const vars = getEquationVars(eq);
-		console.log('TCL: createEquationEditor -> vars', vars);
+        console.log('TCL: createEquationEditor -> vars', vars);
         let varTable = document.getElementById("varTable");
         if (vars.length > 0) {
             let tableStr = `
