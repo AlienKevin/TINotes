@@ -112,7 +112,7 @@ function handleVarNameSubscripts(varName){
     }
 }
 
-function handleSubscripts(equation, withParentheses = true) {
+function handleSubscripts(equation, inGuppyPlainTextFormat = true) {
     if (equation.indexOf("_") >= 0) { // contains subscripts
         let startIndex = 0;
         let underscoreIndex = equation.indexOf("_", startIndex);
@@ -123,7 +123,7 @@ function handleSubscripts(equation, withParentheses = true) {
             let closeParenIndex = findClosingBracketMatchIndex(equation, openParenIndex);
             // console.log("closeParenIndex: ", closeParenIndex);
             let subscriptStartIndex, subscriptEndIndex;
-            if (withParentheses) {
+            if (inGuppyPlainTextFormat) {
                 if (underscoreIndex + 1 < equation.length && equation.charAt(underscoreIndex + 1) !== "(") { // no open paren after underscore
                     // surround the single subscript with a pair of parentheses
                     equation = insertSubstring(equation, underscoreIndex + 1, "(");
@@ -150,8 +150,11 @@ function handleSubscripts(equation, withParentheses = true) {
 
                 const char = equation.substring(i, i + 1);
                 // console.log("char: ", char);
-                if (char !== "(" && char !== ")" && char != "*") {
+                if (char !== "(" && char !== ")" && char != "*" && char != " ") {
                     subscript += char;
+                    if (inGuppyPlainTextFormat && i < subscriptEndIndex - 1){
+                        subscript += "*";
+                    }
                 }
             }
             // console.log("subscript: " + subscript);
