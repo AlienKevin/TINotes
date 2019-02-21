@@ -187,8 +187,19 @@ function generateScriptHelper(position, index) {
     return script;
 }
 
+function simplifyEquation(equation){
+    let eq;
+    if (equation.indexOf("=") >= 0){
+        eqSegments = equation.split("=");
+        eq = simplifyEquation(eqSegments[0]) + "=" + simplifyEquation(eqSegments.slice(1).join(""));
+    } else{
+        eq = math.simplify(equation).toString();
+    }
+    return eq.replace(/ /g,"");
+}
+
 function generateEquationScript(index, item) {
-    const eq = item.equation;
+    const eq = simplifyEquation(item.equation);
     const varEquations = item.varEquations;
     console.log('TCL: generateEquationScript -> vars', varEquations);
     const userVarNames = Object.keys(varEquations);

@@ -34,6 +34,10 @@ fallback.load({
                 '//guppy.js.org/build/guppy_osk.js',
                 '/node_modules/guppy-js/guppy_osk.js',
             ],
+            'mathjs': [
+                '//cdn.jsdelivr.net/npm/mathjs@5.5.0/dist/math.min.js',
+                '//cdnjs.cloudflare.com/ajax/libs/mathjs/5.5.0/math.min.js',
+            ],
             'utils': 'js/utils.js',
 
         }, {
