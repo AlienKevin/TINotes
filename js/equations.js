@@ -35,8 +35,8 @@ function displayEquation(position, eqName, eqInfo) {
 function storeEquation(eqName, eqInfo) {
     const eqInput = document.getElementById("eqInput");
 
-    // storing equation in asciimath
-    eqInfo.equation = getEquation();
+    // storing equation in plain text
+    eqInfo.equation = getEquation(false);
 
     // storing variable equations
     eqInfo.varEquations = getVarEquations();
@@ -90,9 +90,11 @@ function convertSymbolToText(symbolEquation) {
     return symbolEquation;
 }
 
-function getEquation() {
+function getEquation(inGuppyPlainTextFormat) {
     try {
-        const equation = handleSubscripts(convertTextToSymbol(guppyInput.engine.get_content("text")), true);
+        let equation = convertTextToSymbol(guppyInput.engine.get_content("text"));
+        equation = handleSubscripts(equation, inGuppyPlainTextFormat);
+        console.log('TCL: getEquation -> equation', equation);
         detachWarning(eqInput);
         return equation;
     } catch (e) {
@@ -104,10 +106,10 @@ function getEquation() {
     return new Error("error loading equation");
 }
 
-function handleVarNameSubscripts(varName){
-    if (varName.indexOf("_") >= 0){
+function handleVarNameSubscripts(varName) {
+    if (varName.indexOf("_") >= 0) {
         return handleSubscripts(`(${varName})`, true);
-    } else{
+    } else {
         return varName;
     }
 }
@@ -139,11 +141,11 @@ function handleSubscripts(equation, inGuppyPlainTextFormat = true) {
                     equation = deleteSubstring(equation, closeParenIndex - 1, 1);
                     closeParenIndex -= 2; // two parentheses deleted
                 }
-            //   console.log("equation: " + equation);
+                //   console.log("equation: " + equation);
                 subscriptStartIndex = underscoreIndex + 1;
                 subscriptEndIndex = closeParenIndex + 1;
-            //   console.log("subscriptStartIndex: " + subscriptStartIndex);
-            //   console.log("subscriptEndIndex: " + subscriptEndIndex);
+                //   console.log("subscriptStartIndex: " + subscriptStartIndex);
+                //   console.log("subscriptEndIndex: " + subscriptEndIndex);
             }
             let subscript = "";
             for (let i = subscriptStartIndex; i < subscriptEndIndex; i++) {
@@ -152,7 +154,7 @@ function handleSubscripts(equation, inGuppyPlainTextFormat = true) {
                 // console.log("char: ", char);
                 if (char !== "(" && char !== ")" && char != "*" && char != " ") {
                     subscript += char;
-                    if (inGuppyPlainTextFormat && i < subscriptEndIndex - 1){
+                    if (inGuppyPlainTextFormat && i < subscriptEndIndex - 1) {
                         subscript += "*";
                     }
                 }
@@ -192,7 +194,7 @@ function detachWarning(element) {
 function setEquation(equation) {
     if (equation) {
         console.log('TCL: setEquation -> convertSymbolToText(equation)', convertSymbolToText(equation));
-        guppyInput.import_text(convertSymbolToText(equation));
+        guppyInput.import_text(handleSubscripts(convertSymbolToText(equation)), true);
         guppyInput.engine.end();
         guppyInput.activate();
         guppyInput.render(true);
@@ -275,11 +277,11 @@ function openEquationEditField(eqName, eqInfo, position) {
     guppyInput.configure("cliptype", "text");
     guppyInput.configure("button", ["osk", "settings", "symbols", "controls"]);
     guppyInput.event("change", updateVarTable);
-    const previousEquation = eqInfo.equation;
-    if (previousEquation) {
-        console.log('TCL: previousEquation', previousEquation);
-        setEquation(previousEquation);
-    }
+    // const previousEquation = eqInfo.equation;
+    // if (previousEquation) {
+    //     console.log('TCL: previousEquation', previousEquation);
+    //     setEquation(previousEquation);
+    // }
     guppyInput.event("focus", (focusedObj) => {
         if (focusedObj.focused) {
             // console.log('TCL: focused', focusedObj);
@@ -302,7 +304,7 @@ function openEquationEditField(eqName, eqInfo, position) {
     // load equation info from storage
     if (eqInfo !== undefined) {
         if (eqInfo.equation) {
-            guppyInput.value = eqInfo.equation;
+            setEquation(eqInfo.equation);
         }
         createVarTable(eqInfo);
     }
@@ -359,7 +361,7 @@ function openEquationEditField(eqName, eqInfo, position) {
             console.log('TCL: getEquationVars -> variables', variables);
             console.log("Handling subscripts in equation vars...");
             variables = variables.map(variable => handleVarNameSubscripts(variable));
-			console.log('TCL: getEquationVars -> variables', variables);
+            console.log('TCL: getEquationVars -> variables', variables);
             deleteStrInArray("ln", variables);
         } catch (e) {}
         return variables;
