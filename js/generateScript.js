@@ -95,7 +95,7 @@ function changeScriptFormat(scriptFormat) {
             Object.entries(conversionTable).forEach(([key, value]) => {
                 // console.log('TCL: changeScriptFormat -> value', value);
                 // console.log('TCL: changeScriptFormat -> key', key);
-                script = script.replace(new RegExp(escapeRegExp(key), "g"), value);
+                script = script.replace(new RegExp(RegExp.escape(key), "g"), value);
             })
             script = convertSymbolsToWords(script);
             break;
@@ -103,7 +103,7 @@ function changeScriptFormat(scriptFormat) {
             Object.entries(conversionTable).forEach(([key, value]) => {
                 // console.log('TCL: changeScriptFormat -> value', value);
                 // console.log('TCL: changeScriptFormat -> key', key);
-                script = script.replace(new RegExp(escapeRegExp(value), "g"), key);
+                script = script.replace(new RegExp(RegExp.escape(value), "g"), key);
             })
             script = convertWordsToSymbols(script);
             break;

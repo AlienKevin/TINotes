@@ -534,14 +534,14 @@ function setItemInStorage(itemName, item) {
 
 function convertWordsToSymbols(str) {
     for (const [key, value] of Object.entries(conversionTable)) {
-        str = str.replace(new RegExp(escapeRegExp("\\" + key), "g"), value);
+        str = str.replace(new RegExp(RegExp.escape("\\" + key), "g"), value);
     }
     return str;
 }
 
 function convertSymbolsToWords(str) {
     for (const [key, value] of Object.entries(conversionTable)) {
-        str = str.replace(new RegExp(escapeRegExp(value), "g"), "\\" + key);
+        str = str.replace(new RegExp(RegExp.escape(value), "g"), "\\" + key);
     }
     return str;
 }
