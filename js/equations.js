@@ -198,7 +198,6 @@ function setEquation(equation) {
         guppyInput.engine.end();
         guppyInput.activate();
         guppyInput.render(true);
-        removeExtraGuppyOSKTabs();
     }
 }
 
@@ -306,6 +305,7 @@ function openEquationEditField(eqName, eqInfo, position) {
         if (eqInfo.equation) {
             setEquation(eqInfo.equation);
         }
+        console.log("Creating Var Table ...");
         createVarTable(eqInfo);
     }
 
@@ -360,14 +360,13 @@ function openEquationEditField(eqName, eqInfo, position) {
             variables = nerdamer(handleSubscripts(equation.replace(/\=/g, " "), false)).variables();
             console.log('TCL: getEquationVars -> variables', variables);
             console.log("Handling subscripts in equation vars...");
-            variables = variables.map(variable => handleVarNameSubscripts(variable));
-            console.log('TCL: getEquationVars -> variables', variables);
             deleteStrInArray("ln", variables);
         } catch (e) {}
         return variables;
     }
 
     function createVarTable(varInfo) {
+		console.log('TCL: createVarTable -> varInfo', varInfo);
         const eq = getEquation();
         detachWarning(eqInput);
         const vars = getEquationVars(eq);
@@ -394,7 +393,9 @@ function openEquationEditField(eqName, eqInfo, position) {
 
             if (varInfo !== undefined) {
                 const varEquations = varInfo.varEquations;
+				console.log('TCL: createVarTable -> varEquations', varEquations);
                 const varDescriptions = varInfo.varDescriptions;
+				console.log('TCL: createVarTable -> varDescriptions', varDescriptions);
                 // load var equations if specified
                 if (varEquations) {
                     loadVarEquations(varEquations);
@@ -429,7 +430,7 @@ function renderEquationVars() {
 }
 
 function createNewRowHTML(variable) {
-    let newRow = `<tr data-var="${variable}"><th>\$\$${variable}\$\$</th><td>`;
+    let newRow = `<tr data-var="${variable}"><th>\$\$${handleVarNameSubscripts(variable)}\$\$</th><td>`;
     // add variable equation column
     newRow += `<input type="text" size="${eqLength}" class="eqInput" data-var="${variable}" spellcheck="false"></td>`;
     // add variable description column
