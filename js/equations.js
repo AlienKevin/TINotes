@@ -272,7 +272,18 @@ function openEquationEditField(eqName, eqInfo, position) {
     eqInput.classList.add("eqInput");
     // convert div to guppy editor
     guppyInput = new Guppy("eqInput");
-    guppyInput.configure("blacklist", ["norm", "utf8", "eval", "integral", "defintegral", "derivative", "summation", "product", "root", "vector", "point", "matrix", "infinity", "banana", "pineapple", "kiwi", "mango"]);
+    guppyInput.configure("blacklist", [
+    // some disallowed functions
+    "norm", "utf8", "eval", "integral", "defintegral", "derivative", "summation", "product", "root", "vector", "point", "matrix", 
+    // infinity is not allowed
+    "infinity", 
+    // no emojis
+    "banana", "pineapple", "kiwi", "mango", 
+    // no hyperbolic trigs
+    "sinh", "cosh", "tanh",
+    // some disallowed greek letters
+    "zeta", "eta", "iota", "kappa", "nu", "xi", "upsilon", "chi", "psi", "omega", "Theta", "Lambda", "Xi", "Pi", "Psi",
+]);
     guppyInput.configure("cliptype", "text");
     guppyInput.configure("button", ["osk", "settings", "symbols", "controls"]);
     guppyInput.event("change", updateVarTable);
