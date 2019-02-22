@@ -187,6 +187,13 @@ function generateScriptHelper(position, index) {
     return script;
 }
 
+function convertEquationToTIFormat(equation){
+    equation = equation
+    .replace(/\^\s*([2-3]|-1)($|[^0-9])/g, "^^$1$2") // superscript for ^2, ^3, and ^-1 powers
+    .replace(/\_/g, ""); // no subscript in TI so I can only delete the underscore
+    return equation;
+}
+
 function simplifyEquation(equation){
     let eq;
     if (equation.indexOf("=") >= 0){
@@ -199,7 +206,7 @@ function simplifyEquation(equation){
 }
 
 function generateEquationScript(index, item) {
-    const eq = simplifyEquation(item.equation);
+    const eq = convertEquationToTIFormat(simplifyEquation(item.equation));
     const varEquations = item.varEquations;
     console.log('TCL: generateEquationScript -> vars', varEquations);
     const userVarNames = Object.keys(varEquations);
