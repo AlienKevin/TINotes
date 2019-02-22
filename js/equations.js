@@ -273,17 +273,17 @@ function openEquationEditField(eqName, eqInfo, position) {
     // convert div to guppy editor
     guppyInput = new Guppy("eqInput");
     guppyInput.configure("blacklist", [
-    // some disallowed functions
-    "norm", "utf8", "eval", "integral", "defintegral", "derivative", "summation", "product", "root", "vector", "point", "matrix", 
-    // infinity is not allowed
-    "infinity", 
-    // no emojis
-    "banana", "pineapple", "kiwi", "mango", 
-    // no hyperbolic trigs
-    "sinh", "cosh", "tanh",
-    // some disallowed greek letters
-    "zeta", "eta", "iota", "kappa", "nu", "xi", "upsilon", "chi", "psi", "omega", "Theta", "Lambda", "Xi", "Pi", "Psi",
-]);
+        // some disallowed functions
+        "norm", "utf8", "eval", "integral", "defintegral", "derivative", "summation", "product", "root", "vector", "point", "matrix",
+        // infinity is not allowed
+        "infinity",
+        // no emojis
+        "banana", "pineapple", "kiwi", "mango",
+        // no hyperbolic trigs
+        "sinh", "cosh", "tanh",
+        // some disallowed greek letters
+        "zeta", "eta", "iota", "kappa", "nu", "xi", "upsilon", "chi", "psi", "omega", "Theta", "Lambda", "Xi", "Pi", "Psi",
+    ]);
     guppyInput.configure("cliptype", "text");
     guppyInput.configure("button", ["osk", "settings", "symbols", "controls"]);
     guppyInput.event("change", updateVarTable);
@@ -338,10 +338,14 @@ function openEquationEditField(eqName, eqInfo, position) {
             // console.log('TCL: updateVarTable -> rowVars', rowVars);
             vars.forEach(
                 (variable) => {
+                    const tbody = varTable.getElementsByTagName("tbody")[0];
                     if (rowVars.indexOf(variable) < 0) {
                         const newRow = createNewRowHTML(variable);
-                        varTable.getElementsByTagName("tbody")[0].insertAdjacentHTML("beforeend", newRow);
+                        tbody.insertAdjacentHTML("beforeend", newRow);
                     }
+                    const varEqInput = tbody.querySelector(`.eqInput[data-var=${variable}]`);
+                    console.log("Solving var equations...");
+                    varEqInput.value = solveEquation(eq, variable);
                 }
             )
             if (vars.length > 0) {
@@ -377,7 +381,7 @@ function openEquationEditField(eqName, eqInfo, position) {
     }
 
     function createVarTable(varInfo) {
-		console.log('TCL: createVarTable -> varInfo', varInfo);
+        console.log('TCL: createVarTable -> varInfo', varInfo);
         const eq = getEquation();
         detachWarning(eqInput);
         const vars = getEquationVars(eq);
@@ -404,9 +408,9 @@ function openEquationEditField(eqName, eqInfo, position) {
 
             if (varInfo !== undefined) {
                 const varEquations = varInfo.varEquations;
-				console.log('TCL: createVarTable -> varEquations', varEquations);
+                console.log('TCL: createVarTable -> varEquations', varEquations);
                 const varDescriptions = varInfo.varDescriptions;
-				console.log('TCL: createVarTable -> varDescriptions', varDescriptions);
+                console.log('TCL: createVarTable -> varDescriptions', varDescriptions);
                 // load var equations if specified
                 if (varEquations) {
                     loadVarEquations(varEquations);
@@ -419,6 +423,27 @@ function openEquationEditField(eqName, eqInfo, position) {
             }
         }
     }
+}
+
+function solveEquation(equation, variable) {
+	console.log('TCL: solveEquation -> equation', handleSubscripts(equation, false));
+    const solution = nerdamer.solve(handleSubscripts(equation, false), variable);
+    let finalResult = ""; // default to no real solutions
+    if (solution.symbol && solution.symbol.elements) {
+        // return solution.symbol.elements[0].text();
+        solution.symbol.elements.some(element => {
+            console.log('TCL: solveEquation -> element', element.text());
+            if ((element.symbol ? (element.symbol.isImaginary() === false) : (true)) // not imaginary number
+                &&
+                (element.value === "#" ? (element.gte(0)) : (nerdamer(element.text()).evaluate().text().startsWith("-") === false))) { // number must be greater than 0; expr must not start with negative sign
+                console.log("Result is greater than 0!");
+                finalResult = element.text();
+                return true; // exit the loop
+            }
+            return false; // keep looping
+        });
+    }
+    return finalResult;
 }
 
 function renderEquationVars() {
