@@ -221,6 +221,7 @@ function setInputEquation(input, equation) {
         input.engine.sel_all();
         input.engine.sel_clear();
     }
+    input.engine.end();
     input.render(true);
 }
 
@@ -520,6 +521,8 @@ function loadVarDescriptions(varDescriptions) {
 function loadVarEquations(varEquations) {
     Object.keys(varInputs).forEach((variable) => {
         console.log('TCL: loadVarEquations -> variable', variable);
-        setInputEquation(varInputs[variable], varEquations[variable]);
+        const varInput = varInputs[variable];
+        const varEquation = varEquations[variable];
+        setInputEquation(varInput, varEquation);
     })
 }
