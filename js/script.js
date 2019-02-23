@@ -486,7 +486,7 @@ function deleteItem(itemLabel) {
     itemLabel.remove();
     // remove associated edit field
     const editField = document.getElementById("editField");
-    if (editField && editField.getAttribute("data-item") === itemName){
+    if (editField && editField.getAttribute("data-item") === itemName) {
         editField.remove();
     }
 }
@@ -757,13 +757,15 @@ function countFolderSize(folderName) {
 
 function countFileSize(content) {
     let size = 0;
-    for (let i = 0; i < content.length; i++) {
-        const char = content[i];
-        // one-byte characters
-        if (/[0-9A-Z{}()[\],.!?+\-*\/^:=<>≤≥≠π√ ]/.test(char)) {
-            size += 1;
-        } else { // all other symbols are two-bytes
-            size += 2;
+    if (content) { // content exists
+        for (let i = 0; i < content.length; i++) {
+            const char = content[i];
+            // one-byte characters
+            if (/[0-9A-Z{}()[\],.!?+\-*\/^:=<>≤≥≠π√ ]/.test(char)) {
+                size += 1;
+            } else { // all other symbols are two-bytes
+                size += 2;
+            }
         }
     }
     return size * 8; // convert bytes to bits

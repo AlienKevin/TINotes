@@ -196,13 +196,17 @@
     function positionMenu(e) {
         clickCoords = getPosition(e);
         clickCoordsX = clickCoords.x;
+		// console.log('TCL: positionMenu -> clickCoordsX', clickCoordsX);
         clickCoordsY = clickCoords.y;
+		// console.log('TCL: positionMenu -> clickCoordsY', clickCoordsY);
 
         menuWidth = menu.offsetWidth + 4;
         menuHeight = menu.offsetHeight + 4;
 
-        windowWidth = window.innerWidth;
-        windowHeight = window.innerHeight;
+        // Full document height because position of menu is absolute
+        // see here: https://javascript.info/coordinates#document-coordinates
+        windowWidth = document.documentElement.offsetWidth;
+        windowHeight = document.documentElement.offsetHeight;
 
         if ((windowWidth - clickCoordsX) < menuWidth) {
             menu.style.left = windowWidth - menuWidth + "px";
