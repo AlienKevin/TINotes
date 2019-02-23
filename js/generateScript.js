@@ -245,11 +245,12 @@ function generateEquationScript(index, item) {
             tiVarNameIndex = label - startEquationIndex;
         }
         const tiVarName = `|LV(${tiVarNameIndex})`;
-        const varEquation = substituteVarNames(varEquations[userVarName], userVarNames, tiVarNames);
+        const varEquation = varEquations[userVarName];
+        const tiVarEquation = substituteVarNames(varEquations[userVarName], userVarNames, tiVarNames);
         console.log('TCL: generateEquationScript -> varEquation', varEquation);
-        if (isFinite(varEquation)) { // var is a constant
+        if (isFinite(nerdamer(varEquation).evaluate().text())) { // var is a constant
             console.log('TCL: generateEquationScript -> varEquation' + varEquation + ' is finite');
-            prompt += `${varEquation}->${tiVarName}\n`;
+            prompt += `${tiVarEquation}->${tiVarName}\n`;
         } else { // var is a true variable
             // add menu item (equation variables)
             menu += `,"${userVarName}-${userVarDescription}",${label}`;
@@ -258,7 +259,7 @@ function generateEquationScript(index, item) {
             // use T as a temporary variable (input doesn't accept L1(2) syntax)
             prompt += `T->${tiVarName}\nEnd\n`;
             // calculate and display the solution
-            solution += `If L=${label}\nThen\n"${userVarName}="->Str2\n${varEquation}->V\nEnd\n`;
+            solution += `If L=${label}\nThen\n"${userVarName}="->Str2\n${tiVarEquation}->V\nEnd\n`;
         }
         // convert menu item's label to number
         conversion += `Lbl ${startIndex - 1 + endIndex - label}:L+1->L\n`;
@@ -289,11 +290,19 @@ function substituteVarNames(equation, oldVarNames, newVarNames) {
     for (let i = 0; i < oldVarNames.length; i++) {
         varMap[oldVarNames[i]] = newVarNames[i];
     }
-    let newEquation = nerdamer(equation, varMap).text("decimals");
+    let newEquation = handleScientificNotations(nerdamer(equation, varMap).text("decimals"));
     // add in sourcecoder notation of a list
     newEquation = newEquation.replace(/LV([0-9]+)/g, "|LV($1)");
     newEquation = convertMinusesToNegations(newEquation);
     return newEquation;
+}
+
+// replacing lowercase e with uppercase E for scientific notations
+// (TI only accepts uppercase E)
+function handleScientificNotations(equation){
+    const scientificNotationRegex = /([+\-]?(?:0|[1-9]\d*)(?:\.\d*)?)(?:e([+\-]?\d+))/g;
+    // E for exponentiation is different from E the variable name!!! need a | before E!!!
+    return equation.replace(scientificNotationRegex, "$1|E$2");
 }
 
 function convertMinusesToNegations(eq) {
@@ -301,6 +310,7 @@ function convertMinusesToNegations(eq) {
         eq = "~" + eq.substring(1);
     }
     eq = eq.replace(/\(\-/g, "(~");
+    eq = eq.replace(/\|E-/g, "|E~");
     return eq;
 }
 
