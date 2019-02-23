@@ -253,7 +253,11 @@ function generateEquationScript(index, item) {
             prompt += `${tiVarEquation}->${tiVarName}\n`;
         } else { // var is a true variable
             // add menu item (equation variables)
-            menu += `,"${userVarName}-${userVarDescription}",${label}`;
+            if (userVarDescription){
+                menu += `,"${userVarName}-${userVarDescription}",${label}`;
+            } else{
+                menu += `,"${userVarName}",${label}`;
+            }
             // prompt values for known variables
             prompt += `If (L!=${label})\nThen\nInput "${userVarName}=",T\n`;
             // use T as a temporary variable (input doesn't accept L1(2) syntax)
