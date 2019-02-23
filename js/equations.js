@@ -1,7 +1,8 @@
 // button for creating a new equation
 const newEquationBtn = document.getElementById("newEquationBtn");
 const eqLength = 20;
-let guppyInput;
+let mainInput;
+let varInputs = {};
 let warningTimerId; // timer id for settimeout of warning sign
 // Add guppyOSK mobile keyboard
 guppyOSK = new GuppyOSK();
@@ -92,7 +93,7 @@ function convertSymbolToText(symbolEquation) {
 
 function getEquation(inGuppyPlainTextFormat) {
     try {
-        let equation = convertTextToSymbol(guppyInput.engine.get_content("text"));
+        let equation = convertTextToSymbol(mainInput.engine.get_content("text"));
         equation = handleSubscripts(equation, inGuppyPlainTextFormat);
         console.log('TCL: getEquation -> equation', equation);
         detachWarning(eqInput);
@@ -191,14 +192,54 @@ function detachWarning(element) {
     }
 }
 
-function setEquation(equation) {
+function setMainEquation(equation) {
     if (equation) {
         console.log('TCL: setEquation -> convertSymbolToText(equation)', convertSymbolToText(equation));
-        guppyInput.import_text(handleSubscripts(convertSymbolToText(equation)), true);
-        guppyInput.engine.end();
-        guppyInput.activate();
-        guppyInput.render(true);
+        setInputEquation(mainInput, equation);
+        mainInput.engine.end();
+        mainInput.activate();
+        mainInput.render(true);
     }
+}
+
+function setInputEquation(input, equation){
+    const processedEquation = handleSubscripts(convertSymbolToText(equation),true);
+    console.log('TCL: setInputEquation -> processedEquation', processedEquation);
+    if (processedEquation) {
+        input.import_text(processedEquation);
+    } else{
+        input.engine.sel_all();
+        input.engine.sel_clear();
+    }
+    mainInput.render(true);
+}
+
+function configureInput(input){
+    input.configure("blacklist", [
+        // some disallowed functions
+        "norm", "utf8", "eval", "integral", "defintegral", "derivative", "summation", "product", "root", "vector", "point", "matrix",
+        // infinity is not allowed
+        "infinity",
+        // no emojis
+        "banana", "pineapple", "kiwi", "mango",
+        // no hyperbolic trigs
+        "sinh", "cosh", "tanh",
+        // some disallowed greek letters
+        "zeta", "eta", "iota", "kappa", "nu", "xi", "upsilon", "chi", "psi", "omega", "Theta", "Lambda", "Xi", "Pi", "Psi",
+    ]);
+    input.configure("cliptype", "text");
+    input.configure("button", ["osk", "settings", "symbols", "controls"]);
+    input.event("focus", (focusedObj) => {
+        if (focusedObj.focused) {
+            // console.log('TCL: focused', focusedObj);
+            removeExtraGuppyOSKTabs();
+            document.getElementById("editField").scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+                inline: "nearest"
+            });
+        }
+    });
 }
 
 function createEquationEditor() {
@@ -271,50 +312,19 @@ function openEquationEditField(eqName, eqInfo, position) {
     const eqInput = document.getElementById("eqInput");
     eqInput.classList.add("eqInput");
     // convert div to guppy editor
-    guppyInput = new Guppy("eqInput");
-    guppyInput.configure("blacklist", [
-        // some disallowed functions
-        "norm", "utf8", "eval", "integral", "defintegral", "derivative", "summation", "product", "root", "vector", "point", "matrix",
-        // infinity is not allowed
-        "infinity",
-        // no emojis
-        "banana", "pineapple", "kiwi", "mango",
-        // no hyperbolic trigs
-        "sinh", "cosh", "tanh",
-        // some disallowed greek letters
-        "zeta", "eta", "iota", "kappa", "nu", "xi", "upsilon", "chi", "psi", "omega", "Theta", "Lambda", "Xi", "Pi", "Psi",
-    ]);
-    guppyInput.configure("cliptype", "text");
-    guppyInput.configure("button", ["osk", "settings", "symbols", "controls"]);
-    guppyInput.event("change", updateVarTable);
+    mainInput = new Guppy("eqInput");
+    configureInput(mainInput)
+    mainInput.event("change", updateVarTable);
     // const previousEquation = eqInfo.equation;
     // if (previousEquation) {
     //     console.log('TCL: previousEquation', previousEquation);
     //     setEquation(previousEquation);
     // }
-    guppyInput.event("focus", (focusedObj) => {
-        if (focusedObj.focused) {
-            // console.log('TCL: focused', focusedObj);
-            removeExtraGuppyOSKTabs();
-            editor.scrollIntoView({
-                behavior: "smooth",
-                block: "start",
-                inline: "nearest"
-            });
-        }
-    })
-
-    // Scroll editor into view
-    editor.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-        inline: "nearest"
-    });
 
     // load equation info from storage
     if (eqInfo !== undefined) {
         if (eqInfo.equation) {
-            setEquation(eqInfo.equation);
+            setMainEquation(eqInfo.equation);
         }
         console.log("Creating Var Table ...");
         createVarTable(eqInfo);
@@ -342,10 +352,11 @@ function openEquationEditField(eqName, eqInfo, position) {
                     if (rowVars.indexOf(variable) < 0) {
                         const newRow = createNewRowHTML(variable);
                         tbody.insertAdjacentHTML("beforeend", newRow);
+                        varInputs[variable] = new Guppy(`eqInput-${variable}`);
+                        configureInput(varInputs[variable]);
                     }
-                    const varEqInput = tbody.querySelector(`.eqInput[data-var=${variable}]`);
                     console.log("Solving var equations...");
-                    varEqInput.value = solveEquation(eq, variable);
+                    setInputEquation(varInputs[variable], solveEquation(eq, variable));
                 }
             )
             if (vars.length > 0) {
@@ -405,6 +416,11 @@ function openEquationEditField(eqName, eqInfo, position) {
             }
             varTable.innerHTML = tableStr;
             editor.appendChild(varTable);
+
+            vars.forEach((variable) => {
+                varInputs[variable] = new Guppy(`eqInput-${variable}`);
+                configureInput(varInputs[variable]);
+            })
 
             if (varInfo !== undefined) {
                 const varEquations = varInfo.varEquations;
@@ -468,7 +484,7 @@ function renderEquationVars() {
 function createNewRowHTML(variable) {
     let newRow = `<tr data-var="${variable}"><th>\$\$${handleVarNameSubscripts(variable)}\$\$</th><td>`;
     // add variable equation column
-    newRow += `<input type="text" size="${eqLength}" class="eqInput" data-var="${variable}" spellcheck="false"></td>`;
+    newRow += `<div id="eqInput-${variable}" class="eqInput varEqInput" data-var="${variable}"></div></td>`;
     // add variable description column
     const varDescriptionLength = lineLength - variable.length - 1;
     newRow += `<td><input type="text" class="descriptionInput" 
@@ -490,13 +506,7 @@ function loadVarDescriptions(varDescriptions) {
 }
 
 function loadVarEquations(varEquations) {
-    Array.from(document.getElementsByClassName("eqInput")).forEach((input) => {
-        const variable = input.getAttribute("data-var");
-        if (variable) {
-            const varEquation = varEquations[variable];
-            if (varEquation) { // not undefined or empty string
-                input.value = varEquation;
-            }
-        }
-    });
+    Object.keys(varInputs).forEach((variable) => {
+        setInputEquation(varInputs[variable], varEquations[variable]);
+    })
 }

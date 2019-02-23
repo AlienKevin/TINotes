@@ -170,11 +170,9 @@ div#editField[data-type="equation"] input{
     height: 2em;
     font-size: 1em;
 }
-.eqInput{
-    font-family: "Computer Modern Serif", serif;
-}
 
-#eqInput{
+.eqInput{
+    text-align: left;
     display: inline-block;
     width: 25vw;
 }
