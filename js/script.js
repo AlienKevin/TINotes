@@ -477,11 +477,18 @@ function displayFile(position, fileName, fileInfo) {
 
 function deleteItem(itemLabel) {
     const itemName = itemLabel.getAttribute("data-name");
+    // remove item in storage
     if (itemName) {
         removeItemFromStorage(itemName);
         removeElementInArray(itemNameList, itemName);
     }
+    // remove item label
     itemLabel.remove();
+    // remove associated edit field
+    const editField = document.getElementById("editField");
+    if (editField && editField.getAttribute("data-item") === itemName){
+        editField.remove();
+    }
 }
 
 function renameItem(itemLabel) {
