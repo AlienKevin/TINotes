@@ -479,19 +479,24 @@ function openEquationEditField(eqName, eqInfo, position) {
 }
 
 function solveEquation(equation, variable) {
-    console.log('TCL: solveEquation -> equation', handleSubscripts(equation, false));
-    const solution = nerdamer.solve(handleSubscripts(equation, false), variable);
+    const solution = nerdamer.solve(convertTextToSymbol(handleSubscripts(equation, false)), variable);
+    console.log('TCL: solveEquation -> convertTextToSymbol(handleSubscripts(equation, false))', convertTextToSymbol(handleSubscripts(equation, false)));
     let finalResult = ""; // default to no real solutions
     if (solution.symbol && solution.symbol.elements) {
         // return solution.symbol.elements[0].text();
         solution.symbol.elements.some(element => {
             console.log('TCL: solveEquation -> element', element.text());
-            if ((element.symbol ? (element.symbol.isImaginary() === false) : (true)) // not imaginary number
-                &&
-                (element.value === "#" ? (element.gte(0)) : (nerdamer(element.text()).evaluate().text().startsWith("-") === false))) { // number must be greater than 0; expr must not start with negative sign
-                console.log("Result is greater than 0!");
-                finalResult = Algebrite.simplify(element.text()).toString();
-                return true; // exit the loop
+            if ((element.symbol ? (element.symbol.isImaginary() === false) : (true))) { // not imaginary number
+                if ((solution.symbol.elements.length >= 2 &&
+                        // number must be greater than 0; expr must not start with negative sign
+                        (element.value === "#" ?
+                            (element.gte(0)) :
+                            (nerdamer(element.text()).evaluate().text().startsWith("-") === false))) ||
+                    // only solution can be negative
+                    solution.symbol.elements.length <= 1) {
+                    finalResult = Algebrite.simplify(element.text()).toString();
+                    return true; // exit the loop
+                }
             }
             return false; // keep looping
         });
@@ -544,7 +549,7 @@ function loadVarDescriptions(varDescriptions) {
 }
 
 function loadVarEquations(varEquations) {
-	console.log('TCL: loadVarEquations -> varEquations', varEquations);
+    console.log('TCL: loadVarEquations -> varEquations', varEquations);
     Object.keys(varEquations).forEach((variable) => {
         console.log('TCL: loadVarEquations -> variable', variable);
         const varInput = varInputs[variable];
