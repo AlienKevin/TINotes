@@ -1,7 +1,7 @@
 // Here we actually invoke Fallback JS to retrieve the following libraries for the page.
 fallback.load({
             // Include your stylesheets, this can be an array of stylesheets or a string!
-            page_css: 'fontawesome/css/all.min.css', // load local font awesome library
+            page_css: 'fontawesome/css/selected.min.css', // load local font awesome library
             global_css: 'introjs/introjs.min.css',  // load introjs css
 
             // JavaScript library. THE KEY MUST BE THE LIBRARIES WINDOW VARIABLE!
