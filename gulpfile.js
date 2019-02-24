@@ -36,14 +36,14 @@ gulp.task('compressCSS', function () {
   .pipe(gulp.dest('dist'))
 });
 
-gulp.task('compressHTML', () => {
-  return gulp.src('index.html')
-    .pipe(htmlmin({ collapseWhitespace: true, removeComments: true}))
-    .pipe(gulp.dest('dist'));
-});
+// gulp.task('compressHTML', () => {
+//   return gulp.src('index.html')
+//     .pipe(htmlmin({ collapseWhitespace: true, removeComments: true}))
+//     .pipe(gulp.dest('dist'));
+// });
 
 gulp.task('clean:dist', function() {
   return del.sync('dist');
 });
 
-gulp.task('compress', gulp.parallel('compressJS', 'compressHTML', 'compressCSS'));
+gulp.task('compress', gulp.parallel('compressJS', 'compressCSS'));

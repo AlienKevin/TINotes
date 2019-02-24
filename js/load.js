@@ -28,11 +28,11 @@ fallback.load({
 
             'Guppy': [
                 '//guppy.js.org/build/guppy.js',
-                '/node_modules/guppy-js/guppy.js',
+                'guppy-js/guppy.js',
             ],
             'GuppyOSK': [
                 '//guppy.js.org/build/guppy_osk.js',
-                '/node_modules/guppy-js/guppy_osk.js',
+                'guppy-js/guppy_osk.js',
             ],
             'mathjs': [
                 '//cdn.jsdelivr.net/npm/mathjs@5.5.0/dist/math.min.js',
