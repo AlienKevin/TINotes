@@ -246,7 +246,7 @@ function generateEquationScript(index, item) {
         }
         const tiVarName = `|LV(${tiVarNameIndex})`;
         const varEquation = varEquations[userVarName];
-        const tiVarEquation = substituteVarNames(varEquations[userVarName], userVarNames, tiVarNames);
+        const tiVarEquation = substituteVarNames(handleSubscripts(varEquations[userVarName], false), userVarNames, tiVarNames);
         console.log('TCL: generateEquationScript -> varEquation', varEquation);
         if (isFinite(nerdamer(varEquation).evaluate().text())) { // var is a constant
             console.log('TCL: generateEquationScript -> varEquation' + varEquation + ' is finite');

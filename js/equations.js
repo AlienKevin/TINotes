@@ -34,8 +34,6 @@ function displayEquation(position, eqName, eqInfo) {
 }
 
 function storeEquation(eqName, eqInfo) {
-    const eqInput = document.getElementById("eqInput");
-
     // storing equation in plain text
     eqInfo.equation = getMainEquation(false);
 
@@ -63,7 +61,10 @@ function getVarDescriptions() {
 function getVarEquations() {
     const varEquations = {};
     Object.keys(varInputs).forEach((variable) => {
-        varEquations[variable] = getEquation(varInputs[variable], variable ,true);
+        // only store equtions that are open in editField
+        if (document.querySelector(`.eqInput[data-var="${variable}"]`)) {
+            varEquations[variable] = getEquation(varInputs[variable], variable, true);
+        }
     });
     return varEquations;
 }
@@ -106,9 +107,9 @@ function getMainEquation(inGuppyPlainTextFormat) {
 
 function getEquation(input, varName, inGuppyPlainTextFormat) {
     let inputContent = "";
-    try{
+    try {
         inputContent = input.engine.get_content("text");
-    } catch(e){
+    } catch (e) {
         AttachWarning(document.querySelector(`.eqInput[data-var="${varName}"]`));
         throw new Error("Some equations are invalid!");
     }
@@ -125,8 +126,31 @@ function handleVarNameSubscripts(varName) {
     }
 }
 
-function handleSubscripts(equation, inGuppyPlainTextFormat = true) {
+function AddParenthesesAroundVarName(equation) {
+    let vars = nerdamer(equation).variables();
+    const searchVarNames = {};
+    // filter out vars without subscripts
+    vars = vars.filter(varName => varName.indexOf("_") >= 0);
+    vars.forEach(varName => {
+        const varMap = {};
+        const searchVarName = "_" + varName.replace("_", "c") + "_";
+        varMap[varName] = searchVarName;
+        searchVarNames[varName] = searchVarName;
+        equation = nerdamer(equation, varMap).text();
+        console.log('TCL: AddParenthesesAroundVarName -> equation', equation);
+    });
+    vars.forEach(varName => {
+        const varNameWithParen = "(" + varName + ")";
+        equation = equation.replace(new RegExp(searchVarNames[varName], "g"), varNameWithParen);
+    });
+    return equation;
+}
+
+function handleSubscripts(equation, inGuppyPlainTextFormat = true, AddParentheses = false) {
     if (equation.indexOf("_") >= 0) { // contains subscripts
+        if (AddParentheses) {
+            equation = AddParenthesesAroundVarName(equation);
+        }
         let startIndex = 0;
         let underscoreIndex = equation.indexOf("_", startIndex);
         while (underscoreIndex >= 0) {
@@ -212,8 +236,9 @@ function setMainEquation(equation) {
     }
 }
 
-function setInputEquation(input, equation) {
-    const processedEquation = handleSubscripts(convertSymbolToText(equation), true);
+function setInputEquation(input, equation, AddParentheses = false) {
+    console.log('TCL: setInputEquation -> equation', equation);
+    const processedEquation = convertSymbolToText(handleSubscripts(equation, true, AddParentheses));
     console.log('TCL: setInputEquation -> processedEquation', processedEquation);
     if (processedEquation) {
         input.import_text(processedEquation);
@@ -368,7 +393,7 @@ function openEquationEditField(eqName, eqInfo, position) {
                         configureInput(varInputs[variable]);
                     }
                     console.log("Solving var equations...");
-                    setInputEquation(varInputs[variable], solveEquation(eq, variable));
+                    setInputEquation(varInputs[variable], solveEquation(eq, variable), true);
                 }
             )
             if (vars.length > 0) {
@@ -523,6 +548,6 @@ function loadVarEquations(varEquations) {
         console.log('TCL: loadVarEquations -> variable', variable);
         const varInput = varInputs[variable];
         const varEquation = varEquations[variable];
-        setInputEquation(varInput, varEquation);
+        setInputEquation(varInput, varEquation, false);
     })
 }
