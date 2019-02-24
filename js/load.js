@@ -38,7 +38,7 @@ fallback.load({
                 '//cdn.jsdelivr.net/npm/mathjs@5.5.0/dist/math.min.js',
                 '//cdnjs.cloudflare.com/ajax/libs/mathjs/5.5.0/math.min.js',
             ],
-            'utils': 'js/utils.js',
+            'utils': 'dist/js/utils.js',
 
         }, {
             // shim: {

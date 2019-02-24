@@ -20,6 +20,14 @@ gulp.task('compressJS', function (cb) {
     ],
     cb
   );
+
+  pump([
+    gulp.src('nerdamer/*.js'),
+    minify(options),
+    gulp.dest('nerdamer')
+  ],
+  cb
+);
 });
 
 gulp.task('compressCSS', function () {
