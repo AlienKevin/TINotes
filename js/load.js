@@ -52,6 +52,7 @@ fallback.load({
             dynamicallyLoadScript("TI-BASIC/baseScript.txt");
             dynamicallyLoadScript("dist/js/generateScript.js");
             dynamicallyLoadScript("dist/js/popup.js");
+            dynamicallyLoadScript("dist/js/introSteps.js");
         });
 
         function dynamicallyLoadScript(url) {

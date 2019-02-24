@@ -20,14 +20,16 @@ gulp.task('compressJS', function (cb) {
     ],
     cb
   );
+});
 
+gulp.task("compressNerdamer", function(cb){
+  
   pump([
     gulp.src('nerdamer/*.js'),
     minify(options),
     gulp.dest('nerdamer')
   ],
-  cb
-);
+  cb);
 });
 
 gulp.task('compressCSS', function () {
@@ -45,5 +47,11 @@ gulp.task('compressCSS', function () {
 gulp.task('clean:dist', function() {
   return del.sync('dist');
 });
+
+gulp.task('watch', function(){
+  gulp.watch('js/*.js', gulp.series('compressJS')); 
+  gulp.watch('style.css', gulp.series('compressCSS'));
+  // Other watchers
+})
 
 gulp.task('compress', gulp.parallel('compressJS', 'compressCSS'));
