@@ -1,7 +1,7 @@
 // Here we actually invoke Fallback JS to retrieve the following libraries for the page.
 fallback.load({
             // Include your stylesheets, this can be an array of stylesheets or a string!
-            page_css: 'fontawesome/css/all.css', // load local font awesome library
+            page_css: 'fontawesome/css/all.min.css', // load local font awesome library
             global_css: 'introjs/introjs.min.css',  // load introjs css
 
             // JavaScript library. THE KEY MUST BE THE LIBRARIES WINDOW VARIABLE!
@@ -46,12 +46,12 @@ fallback.load({
             // },
         }); 
         fallback.ready(function () {
-            dynamicallyLoadScript("js/script.js");
-            dynamicallyLoadScript("js/equations.js");
-            dynamicallyLoadScript("js/contextMenu.js");
+            dynamicallyLoadScript("dist/js/script.js");
+            dynamicallyLoadScript("dist/js/equations.js");
+            dynamicallyLoadScript("dist/js/contextMenu.js");
             dynamicallyLoadScript("TI-BASIC/baseScript.txt");
-            dynamicallyLoadScript("js/generateScript.js");
-            dynamicallyLoadScript("js/popup.js");
+            dynamicallyLoadScript("dist/js/generateScript.js");
+            dynamicallyLoadScript("dist/js/popup.js");
         });
 
         function dynamicallyLoadScript(url) {
