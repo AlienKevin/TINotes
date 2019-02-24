@@ -544,7 +544,8 @@ function loadVarDescriptions(varDescriptions) {
 }
 
 function loadVarEquations(varEquations) {
-    Object.keys(varInputs).forEach((variable) => {
+	console.log('TCL: loadVarEquations -> varEquations', varEquations);
+    Object.keys(varEquations).forEach((variable) => {
         console.log('TCL: loadVarEquations -> variable', variable);
         const varInput = varInputs[variable];
         const varEquation = varEquations[variable];
