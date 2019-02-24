@@ -245,10 +245,12 @@ function generateEquationScript(index, item) {
             tiVarNameIndex = label - startEquationIndex;
         }
         const tiVarName = `|LV(${tiVarNameIndex})`;
-        const varEquation = varEquations[userVarName];
-        const tiVarEquation = substituteVarNames(handleSubscripts(varEquations[userVarName], false), userVarNames, tiVarNames);
+        let varEquation = varEquations[userVarName];
+        // remove parentheses around subscripts to ensure valid variable names
+        varEquation = handleSubscripts(varEquations[userVarName], false);
+        const tiVarEquation = substituteVarNames(varEquation, userVarNames, tiVarNames);
         console.log('TCL: generateEquationScript -> varEquation', varEquation);
-        if (isFinite(nerdamer(varEquation).evaluate().text())) { // var is a constant
+        if (isConstant(varEquation)) { // var is a constant
             console.log('TCL: generateEquationScript -> varEquation' + varEquation + ' is finite');
             prompt += `${tiVarEquation}->${tiVarName}\n`;
         } else { // var is a true variable

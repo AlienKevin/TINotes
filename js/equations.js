@@ -43,8 +43,24 @@ function storeEquation(eqName, eqInfo) {
     // storing variable descriptions
     eqInfo.varDescriptions = getVarDescriptions();
 
+    // storing constants in XML
+    eqInfo.constants = getConstants();
+
     // load all equation info into storage
     setItemInStorage(eqName, eqInfo);
+}
+
+function getConstants(){
+    const varEquations = getVarEquations();
+    const constants = {};
+    Object.keys(varEquations).forEach(variable => {
+        const equation = varEquations[variable];
+        if (isConstant(equation)){
+            const input = varInputs[variable];
+            constants[variable] = input.engine.get_content("xml");
+        }
+    });
+    return constants;
 }
 
 function getVarDescriptions() {
@@ -109,13 +125,40 @@ function getEquation(input, varName, inGuppyPlainTextFormat) {
     let inputContent = "";
     try {
         inputContent = input.engine.get_content("text");
+        console.log('TCL: getEquation -> inputContent', inputContent);
     } catch (e) {
         AttachWarning(document.querySelector(`.eqInput[data-var="${varName}"]`));
         throw new Error("Some equations are invalid!");
     }
     let equation = convertTextToSymbol(inputContent);
+    console.log('TCL: getEquation -> equation', equation);
     equation = handleSubscripts(equation, inGuppyPlainTextFormat);
+    console.log('TCL: getEquation -> equation', equation);
     return equation;
+}
+
+function convertToExponential(equation) {
+    const value = nerdamer(equation).evaluate().text();
+    console.log('TCL: convertToExponential -> value', value);
+    const minPowerForExponential = 5;
+    if (isFinite(value)) {
+        let exponential = Number(value).toExponential();
+        exponential = exponential.toUpperCase(); // convert lowercase e to uppercase E
+        const exponent = exponential.substring(exponential.indexOf("E") + 1);
+        if (Math.abs(Number(exponent)) > minPowerForExponential) {
+            return exponential;
+        } else {
+            return value;
+        }
+    }
+    return equation;
+}
+
+function getExponent(value){
+    let exponential = Number(value).toExponential();
+    exponential = exponential.toUpperCase(); // convert lowercase e to uppercase E
+    const exponent = exponential.substring(exponential.indexOf("E") + 1);
+    return exponent;
 }
 
 function handleVarNameSubscripts(varName) {
@@ -465,8 +508,8 @@ function openEquationEditField(eqName, eqInfo, position) {
                 const varDescriptions = varInfo.varDescriptions;
                 console.log('TCL: createVarTable -> varDescriptions', varDescriptions);
                 // load var equations if specified
-                if (varEquations) {
-                    loadVarEquations(varEquations);
+                if (varInfo) {
+                    loadVarEquations(varInfo);
                     renderEquationVars();
                 }
                 // load var descriptions if specified
@@ -548,12 +591,21 @@ function loadVarDescriptions(varDescriptions) {
     });
 }
 
-function loadVarEquations(varEquations) {
+function loadVarEquations(varInfo) {
+    const varEquations = varInfo.varEquations;
+    const constants = varInfo.constants;
     console.log('TCL: loadVarEquations -> varEquations', varEquations);
     Object.keys(varEquations).forEach((variable) => {
         console.log('TCL: loadVarEquations -> variable', variable);
         const varInput = varInputs[variable];
         const varEquation = varEquations[variable];
-        setInputEquation(varInput, varEquation, false);
+        if (constants && Object.keys(constants).indexOf(variable) >= 0){
+            const constant = constants[variable];
+            varInput.import_xml(constant);
+            varInput.engine.end();
+            varInput.render(true);
+        } else{
+            setInputEquation(varInput, varEquation, false);
+        }
     })
 }
