@@ -200,7 +200,7 @@ function simplifyEquation(equation){
         eqSegments = equation.split("=");
         eq = simplifyEquation(eqSegments[0]) + "=" + simplifyEquation(eqSegments.slice(1).join(""));
     } else{
-        eq = math.simplify(equation).toString();
+        eq = Algebrite.simplify(equation).toString();
     }
     return eq.replace(/ /g,"");
 }
