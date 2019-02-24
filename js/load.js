@@ -34,19 +34,11 @@ fallback.load({
                 '//guppy.js.org/build/guppy_osk.js',
                 'guppy-js/guppy_osk.js',
             ],
-            'mathjs': [
-                '//cdn.jsdelivr.net/npm/mathjs@5.5.0/dist/math.min.js',
-                '//cdnjs.cloudflare.com/ajax/libs/mathjs/5.5.0/math.min.js',
-            ],
             'Algebrite': [
                 '//cdn.jsdelivr.net/npm/algebrite@1.2.0/dist/algebrite.bundle-for-browser.min.js',
             ],
             'utils': 'dist/js/utils.js',
 
-        }, {
-            // shim: {
-            //     'utils': ['Mousetrap','swal','introJs'],
-            // },
         }); 
         fallback.ready(function () {
             dynamicallyLoadScript("dist/js/script.js");
