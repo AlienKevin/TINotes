@@ -3,17 +3,24 @@ Notes management and viewing system built for TI graphing calculators. Users are
 
 Try TINotes here: https://alienkevin.github.io/TINotes/
 
-Demo 1: Basic Usage 
+**Demo 1**: Basic Usage 
 ![Demo 1](https://raw.githubusercontent.com/AlienKevin/TINotes/master/Demos/Demo1.gif)
 
-Demo 2: TINotes have comprehensive step-by-step instructions 
+**Demo 2**: TINotes have comprehensive step-by-step instructions 
 ![Demo 2](https://raw.githubusercontent.com/AlienKevin/TINotes/master/Demos/Demo2.gif)
 
-Demo 3: All folders and files are stored locally. Refreshing/closing and reopening will not discard data.
+**Demo 3**: All folders and files are stored locally. Refreshing/closing and reopening will not discard data.
 ![Demo 3](https://raw.githubusercontent.com/AlienKevin/TINotes/master/Demos/Demo3.gif)
 
-Demo 4: Notes navigation in the calculator, showing how you can navigate back and forth both in the folder system and within individual files<br/>
+**Demo 4**: Notes navigation in the calculator, showing how you can navigate back and forth both in the folder system and within individual files<br/>
 ![Demo 4](https://raw.githubusercontent.com/AlienKevin/TINotes/master/Demos/Demo4.gif)
+
+**Demo 5**: You even now add equations to you TI calculators! You can enter any custom equations and TINotes will auto-detect all variables and solve for each. Currently, TINotes cannot solve for variables under sqrt, log, ln, and trig functions but you can solve them using other tools and paste the results back to TINotes. (checkout [quickmath](https://quickmath.com/webMathematica3/quickmath/equations/solve/intermediate.jsp) or [doyourmath](https://doyourmath.com/))
+TINotes website:
+![Demo 5 website](https://raw.githubusercontent.com/AlienKevin/TINotes/gh-pages/Demos/EquationF%3Dma.gif)
+
+TI calculator screen:
+![Demo 5 calculator](https://raw.githubusercontent.com/AlienKevin/TINotes/gh-pages/Demos/EquationF%3DmaTI.gif)
 
 ## Set up
 I. Use online: go to https://alienkevin.github.io/TINotes/
