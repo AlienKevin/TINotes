@@ -285,9 +285,10 @@ function generateEquationScript(index, item) {
     // press 2nd key to go back to parent folder
     let back = `Lbl theta
     0->K
-    Repeat K=21 or K=105
+    Repeat K=21 or K=105 or K=45
         getKey->K
     End
+    V
     If K=21
     Then
         W-1->W
@@ -296,13 +297,16 @@ function generateEquationScript(index, item) {
     End
     If K=105
     Then
-        V
         Input "",Str0
         expr(Str0)->V
         Disp V
         Disp "~~~~~~~~~~~~~~~~~~~~~~~~~~"
         Goto theta
-    End\n`;
+    End
+    If K=45
+	Then
+		Stop
+	End\n`;
     str += menu + conversion + prompt + solution + back;
     str += "End\n" // pause to let user see solution
     // increase equationIndex
