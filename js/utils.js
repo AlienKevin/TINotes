@@ -11,29 +11,39 @@ function deleteStrInArray(str, array) {
 
 function findClosingBracketMatchIndex(str, pos) {
     if (str[pos] != '(') {
-      throw new Error("No '(' at index " + pos);
+        throw new Error("No '(' at index " + pos);
     }
     let depth = 1;
     for (let i = pos + 1; i < str.length; i++) {
-      switch (str[i]) {
-      case '(':
-        depth++;
-        break;
-      case ')':
-        if (--depth == 0) {
-          return i;
+        switch (str[i]) {
+            case '(':
+                depth++;
+                break;
+            case ')':
+                if (--depth == 0) {
+                    return i;
+                }
+                break;
         }
-        break;
-      }
     }
-    return -1;    // No matching closing parenthesis
-  }
+    return -1; // No matching closing parenthesis
+}
+
+// Check if an equation is a constant or not
+function isConstant(equation) {
+    try {
+        const value = nerdamer(equation).evaluate().text();
+        return isFinite(value);
+    } catch (e) {
+        return false;
+    }
+}
 
 /************************* From generateScript.js *************************/
 
 // source: https://stackoverflow.com/a/3561711/6798201
 // Escape all special characters in a regular expression string
-RegExp.escape = function(s) {
+RegExp.escape = function (s) {
     return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
 };
 

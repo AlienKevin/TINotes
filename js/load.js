@@ -1,7 +1,7 @@
 // Here we actually invoke Fallback JS to retrieve the following libraries for the page.
 fallback.load({
             // Include your stylesheets, this can be an array of stylesheets or a string!
-            page_css: 'fontawesome/css/all.css', // load local font awesome library
+            page_css: 'fontawesome/css/selected.min.css', // load local font awesome library
             global_css: 'introjs/introjs.min.css',  // load introjs css
 
             // JavaScript library. THE KEY MUST BE THE LIBRARIES WINDOW VARIABLE!
@@ -28,30 +28,26 @@ fallback.load({
 
             'Guppy': [
                 '//guppy.js.org/build/guppy.js',
-                '/node_modules/guppy-js/guppy.js',
+                'guppy-js/guppy.js',
             ],
             'GuppyOSK': [
                 '//guppy.js.org/build/guppy_osk.js',
-                '/node_modules/guppy-js/guppy_osk.js',
+                'guppy-js/guppy_osk.js',
             ],
-            'mathjs': [
-                '//cdn.jsdelivr.net/npm/mathjs@5.5.0/dist/math.min.js',
-                '//cdnjs.cloudflare.com/ajax/libs/mathjs/5.5.0/math.min.js',
+            'Algebrite': [
+                '//cdn.jsdelivr.net/npm/algebrite@1.2.0/dist/algebrite.bundle-for-browser.min.js',
             ],
-            'utils': 'js/utils.js',
+            'utils': 'dist/js/utils.js',
 
-        }, {
-            // shim: {
-            //     'utils': ['Mousetrap','swal','introJs'],
-            // },
         }); 
         fallback.ready(function () {
-            dynamicallyLoadScript("js/script.js");
-            dynamicallyLoadScript("js/equations.js");
-            dynamicallyLoadScript("js/contextMenu.js");
+            dynamicallyLoadScript("dist/js/script.js");
+            dynamicallyLoadScript("dist/js/equations.js");
+            dynamicallyLoadScript("dist/js/contextMenu.js");
             dynamicallyLoadScript("TI-BASIC/baseScript.txt");
-            dynamicallyLoadScript("js/generateScript.js");
-            dynamicallyLoadScript("js/popup.js");
+            dynamicallyLoadScript("dist/js/generateScript.js");
+            dynamicallyLoadScript("dist/js/popup.js");
+            dynamicallyLoadScript("dist/js/introSteps.js");
         });
 
         function dynamicallyLoadScript(url) {

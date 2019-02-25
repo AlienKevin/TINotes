@@ -1,7 +1,8 @@
 // button for creating a new equation
 const newEquationBtn = document.getElementById("newEquationBtn");
 const eqLength = 20;
-let guppyInput;
+let mainInput;
+let varInputs = {};
 let warningTimerId; // timer id for settimeout of warning sign
 // Add guppyOSK mobile keyboard
 guppyOSK = new GuppyOSK();
@@ -33,10 +34,8 @@ function displayEquation(position, eqName, eqInfo) {
 }
 
 function storeEquation(eqName, eqInfo) {
-    const eqInput = document.getElementById("eqInput");
-
     // storing equation in plain text
-    eqInfo.equation = getEquation(false);
+    eqInfo.equation = getMainEquation(false);
 
     // storing variable equations
     eqInfo.varEquations = getVarEquations();
@@ -44,8 +43,24 @@ function storeEquation(eqName, eqInfo) {
     // storing variable descriptions
     eqInfo.varDescriptions = getVarDescriptions();
 
+    // storing constants in XML
+    eqInfo.constants = getConstants();
+
     // load all equation info into storage
     setItemInStorage(eqName, eqInfo);
+}
+
+function getConstants(){
+    const varEquations = getVarEquations();
+    const constants = {};
+    Object.keys(varEquations).forEach(variable => {
+        const equation = varEquations[variable];
+        if (isConstant(equation)){
+            const input = varInputs[variable];
+            constants[variable] = input.engine.get_content("xml");
+        }
+    });
+    return constants;
 }
 
 function getVarDescriptions() {
@@ -61,10 +76,10 @@ function getVarDescriptions() {
 
 function getVarEquations() {
     const varEquations = {};
-    Array.from(document.getElementsByClassName("eqInput")).forEach((input) => {
-        const variable = input.getAttribute("data-var");
-        if (variable) {
-            varEquations[variable] = input.value;
+    Object.keys(varInputs).forEach((variable) => {
+        // only store equtions that are open in editField
+        if (document.querySelector(`.eqInput[data-var="${variable}"]`)) {
+            varEquations[variable] = getEquation(varInputs[variable], variable, true);
         }
     });
     return varEquations;
@@ -73,6 +88,7 @@ function getVarEquations() {
 const equationTextToSymbol = {
     "absolutevalue(": "abs(",
     "squareroot(": "sqrt(",
+    "neg(": "-(",
 }
 
 function convertTextToSymbol(textEquation) {
@@ -90,10 +106,9 @@ function convertSymbolToText(symbolEquation) {
     return symbolEquation;
 }
 
-function getEquation(inGuppyPlainTextFormat) {
+function getMainEquation(inGuppyPlainTextFormat) {
     try {
-        let equation = convertTextToSymbol(guppyInput.engine.get_content("text"));
-        equation = handleSubscripts(equation, inGuppyPlainTextFormat);
+        let equation = getEquation(mainInput, "main", inGuppyPlainTextFormat);
         console.log('TCL: getEquation -> equation', equation);
         detachWarning(eqInput);
         return equation;
@@ -106,6 +121,46 @@ function getEquation(inGuppyPlainTextFormat) {
     return new Error("error loading equation");
 }
 
+function getEquation(input, varName, inGuppyPlainTextFormat) {
+    let inputContent = "";
+    try {
+        inputContent = input.engine.get_content("text");
+        console.log('TCL: getEquation -> inputContent', inputContent);
+    } catch (e) {
+        AttachWarning(document.querySelector(`.eqInput[data-var="${varName}"]`));
+        throw new Error("Some equations are invalid!");
+    }
+    let equation = convertTextToSymbol(inputContent);
+    console.log('TCL: getEquation -> equation', equation);
+    equation = handleSubscripts(equation, inGuppyPlainTextFormat);
+    console.log('TCL: getEquation -> equation', equation);
+    return equation;
+}
+
+function convertToExponential(equation) {
+    const value = nerdamer(equation).evaluate().text();
+    console.log('TCL: convertToExponential -> value', value);
+    const minPowerForExponential = 5;
+    if (isFinite(value)) {
+        let exponential = Number(value).toExponential();
+        exponential = exponential.toUpperCase(); // convert lowercase e to uppercase E
+        const exponent = exponential.substring(exponential.indexOf("E") + 1);
+        if (Math.abs(Number(exponent)) > minPowerForExponential) {
+            return exponential;
+        } else {
+            return value;
+        }
+    }
+    return equation;
+}
+
+function getExponent(value){
+    let exponential = Number(value).toExponential();
+    exponential = exponential.toUpperCase(); // convert lowercase e to uppercase E
+    const exponent = exponential.substring(exponential.indexOf("E") + 1);
+    return exponent;
+}
+
 function handleVarNameSubscripts(varName) {
     if (varName.indexOf("_") >= 0) {
         return handleSubscripts(`(${varName})`, true);
@@ -114,8 +169,31 @@ function handleVarNameSubscripts(varName) {
     }
 }
 
-function handleSubscripts(equation, inGuppyPlainTextFormat = true) {
+function AddParenthesesAroundVarName(equation) {
+    let vars = nerdamer(equation).variables();
+    const searchVarNames = {};
+    // filter out vars without subscripts
+    vars = vars.filter(varName => varName.indexOf("_") >= 0);
+    vars.forEach(varName => {
+        const varMap = {};
+        const searchVarName = "_" + varName.replace("_", "c") + "_";
+        varMap[varName] = searchVarName;
+        searchVarNames[varName] = searchVarName;
+        equation = nerdamer(equation, varMap).text();
+        console.log('TCL: AddParenthesesAroundVarName -> equation', equation);
+    });
+    vars.forEach(varName => {
+        const varNameWithParen = "(" + varName + ")";
+        equation = equation.replace(new RegExp(searchVarNames[varName], "g"), varNameWithParen);
+    });
+    return equation;
+}
+
+function handleSubscripts(equation, inGuppyPlainTextFormat = true, AddParentheses = false) {
     if (equation.indexOf("_") >= 0) { // contains subscripts
+        if (AddParentheses) {
+            equation = AddParenthesesAroundVarName(equation);
+        }
         let startIndex = 0;
         let underscoreIndex = equation.indexOf("_", startIndex);
         while (underscoreIndex >= 0) {
@@ -191,14 +269,56 @@ function detachWarning(element) {
     }
 }
 
-function setEquation(equation) {
+function setMainEquation(equation) {
     if (equation) {
         console.log('TCL: setEquation -> convertSymbolToText(equation)', convertSymbolToText(equation));
-        guppyInput.import_text(handleSubscripts(convertSymbolToText(equation)), true);
-        guppyInput.engine.end();
-        guppyInput.activate();
-        guppyInput.render(true);
+        setInputEquation(mainInput, equation);
+        mainInput.engine.end();
+        mainInput.activate();
+        mainInput.render(true);
     }
+}
+
+function setInputEquation(input, equation, AddParentheses = false) {
+    console.log('TCL: setInputEquation -> equation', equation);
+    const processedEquation = convertSymbolToText(handleSubscripts(equation, true, AddParentheses));
+    console.log('TCL: setInputEquation -> processedEquation', processedEquation);
+    if (processedEquation) {
+        input.import_text(processedEquation);
+    } else {
+        input.engine.sel_all();
+        input.engine.sel_clear();
+    }
+    input.engine.end();
+    input.render(true);
+}
+
+function configureInput(input) {
+    input.configure("blacklist", [
+        // some disallowed functions
+        "norm", "utf8", "eval", "integral", "defintegral", "derivative", "summation", "product", "root", "vector", "point", "matrix",
+        // infinity is not allowed
+        "infinity",
+        // no emojis
+        "banana", "pineapple", "kiwi", "mango",
+        // no hyperbolic trigs
+        "sinh", "cosh", "tanh",
+        // some disallowed greek letters
+        "zeta", "eta", "iota", "kappa", "nu", "xi", "upsilon", "chi", "psi", "omega", "Theta", "Lambda", "Xi", "Pi", "Psi",
+    ]);
+    input.configure("cliptype", "text");
+    input.configure("button", ["osk", "settings", "symbols", "controls"]);
+    input.event("focus", (focusedObj) => {
+        if (focusedObj.focused) {
+            // console.log('TCL: focused', focusedObj);
+            removeExtraGuppyOSKTabs();
+            document.getElementById("editField").scrollIntoView({
+                behavior: "smooth",
+                block: "start",
+                inline: "nearest"
+            });
+        }
+    });
 }
 
 function createEquationEditor() {
@@ -270,58 +390,28 @@ function openEquationEditField(eqName, eqInfo, position) {
 
     const eqInput = document.getElementById("eqInput");
     eqInput.classList.add("eqInput");
+    eqInput.setAttribute("data-var", "main");
     // convert div to guppy editor
-    guppyInput = new Guppy("eqInput");
-    guppyInput.configure("blacklist", [
-        // some disallowed functions
-        "norm", "utf8", "eval", "integral", "defintegral", "derivative", "summation", "product", "root", "vector", "point", "matrix",
-        // infinity is not allowed
-        "infinity",
-        // no emojis
-        "banana", "pineapple", "kiwi", "mango",
-        // no hyperbolic trigs
-        "sinh", "cosh", "tanh",
-        // some disallowed greek letters
-        "zeta", "eta", "iota", "kappa", "nu", "xi", "upsilon", "chi", "psi", "omega", "Theta", "Lambda", "Xi", "Pi", "Psi",
-    ]);
-    guppyInput.configure("cliptype", "text");
-    guppyInput.configure("button", ["osk", "settings", "symbols", "controls"]);
-    guppyInput.event("change", updateVarTable);
+    mainInput = new Guppy("eqInput");
+    configureInput(mainInput)
+    mainInput.event("change", updateVarTable);
     // const previousEquation = eqInfo.equation;
     // if (previousEquation) {
     //     console.log('TCL: previousEquation', previousEquation);
     //     setEquation(previousEquation);
     // }
-    guppyInput.event("focus", (focusedObj) => {
-        if (focusedObj.focused) {
-            // console.log('TCL: focused', focusedObj);
-            removeExtraGuppyOSKTabs();
-            editor.scrollIntoView({
-                behavior: "smooth",
-                block: "start",
-                inline: "nearest"
-            });
-        }
-    })
-
-    // Scroll editor into view
-    editor.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-        inline: "nearest"
-    });
 
     // load equation info from storage
     if (eqInfo !== undefined) {
         if (eqInfo.equation) {
-            setEquation(eqInfo.equation);
+            setMainEquation(eqInfo.equation);
         }
         console.log("Creating Var Table ...");
         createVarTable(eqInfo);
     }
 
     function updateVarTable() {
-        const eq = getEquation();
+        const eq = getMainEquation();
         console.log('TCL: updateVarTable -> eq', eq);
         const vars = getEquationVars(eq);
         console.log('TCL: updateVarTable -> vars', vars);
@@ -342,10 +432,11 @@ function openEquationEditField(eqName, eqInfo, position) {
                     if (rowVars.indexOf(variable) < 0) {
                         const newRow = createNewRowHTML(variable);
                         tbody.insertAdjacentHTML("beforeend", newRow);
+                        varInputs[variable] = new Guppy(`eqInput-${variable}`);
+                        configureInput(varInputs[variable]);
                     }
-                    const varEqInput = tbody.querySelector(`.eqInput[data-var=${variable}]`);
                     console.log("Solving var equations...");
-                    varEqInput.value = solveEquation(eq, variable);
+                    setInputEquation(varInputs[variable], solveEquation(eq, variable), true);
                 }
             )
             if (vars.length > 0) {
@@ -382,7 +473,7 @@ function openEquationEditField(eqName, eqInfo, position) {
 
     function createVarTable(varInfo) {
         console.log('TCL: createVarTable -> varInfo', varInfo);
-        const eq = getEquation();
+        const eq = getMainEquation();
         detachWarning(eqInput);
         const vars = getEquationVars(eq);
         // console.log('TCL: createEquationEditor -> vars', vars);
@@ -406,14 +497,19 @@ function openEquationEditField(eqName, eqInfo, position) {
             varTable.innerHTML = tableStr;
             editor.appendChild(varTable);
 
+            vars.forEach((variable) => {
+                varInputs[variable] = new Guppy(`eqInput-${variable}`);
+                configureInput(varInputs[variable]);
+            })
+
             if (varInfo !== undefined) {
                 const varEquations = varInfo.varEquations;
                 console.log('TCL: createVarTable -> varEquations', varEquations);
                 const varDescriptions = varInfo.varDescriptions;
                 console.log('TCL: createVarTable -> varDescriptions', varDescriptions);
                 // load var equations if specified
-                if (varEquations) {
-                    loadVarEquations(varEquations);
+                if (varInfo) {
+                    loadVarEquations(varInfo);
                     renderEquationVars();
                 }
                 // load var descriptions if specified
@@ -426,23 +522,29 @@ function openEquationEditField(eqName, eqInfo, position) {
 }
 
 function solveEquation(equation, variable) {
-	console.log('TCL: solveEquation -> equation', handleSubscripts(equation, false));
-    const solution = nerdamer.solve(handleSubscripts(equation, false), variable);
+    const solution = nerdamer.solve(convertTextToSymbol(handleSubscripts(equation, false)), variable);
+    console.log('TCL: solveEquation -> convertTextToSymbol(handleSubscripts(equation, false))', convertTextToSymbol(handleSubscripts(equation, false)));
     let finalResult = ""; // default to no real solutions
     if (solution.symbol && solution.symbol.elements) {
         // return solution.symbol.elements[0].text();
         solution.symbol.elements.some(element => {
             console.log('TCL: solveEquation -> element', element.text());
-            if ((element.symbol ? (element.symbol.isImaginary() === false) : (true)) // not imaginary number
-                &&
-                (element.value === "#" ? (element.gte(0)) : (nerdamer(element.text()).evaluate().text().startsWith("-") === false))) { // number must be greater than 0; expr must not start with negative sign
-                console.log("Result is greater than 0!");
-                finalResult = element.text();
-                return true; // exit the loop
+            if ((element.symbol ? (element.symbol.isImaginary() === false) : (true))) { // not imaginary number
+                if ((solution.symbol.elements.length >= 2 &&
+                        // number must be greater than 0; expr must not start with negative sign
+                        (element.value === "#" ?
+                            (element.gte(0)) :
+                            (nerdamer(element.text()).evaluate().text().startsWith("-") === false))) ||
+                    // only solution can be negative
+                    solution.symbol.elements.length <= 1) {
+                    finalResult = Algebrite.simplify(element.text()).toString();
+                    return true; // exit the loop
+                }
             }
             return false; // keep looping
         });
     }
+    console.log('TCL: solveEquation -> finalResult', finalResult);
     return finalResult;
 }
 
@@ -468,7 +570,7 @@ function renderEquationVars() {
 function createNewRowHTML(variable) {
     let newRow = `<tr data-var="${variable}"><th>\$\$${handleVarNameSubscripts(variable)}\$\$</th><td>`;
     // add variable equation column
-    newRow += `<input type="text" size="${eqLength}" class="eqInput" data-var="${variable}" spellcheck="false"></td>`;
+    newRow += `<div id="eqInput-${variable}" class="eqInput varEqInput" data-var="${variable}"></div></td>`;
     // add variable description column
     const varDescriptionLength = lineLength - variable.length - 1;
     newRow += `<td><input type="text" class="descriptionInput" 
@@ -489,14 +591,21 @@ function loadVarDescriptions(varDescriptions) {
     });
 }
 
-function loadVarEquations(varEquations) {
-    Array.from(document.getElementsByClassName("eqInput")).forEach((input) => {
-        const variable = input.getAttribute("data-var");
-        if (variable) {
-            const varEquation = varEquations[variable];
-            if (varEquation) { // not undefined or empty string
-                input.value = varEquation;
-            }
+function loadVarEquations(varInfo) {
+    const varEquations = varInfo.varEquations;
+    const constants = varInfo.constants;
+    console.log('TCL: loadVarEquations -> varEquations', varEquations);
+    Object.keys(varEquations).forEach((variable) => {
+        console.log('TCL: loadVarEquations -> variable', variable);
+        const varInput = varInputs[variable];
+        const varEquation = varEquations[variable];
+        if (constants && Object.keys(constants).indexOf(variable) >= 0){
+            const constant = constants[variable];
+            varInput.import_xml(constant);
+            varInput.engine.end();
+            varInput.render(true);
+        } else{
+            setInputEquation(varInput, varEquation, false);
         }
-    });
+    })
 }

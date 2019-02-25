@@ -5,7 +5,6 @@ let
     lineLength, rowLength, menuTitleLength, menuItemLength;
 // minimum length required, no empty string
 const minMenuItemLength = 1;
-const appInfoBtn = document.getElementById("appInfoBtn");
 const newFolderBtn = document.getElementById("newFolderBtn");
 const newFileBtn = document.getElementById("newFileBtn");
 const backBtn = document.getElementById("backBtn");
@@ -80,18 +79,6 @@ function updateAtPosition(currentPosition) {
 displayItemPlaceholder();
 
 // set up buttons
-
-// set up information button
-appInfoBtn.addEventListener("click", () => {
-    const introjs = introJs().setOptions({
-        "tooltipPosition": "bottom",
-        "showStepNumbers": false,
-        "hidePrev": true,
-        "hideNext": true,
-        "showProgress": true,
-    });
-    introjs.start();
-});
 
 // button for creating a new folder
 newFolderBtn.addEventListener("click", () => {
