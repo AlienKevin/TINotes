@@ -296,8 +296,10 @@ function generateEquationScript(index, item) {
     End
     If K=105
     Then
+        V
         Input "",Str0
-        Disp expr(Str0)
+        expr(Str0)->V
+        Disp V
         Disp "~~~~~~~~~~~~~~~~~~~~~~~~~~"
         Goto theta
     End\n`;
