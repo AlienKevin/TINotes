@@ -17,10 +17,10 @@ Try TINotes here: https://alienkevin.github.io/TINotes/
 
 **Demo 5**: You even now add equations to you TI calculators! You can enter any custom equations and TINotes will auto-detect all variables and solve for each. Currently, TINotes cannot solve for variables under sqrt, log, ln, and trig functions but you can solve them using other tools and paste the results back to TINotes. (checkout [quickmath](https://quickmath.com/webMathematica3/quickmath/equations/solve/intermediate.jsp) or [doyourmath](https://doyourmath.com/))<br/>
 TINotes website:<br/>
-![Demo 5 website](https://raw.githubusercontent.com/AlienKevin/TINotes/gh-pages/Demos/EquationF%3Dma.gif)
+![Demo 5 website](https://raw.githubusercontent.com/AlienKevin/TINotes/master/Demos/EquationF%3Dma.gif)
 
 TI calculator screen:<br/>
-![Demo 5 calculator](https://raw.githubusercontent.com/AlienKevin/TINotes/gh-pages/Demos/EquationF%3DmaTI.gif)
+![Demo 5 calculator](https://raw.githubusercontent.com/AlienKevin/TINotes/master/Demos/EquationF%3DmaTI.gif)
 
 ## Set up
 I. Use online: go to https://alienkevin.github.io/TINotes/
