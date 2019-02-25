@@ -64,6 +64,14 @@ II. Download and use offline
     - press <kbd>2nd</kbd> to exit the file and go back to parent folder
 3. If you are inside a folder,
     - select the "Back" option in the menu by either scrolling through options using arrow keys and press <kbd>enter</kbd> or pressing the menu item's number
+4. If you are inside an equation solver,
+    - select the equation you want to solve from the menu
+    - when the equation appears, press <kbd>enter</kbd> to select the variable you want to solve for
+    - type in the values of variables prompted, press <kbd>enter</kbd> to continue to next variable
+    - press <kbd>enter</kbd> and the result will show up
+    - If you want to go back to parent folder, press <kbd>2nd</kbd>. If you want to do more calculations, press <kbd>enter</kbd>. You can use <kbd>Ans</kbd> to access the solution of equation.
+    - If you are done with calculations, press <kbd>clear</kbd> to exit the program. The result of your last calculation is preserved in `Ans`.
+    ![Demo for navigation in equatoin solver in calculator](https://raw.githubusercontent.com/AlienKevin/TINotes/master/Demos/EquationCalcNavigationDemo.gif)
 
 ### Insert special symbols
 You can insert special symbols by typing a "\\" (backward slash) and then the name of the symbol. E.g. "\alpha" produces "α"
