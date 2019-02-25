@@ -1,21 +1,21 @@
 // Here we actually invoke Fallback JS to retrieve the following libraries for the page.
 fallback.load({
             // Include your stylesheets, this can be an array of stylesheets or a string!
-            page_css: 'fontawesome/css/selected.min.css', // load local font awesome library
-            global_css: 'introjs/introjs.min.css',  // load introjs css
+            page_css: 'lib/fontawesome/css/selected.min.css', // load local font awesome library
+            global_css: 'lib/introjs/introjs.min.css',  // load introjs css
 
             // JavaScript library. THE KEY MUST BE THE LIBRARIES WINDOW VARIABLE!
             // load sweet alert for beautiful popups: https://github.com/t4t5/sweetalert
             'swal': [
                 '//unpkg.com/sweetalert/dist/sweetalert.min.js',
                 '//cdn.jsdelivr.net/npm/sweetalert',
-                'sweetalert/sweetalert.min.js'
+                'lib/sweetalert/sweetalert.min.js'
             ],
 
             // load Mousetrap for keyboard shortcuts: https://github.com/ccampbell/mousetrap
             'Mousetrap': [
                 '//cdnjs.cloudflare.com/ajax/libs/mousetrap/1.6.2/mousetrap.min.js',
-                'mousetrap/mousetrap.min.js',
+                'lib/mousetrap/mousetrap.min.js',
             ],
 
             // load introjs for step-by-step introduction to my web app:
@@ -23,16 +23,16 @@ fallback.load({
             'introJs': [
                 '//cdn.jsdelivr.net/npm/intro.js@2.9.3/minified/intro.min.js',
                 '//cdnjs.cloudflare.com/ajax/libs/intro.js/2.9.3/intro.min.js',
-                'introjs/intro.min.js'
+                'lib/introjs/intro.min.js'
             ],
 
             'Guppy': [
                 '//guppy.js.org/build/guppy.js',
-                'guppy-js/guppy.js',
+                'lib/guppy-js/guppy.js',
             ],
             'GuppyOSK': [
                 '//guppy.js.org/build/guppy_osk.js',
-                'guppy-js/guppy_osk.js',
+                'lib/guppy-js/guppy_osk.js',
             ],
             'Algebrite': [
                 '//cdn.jsdelivr.net/npm/algebrite@1.2.0/dist/algebrite.bundle-for-browser.min.js',
