@@ -203,6 +203,12 @@ div#editField[data-type="equation"] input{
     padding: .3em 1em;
 }
 
+/* guppy help */
+.guppy_help{
+    z-index: 10; /* higher than guppyOSK */
+}
+
+/* guppy osk (keyboard) */
 div.guppy_osk{
     /* transform: scale(0.8); */
     position: sticky;
