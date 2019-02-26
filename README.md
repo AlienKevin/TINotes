@@ -42,7 +42,7 @@ II. Download and use offline
 5. In the end, you don't need to save anything before exiting the program, all files and folders are stored locally on your machine and will automatically load next time you lauched the program.
 
 ### Export notes
-1. When you are happy with your notes, you can export them to your calculator. Simply click the `Generate TI Script` button to generate the script. In the popup window, click the `download` button to download the script.
+1. When you are happy with your notes, you can export them to your calculator. Simply click the `Generate TI Script` button to generate the script. In the popup window, click the `download` button to download the script. **I strongly recommend you choose the sourceCoder format and compile the script in SourceCoder and then download and load it to your calculator. New Releases may not support TI-BASIC format**
 2. To load the script into your calculator, you need to download the TI Connect software from [Texas Instrument website](https://education.ti.com/en/software/details/en/CA9C74CAD02440A69FDC7189D7E1B6C2/swticonnectcesoftware#!). Pick the right version for your calculator and operating system and download TI Connect.
 3. Open up the generated script file, select all text and copy it.
 4. Open the TI Connect software and create a new program file. Paste the content in the new file. Name the TI file `TINOTES`.*
