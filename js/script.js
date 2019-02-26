@@ -365,6 +365,13 @@ function getEndOfPosition(itemName) {
     return itemName.substring(itemName.lastIndexOf("/") + 1);
 }
 
+// retrieve the item folder name from its full position path
+// e.g. itemName = "home/folder1/file1"
+// returns "home/folder1"
+function getStartOfPosition(itemName){
+    return itemName.substring(0, itemName.lastIndexOf("/"));
+}
+
 // display item labels
 function displayItem(itemName, itemType, itemPosition) {
     // replace input with label
@@ -551,10 +558,11 @@ function linkItemToHome(originalItemName){
     const linkedItemName = `home/${shortItemName}`;
     console.log('TCL: pinToHome -> newItemName', linkedItemName);
     const linkedItem =  clone(originalItem); // must clone to not modify original
+	console.log('TCL: linkItemToHome -> linkedItem', linkedItem);
     // set position to home
     linkedItem.position = homePosition;
     linkedItem.link = originalItemName;
-
+    console.log('TCL: linkItemToHome -> linkedItem', linkedItem);
     // store linked item at home position
     setItemInStorage(linkedItemName, linkedItem);
     // modify original item
@@ -577,7 +585,16 @@ function getItemFromStorage(itemName) {
 }
 
 function setItemInStorage(itemName, item) {
+    // store item itself
     localStorage.setItem(itemName, JSON.stringify(item));
+    // update linked item
+    if (item.link){
+        const linkedItemName = item.link;
+        const linkedItem = clone(item);
+        linkedItem.position = getStartOfPosition(linkedItemName);
+        linkedItem.link = itemName;
+        localStorage.setItem(linkedItemName, JSON.stringify(linkedItem));
+    }
 }
 
 function convertWordsToSymbols(str) {
