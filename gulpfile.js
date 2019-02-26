@@ -6,6 +6,7 @@ var pump = require('pump');
 var cssnano = require('gulp-cssnano');
 const htmlmin = require('gulp-htmlmin');
 var del = require('del');
+var sourcemaps = require('gulp-sourcemaps');
 
 var minify = composer(uglifyjs, console);
  
@@ -15,7 +16,9 @@ gulp.task('compressJS', function (cb) {
  
   pump([
       gulp.src('js/*.js'),
+      sourcemaps.init(),
       minify(options),
+      sourcemaps.write('../../maps/js'),
       gulp.dest('dist/js')
     ],
     cb
@@ -34,7 +37,9 @@ gulp.task("compressNerdamer", function(cb){
 
 gulp.task('compressCSS', function () {
   gulp.src("style.css")
+  .pipe(sourcemaps.init())
   .pipe(cssnano())
+  .pipe(sourcemaps.write('../maps'))
   .pipe(gulp.dest('dist'))
 });
 
