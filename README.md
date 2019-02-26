@@ -73,6 +73,12 @@ II. Download and use offline
     - If you are done with calculations, press <kbd>clear</kbd> to exit the program. The result of your last calculation is preserved in `Ans`.
     ![Demo for navigation in equatoin solver in calculator](https://raw.githubusercontent.com/AlienKevin/TINotes/master/Demos/EquationCalcNavigationDemo.gif)
 
+## Advanced Usages
+ 
+### Pin to home (root folder)
+If you want to create a shortcut to access a file/equation, right click and select `Pin To Home`. The pinned version and the original are linked now and changes to either will automatically update the other. To unpin from home, go to home and delete the linked item.
+<br/>Note: linked items are copied so beaware of their impact on calculator RAM storage.
+
 ### Insert special symbols
 You can insert special symbols by typing a "\\" (backward slash) and then the name of the symbol. E.g. "\alpha" produces "α"
 Here's a list of symbols supported:
