@@ -296,13 +296,15 @@ function setInputEquation(input, equation, AddParentheses = false) {
 function configureInput(input) {
     input.configure("blacklist", [
         // some disallowed functions
-        "norm", "utf8", "eval", "integral", "defintegral", "derivative", "summation", "product", "root", "vector", "point", "matrix",
+        "norm", "utf8", "text", "floor", "eval", "integral", "defintegral", "derivative", "summation", "product", "root", "vector", "point", "matrix",
         // infinity is not allowed
         "infinity",
         // no emojis
         "banana", "pineapple", "kiwi", "mango",
         // no hyperbolic trigs
         "sinh", "cosh", "tanh",
+        // inequalities
+        "<=", "!=", ">=", ">", "<", "!=",
         // some disallowed greek letters
         "zeta", "eta", "iota", "kappa", "nu", "xi", "upsilon", "chi", "psi", "omega", "Theta", "Lambda", "Xi", "Pi", "Psi",
     ]);
