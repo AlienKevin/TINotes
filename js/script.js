@@ -511,13 +511,6 @@ function renameItem(itemLabel) {
 function pinToHome(itemLabel) {
     const itemName = itemLabel.getAttribute("data-name");
 	console.log('TCL: pinToHome -> itemName', itemName);
-    const shortItemName = getEndOfPosition(itemName);
-	console.log('TCL: pinToHome -> shortItemName', shortItemName);
-    const newItemName = `home/${shortItemName}`;
-	console.log('TCL: pinToHome -> newItemName', newItemName);
-    const item = getItemFromStorage(itemName);
-    // set position to home
-    item.position = homePosition;
     swal({
             title: "Give the pinned item a name",
             buttons: {
@@ -540,7 +533,7 @@ function pinToHome(itemLabel) {
                         buttons: false,
                         timer: 800,
                     });
-                    setItemInStorage(newItemName, item);
+                    linkItemToHome(itemName);
                     break;
 
                 case "newName":
@@ -548,6 +541,25 @@ function pinToHome(itemLabel) {
                     break;
             }
         });
+}
+
+function linkItemToHome(originalItemName){
+    const shortItemName = getEndOfPosition(originalItemName);
+    console.log('TCL: pinToHome -> shortItemName', shortItemName);
+    const originalItem = getItemFromStorage(originalItemName);
+	console.log('TCL: linkItemToHome -> originalItem', originalItem);
+    const linkedItemName = `home/${shortItemName}`;
+    console.log('TCL: pinToHome -> newItemName', linkedItemName);
+    const linkedItem =  clone(originalItem); // must clone to not modify original
+    // set position to home
+    linkedItem.position = homePosition;
+    linkedItem.link = originalItemName;
+
+    // store linked item at home position
+    setItemInStorage(linkedItemName, linkedItem);
+    // modify original item
+    originalItem.link = linkedItemName;
+    setItemInStorage(originalItemName, originalItem);
 }
 
 function renameItemInStorage(oldItemName, newItemName) {

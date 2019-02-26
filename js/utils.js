@@ -93,3 +93,10 @@ function insertSubstring(str, index, insertedString, deleteLength = 0) {
 function deleteSubstring(str, index, deleteLength = 0) {
     return insertSubstring(str, index, "", deleteLength);
 }
+
+// Clone an object containing objects, arrays, strings, booleans and numbers
+// but not containing functions
+// Source: https://stackoverflow.com/a/10869248/6798201
+function clone(obj){
+    return JSON.parse(JSON.stringify(obj));
+}
