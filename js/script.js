@@ -516,9 +516,9 @@ function renameItem(itemLabel) {
 }
 
 function pinToHome(itemLabel) {
-    const itemName = itemLabel.getAttribute("data-name");
-    const itemType = getItemFromStorage(itemName).type;
-    console.log('TCL: pinToHome -> itemName', itemName);
+    const originalItemName = itemLabel.getAttribute("data-name");
+    const originalItemType = getItemFromStorage(originalItemName).type;
+    console.log('TCL: pinToHome -> itemName', originalItemName);
     swal({
             title: "Give the pinned item a name",
             buttons: {
@@ -541,40 +541,65 @@ function pinToHome(itemLabel) {
                         buttons: false,
                         timer: 800,
                     });
-                    linkItemToHome(itemName);
+                    linkItemToHome(originalItemName);
                     break;
 
                 case "newName":
-                    const itemNameInput = createItemNameInput(itemType);
-                    itemNameInput.style.margin = "auto";
-                    itemNameInput.placeholder = "";
-                    itemNameInput.autofocus = true;
-                    swal({
-                            title: "Enter New Name: ",
-                            content: itemNameInput,
-                        })
-                        .then(() => {
-                            const newItemName = itemNameInput.value; 
-                            swal(`${newItemName} pinned to home!`, {
-                                icon: "success",
-                                buttons: false,
-                                timer: 800,
-                            });
-                            linkItemToHome(itemName, newItemName);
-                        });
+                    askForNewLinkedName(originalItemName, originalItemType);
                     break;
             }
         });
 }
 
+function askForNewLinkedName(originalItemName, originalItemType) {
+    const itemNameInput = createItemNameInput(originalItemType);
+    itemNameInput.style.margin = "auto";
+    itemNameInput.placeholder = "";
+    itemNameInput.autofocus = true;
+    swal({
+            title: "Enter New Name: ",
+            content: itemNameInput,
+        })
+        .then(() => {
+            const newItemName = itemNameInput.value;
+			console.log('TCL: askForNewLinkedName -> newItemName', newItemName);
+            swal(`${newItemName} pinned to home!`, {
+                icon: "success",
+                buttons: false,
+                timer: 800,
+            });
+            linkItemToHome(originalItemName, newItemName);
+        });
+}
+
 function linkItemToHome(originalItemName, shortlinkedItemName) {
+	console.log('TCL: linkItemToHome -> shortlinkedItemName', shortlinkedItemName);
     const originalItem = getItemFromStorage(originalItemName);
     console.log('TCL: linkItemToHome -> originalItem', originalItem);
-    if (!shortlinkedItemName) {
+    if (shortlinkedItemName === undefined) {
         shortlinkedItemName = getEndOfPosition(originalItemName);
     }
     const linkedItemName = `home/${shortlinkedItemName}`;
     console.log('TCL: pinToHome -> newItemName', linkedItemName);
+    const itemNameList = getItemNamesAtPosition(homePosition);
+    if (itemNameList.indexOf(linkedItemName) >= 0 || shortlinkedItemName === "") {
+        let alertTitle = "Duplicated Item Name!";
+		console.log('TCL: linkItemToHome -> shortlinkedItemName', shortlinkedItemName);
+        if (shortlinkedItemName === ""){ // empty name
+            alertTitle = "Item name cannot be empty!";
+        }
+        // duplicated name at home
+        swal({
+            title: alertTitle,
+            icon: "warning",
+            button: "OK",
+        }).then(() => {
+            // Ask for new item name
+            askForNewLinkedName(originalItemName, shortlinkedItemName);
+        });
+        throw new Error("Invalid item name"); // stop program execution
+    }
+    console.log("linking the items...");
     const linkedItem = clone(originalItem); // must clone to not modify original
     console.log('TCL: linkItemToHome -> linkedItem', linkedItem);
     // set position to home
@@ -586,6 +611,16 @@ function linkItemToHome(originalItemName, shortlinkedItemName) {
     // modify original item
     originalItem.link = linkedItemName;
     setItemInStorage(originalItemName, originalItem);
+}
+
+function getItemNamesAtPosition(position) {
+    const itemNameList = [];
+    iterateStorage(function (item, itemName) {
+        if (item.position === position) {
+            itemNameList.push(itemName);
+        }
+    });
+    return itemNameList;
 }
 
 function restrictContextItems(itemLabel) {
