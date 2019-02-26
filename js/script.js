@@ -510,7 +510,14 @@ function renameItem(itemLabel) {
 
 function pinToHome(itemLabel) {
     const itemName = itemLabel.getAttribute("data-name");
+	console.log('TCL: pinToHome -> itemName', itemName);
+    const shortItemName = getEndOfPosition(itemName);
+	console.log('TCL: pinToHome -> shortItemName', shortItemName);
+    const newItemName = `home/${shortItemName}`;
+	console.log('TCL: pinToHome -> newItemName', newItemName);
     const item = getItemFromStorage(itemName);
+    // set position to home
+    item.position = homePosition;
     swal({
             title: "Give the pinned item a name",
             buttons: {
@@ -528,7 +535,12 @@ function pinToHome(itemLabel) {
         .then((value) => {
             switch (value) {
                 case "sameName":
-                    swal("Pinned to home!", "success");
+                    swal("Pinned to home!", {
+                        icon: "success",
+                        buttons: false,
+                        timer: 800,
+                    });
+                    setItemInStorage(newItemName, item);
                     break;
 
                 case "newName":
