@@ -391,7 +391,7 @@ function displayItem(itemName, itemType, itemPosition) {
     itemLabelText += displayedName;
 
     // add link sign to indicate that the item is linked with another
-    if (itemInfo.link){
+    if (itemInfo && itemInfo.link){
         itemLabelText += `<i class="far fa-link"></i>`;
     }
 
