@@ -117,6 +117,11 @@
                                     renameItem(itemLabel);
                                 };
                                 break;
+                            case "pinToHome":
+                                el.onclick = () => {
+                                    pinToHome(itemLabel);
+                                };
+                                break;
                         }
                     }
                 )

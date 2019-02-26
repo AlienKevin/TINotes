@@ -508,6 +508,36 @@ function renameItem(itemLabel) {
     }
 }
 
+function pinToHome(itemLabel) {
+    const itemName = itemLabel.getAttribute("data-name");
+    const item = getItemFromStorage(itemName);
+    swal({
+            title: "Give the pinned item a name",
+            buttons: {
+                sameName: {
+                    text: "Same Name",
+                    value: "sameName",
+                },
+                newName: {
+                    text: "New Name",
+                    value: "newName",
+                },
+                cancel: "Cancel",
+            },
+        })
+        .then((value) => {
+            switch (value) {
+                case "sameName":
+                    swal("Pinned to home!", "success");
+                    break;
+
+                case "newName":
+                    swal("enter a new name!");
+                    break;
+            }
+        });
+}
+
 function renameItemInStorage(oldItemName, newItemName) {
     const item = getItemFromStorage(oldItemName);
     removeItemFromStorage(oldItemName);
