@@ -142,7 +142,7 @@ function getEquation(input, varName, inGuppyPlainTextFormat) {
         console.log('TCL: getEquation -> inputContent', inputContent);
     } catch (e) {
         AttachWarning(document.querySelector(`.eqInput[data-var="${varName}"]`));
-        throw new Error("Some equations are invalid!");
+        // throw new Error("Some equations are invalid!");
     }
     let equation = convertTextToSymbol(inputContent);
     console.log('TCL: getEquation -> equation', equation);
@@ -324,20 +324,20 @@ function configureInput(input) {
     });
 }
 
-function configureGuppyHelp(){
+function configureGuppyHelp() {
     const additionalBlacklist = [
         "int", "defi", "deriv",
         "mat", "vec", "sum", "prod",
         "leq", "geq", "less", "greater", "neq",
     ];
     // configure guppy help to restrict symbols
-document.querySelector('#guppy_syms_table')
-.querySelectorAll("tr").forEach(row => {
-    const symbolName = row.querySelector("td").innerText;
-    if (guppyBlacklist.indexOf(symbolName) >= 0 || additionalBlacklist.indexOf(symbolName) >= 0) {
-        row.remove();
-    }
-});
+    document.querySelector('#guppy_syms_table')
+        .querySelectorAll("tr").forEach(row => {
+            const symbolName = row.querySelector("td").innerText;
+            if (guppyBlacklist.indexOf(symbolName) >= 0 || additionalBlacklist.indexOf(symbolName) >= 0) {
+                row.remove();
+            }
+        });
 }
 
 function createEquationEditor() {
@@ -434,8 +434,9 @@ function openEquationEditField(eqName, eqInfo, position) {
     function updateVarTable() {
         const eq = getMainEquation();
         console.log('TCL: updateVarTable -> eq', eq);
-        const vars = getEquationVars(eq);
+        let vars = getEquationVars(eq);
         console.log('TCL: updateVarTable -> vars', vars);
+
         let varTable = document.getElementById("varTable");
         // console.log('TCL: updateVarTable -> varTable', varTable);
         if (varTable) {
@@ -446,7 +447,16 @@ function openEquationEditField(eqName, eqInfo, position) {
                     rowVars.push(row.getAttribute("data-var"));
                 }
             );
-            // console.log('TCL: updateVarTable -> rowVars', rowVars);
+
+            // detect empty main equation
+            const emptyXML = new RegExp("<m[^>]*><e[^>]*></e></m>");
+            const mainContent = mainInput.engine.get_content("xml");
+            console.log('TCL: updateVarTable -> mainContent', mainContent);
+            console.log('TCL: updateVarTable -> emptyXML.test(mainContent)', emptyXML.test(mainContent));
+            if (emptyXML.test(mainContent)) { // empty main equation
+                varTable.remove();
+            }
+
             vars.forEach(
                 (variable) => {
                     const tbody = varTable.getElementsByTagName("tbody")[0];
