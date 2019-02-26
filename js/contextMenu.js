@@ -102,10 +102,9 @@
             taskItemInContext = clickInsideElement(itemClickedEvent, taskItemClassName);
             if (taskItemInContext) {
                 itemClickedEvent.preventDefault();
+                let itemLabel = itemClickedEvent.target;
                 Array.from(document.getElementsByClassName(contextMenuItemClassName)).forEach(
                     el => {
-                        const itemLabel = itemClickedEvent.target;
-
                         switch (el.getAttribute("data-action")) {
                             case "delete":
                                 el.onclick = () => {
@@ -125,7 +124,7 @@
                         }
                     }
                 )
-                toggleMenuOn();
+                toggleMenuOn(itemLabel);
                 positionMenu(itemClickedEvent);
             } else {
                 taskItemInContext = null;
@@ -176,8 +175,10 @@
     /**
      * Turns the custom context menu on.
      */
-    function toggleMenuOn() {
+    function toggleMenuOn(itemLabel) {
         if (menuState !== 1) {
+            console.log("toggling on context menu...");
+            restrictContextItems(itemLabel);
             menuState = 1;
             menu.classList.add(contextMenuActive);
         }

@@ -368,7 +368,7 @@ function getEndOfPosition(itemName) {
 // retrieve the item folder name from its full position path
 // e.g. itemName = "home/folder1/file1"
 // returns "home/folder1"
-function getStartOfPosition(itemName){
+function getStartOfPosition(itemName) {
     return itemName.substring(0, itemName.lastIndexOf("/"));
 }
 
@@ -517,7 +517,7 @@ function renameItem(itemLabel) {
 
 function pinToHome(itemLabel) {
     const itemName = itemLabel.getAttribute("data-name");
-	console.log('TCL: pinToHome -> itemName', itemName);
+    console.log('TCL: pinToHome -> itemName', itemName);
     swal({
             title: "Give the pinned item a name",
             buttons: {
@@ -550,15 +550,15 @@ function pinToHome(itemLabel) {
         });
 }
 
-function linkItemToHome(originalItemName){
+function linkItemToHome(originalItemName) {
     const shortItemName = getEndOfPosition(originalItemName);
     console.log('TCL: pinToHome -> shortItemName', shortItemName);
     const originalItem = getItemFromStorage(originalItemName);
-	console.log('TCL: linkItemToHome -> originalItem', originalItem);
+    console.log('TCL: linkItemToHome -> originalItem', originalItem);
     const linkedItemName = `home/${shortItemName}`;
     console.log('TCL: pinToHome -> newItemName', linkedItemName);
-    const linkedItem =  clone(originalItem); // must clone to not modify original
-	console.log('TCL: linkItemToHome -> linkedItem', linkedItem);
+    const linkedItem = clone(originalItem); // must clone to not modify original
+    console.log('TCL: linkItemToHome -> linkedItem', linkedItem);
     // set position to home
     linkedItem.position = homePosition;
     linkedItem.link = originalItemName;
@@ -568,6 +568,19 @@ function linkItemToHome(originalItemName){
     // modify original item
     originalItem.link = linkedItemName;
     setItemInStorage(originalItemName, originalItem);
+}
+
+function restrictContextItems(itemLabel) {
+    const pinToHomeBtn = document.querySelector(`li.context-menu__item[data-action="pinToHome"`);
+    const itemName = itemLabel.getAttribute("data-name");
+    const itemType = getItemFromStorage(itemName).type;
+    if (pinToHomeBtn) {
+        if (position === homePosition || itemType === "folder") {
+            pinToHomeBtn.style.display = "none";
+        } else {
+            pinToHomeBtn.style.display = "block";
+        }
+    }
 }
 
 function renameItemInStorage(oldItemName, newItemName) {
@@ -588,7 +601,7 @@ function setItemInStorage(itemName, item) {
     // store item itself
     localStorage.setItem(itemName, JSON.stringify(item));
     // update linked item
-    if (item.link){
+    if (item.link) {
         const linkedItemName = item.link;
         const linkedItem = clone(item);
         linkedItem.position = getStartOfPosition(linkedItemName);
