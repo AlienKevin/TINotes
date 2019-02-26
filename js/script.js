@@ -517,6 +517,7 @@ function renameItem(itemLabel) {
 
 function pinToHome(itemLabel) {
     const itemName = itemLabel.getAttribute("data-name");
+    const itemType = getItemFromStorage(itemName).type;
     console.log('TCL: pinToHome -> itemName', itemName);
     swal({
             title: "Give the pinned item a name",
@@ -544,18 +545,35 @@ function pinToHome(itemLabel) {
                     break;
 
                 case "newName":
-                    swal("enter a new name!");
+                    const itemNameInput = createItemNameInput(itemType);
+                    itemNameInput.style.margin = "auto";
+                    itemNameInput.placeholder = "";
+                    itemNameInput.autofocus = true;
+                    swal({
+                            title: "Enter New Name: ",
+                            content: itemNameInput,
+                        })
+                        .then(() => {
+                            const newItemName = itemNameInput.value; 
+                            swal(`${newItemName} pinned to home!`, {
+                                icon: "success",
+                                buttons: false,
+                                timer: 800,
+                            });
+                            linkItemToHome(itemName, newItemName);
+                        });
                     break;
             }
         });
 }
 
-function linkItemToHome(originalItemName) {
-    const shortItemName = getEndOfPosition(originalItemName);
-    console.log('TCL: pinToHome -> shortItemName', shortItemName);
+function linkItemToHome(originalItemName, shortlinkedItemName) {
     const originalItem = getItemFromStorage(originalItemName);
     console.log('TCL: linkItemToHome -> originalItem', originalItem);
-    const linkedItemName = `home/${shortItemName}`;
+    if (!shortlinkedItemName) {
+        shortlinkedItemName = getEndOfPosition(originalItemName);
+    }
+    const linkedItemName = `home/${shortlinkedItemName}`;
     console.log('TCL: pinToHome -> newItemName', linkedItemName);
     const linkedItem = clone(originalItem); // must clone to not modify original
     console.log('TCL: linkItemToHome -> linkedItem', linkedItem);

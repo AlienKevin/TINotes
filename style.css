@@ -67,7 +67,9 @@ i.fa-calculator{
 .swal-footer{
     text-align: center;
 }
-
+/* .swal-content__input{
+    width: 25vw;
+} */
 #newItemPlaceholder{
     border: 1px dashed gray;
     background: transparent;
