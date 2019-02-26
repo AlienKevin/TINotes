@@ -376,21 +376,32 @@ function getStartOfPosition(itemName) {
 function displayItem(itemName, itemType, itemPosition) {
     // replace input with label
     const itemLabel = document.createElement("p");
+    const itemInfo = getItemFromStorage(itemName);
     const displayedName = getEndOfPosition(itemName);
+    let itemLabelText = "";
     if (itemType === "file") {
-        itemLabel.innerHTML = `📝`;
+        itemLabelText = `📝`;
     } else if (itemType === "folder") {
-        itemLabel.innerHTML = `📁`;
+        itemLabelText = `📁`;
     } else {
-        itemLabel.innerHTML = `<i class="far fa-calculator"></i>`;
+        itemLabelText = `<i class="far fa-calculator"></i>`;
     }
-    itemLabel.innerHTML += displayedName;
+
+    // append item name
+    itemLabelText += displayedName;
+
+    // add link sign to indicate that the item is linked with another
+    if (itemInfo.link){
+        itemLabelText += `<i class="far fa-link"></i>`;
+    }
+
+    itemLabel.innerHTML = itemLabelText;
+
     itemLabel.classList.add(itemType);
     itemLabel.classList.add("btn");
     itemLabel.classList.add("item");
     itemLabel.setAttribute("data-name", itemName);
     itemLabel.addEventListener("click", () => {
-        const itemInfo = getItemFromStorage(itemName);
         const editField = document.getElementById("editField");
         if (editField) { // has previous item's editor open
             const previousItemName = editField.getAttribute("data-item");
@@ -475,6 +486,7 @@ function deleteItem(itemLabel) {
     if (itemName) {
         removeItemFromStorage(itemName);
         removeElementInArray(itemNameList, itemName);
+        removeLink(itemName);
     }
     // remove item label
     itemLabel.remove();
@@ -483,6 +495,16 @@ function deleteItem(itemLabel) {
     if (editField && editField.getAttribute("data-item") === itemName) {
         editField.remove();
     }
+}
+
+function removeLink(linkedItemName){
+    iterateStorage(function(item, itemName){
+        const itemLink = item.link;
+        if (itemLink === linkedItemName){
+            delete item.link;
+            setItemInStorage(itemName, item);
+        }
+    })
 }
 
 function renameItem(itemLabel) {
