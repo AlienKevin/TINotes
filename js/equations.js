@@ -395,6 +395,7 @@ function openEquationEditField(eqName, eqInfo, position) {
     mainInput = new Guppy("eqInput");
     configureInput(mainInput)
     mainInput.event("change", updateVarTable);
+    mainInput.activate();
     // const previousEquation = eqInfo.equation;
     // if (previousEquation) {
     //     console.log('TCL: previousEquation', previousEquation);
