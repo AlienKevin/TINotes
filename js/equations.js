@@ -3,6 +3,20 @@ const newEquationBtn = document.getElementById("newEquationBtn");
 const eqLength = 20;
 let mainInput;
 let varInputs = {};
+const guppyBlacklist = [
+    // some disallowed functions
+    "norm", "utf8", "text", "floor", "eval", "integral", "defintegral", "derivative", "summation", "product", "root", "vector", "point", "matrix",
+    // infinity is not allowed
+    "infinity",
+    // no emojis
+    "banana", "pineapple", "kiwi", "mango",
+    // no hyperbolic trigs
+    "sinh", "cosh", "tanh",
+    // inequalities
+    "<=", "!=", ">=", ">", "<", "!=",
+    // some disallowed greek letters
+    "zeta", "eta", "iota", "kappa", "nu", "xi", "upsilon", "chi", "psi", "omega", "Theta", "Lambda", "Xi", "Pi", "Psi",
+];
 let warningTimerId; // timer id for settimeout of warning sign
 // Add guppyOSK mobile keyboard
 guppyOSK = new GuppyOSK();
@@ -50,12 +64,12 @@ function storeEquation(eqName, eqInfo) {
     setItemInStorage(eqName, eqInfo);
 }
 
-function getConstants(){
+function getConstants() {
     const varEquations = getVarEquations();
     const constants = {};
     Object.keys(varEquations).forEach(variable => {
         const equation = varEquations[variable];
-        if (isConstant(equation)){
+        if (isConstant(equation)) {
             const input = varInputs[variable];
             constants[variable] = input.engine.get_content("xml");
         }
@@ -154,7 +168,7 @@ function convertToExponential(equation) {
     return equation;
 }
 
-function getExponent(value){
+function getExponent(value) {
     let exponential = Number(value).toExponential();
     exponential = exponential.toUpperCase(); // convert lowercase e to uppercase E
     const exponent = exponential.substring(exponential.indexOf("E") + 1);
@@ -294,20 +308,7 @@ function setInputEquation(input, equation, AddParentheses = false) {
 }
 
 function configureInput(input) {
-    input.configure("blacklist", [
-        // some disallowed functions
-        "norm", "utf8", "text", "floor", "eval", "integral", "defintegral", "derivative", "summation", "product", "root", "vector", "point", "matrix",
-        // infinity is not allowed
-        "infinity",
-        // no emojis
-        "banana", "pineapple", "kiwi", "mango",
-        // no hyperbolic trigs
-        "sinh", "cosh", "tanh",
-        // inequalities
-        "<=", "!=", ">=", ">", "<", "!=",
-        // some disallowed greek letters
-        "zeta", "eta", "iota", "kappa", "nu", "xi", "upsilon", "chi", "psi", "omega", "Theta", "Lambda", "Xi", "Pi", "Psi",
-    ]);
+    input.configure("blacklist", guppyBlacklist);
     input.configure("cliptype", "text");
     input.configure("button", ["osk", "settings", "symbols", "controls"]);
     input.event("focus", (focusedObj) => {
@@ -321,6 +322,22 @@ function configureInput(input) {
             });
         }
     });
+}
+
+function configureGuppyHelp(){
+    const additionalBlacklist = [
+        "int", "defi", "deriv",
+        "mat", "vec", "sum", "prod",
+        "leq", "geq", "less", "greater", "neq",
+    ];
+    // configure guppy help to restrict symbols
+document.querySelector('#guppy_syms_table')
+.querySelectorAll("tr").forEach(row => {
+    const symbolName = row.querySelector("td").innerText;
+    if (guppyBlacklist.indexOf(symbolName) >= 0 || additionalBlacklist.indexOf(symbolName) >= 0) {
+        row.remove();
+    }
+});
 }
 
 function createEquationEditor() {
@@ -396,6 +413,7 @@ function openEquationEditField(eqName, eqInfo, position) {
     // convert div to guppy editor
     mainInput = new Guppy("eqInput");
     configureInput(mainInput)
+    configureGuppyHelp();
     mainInput.event("change", updateVarTable);
     mainInput.activate();
     // const previousEquation = eqInfo.equation;
@@ -602,12 +620,12 @@ function loadVarEquations(varInfo) {
         console.log('TCL: loadVarEquations -> variable', variable);
         const varInput = varInputs[variable];
         const varEquation = varEquations[variable];
-        if (constants && Object.keys(constants).indexOf(variable) >= 0){
+        if (constants && Object.keys(constants).indexOf(variable) >= 0) {
             const constant = constants[variable];
             varInput.import_xml(constant);
             varInput.engine.end();
             varInput.render(true);
-        } else{
+        } else {
             setInputEquation(varInput, varEquation, false);
         }
     })
