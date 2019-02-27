@@ -154,9 +154,14 @@ div#calculatorTypeSelector>div {
     display: inline;
 }
 
-.itemNameInput {
+.itemNameInput, .swal-content__input {
     height: 2em;
     font-size: 1em;
+}
+
+.swal-content__input {
+    width: 90%;
+    margin: auto;
 }
 
 .folder {}
