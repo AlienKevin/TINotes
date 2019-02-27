@@ -401,7 +401,7 @@ function displayItem(itemName, itemType, itemPosition) {
         itemLabelText = `📝`;
     } else if (itemType === "folder") {
         itemLabelText = `📁`;
-    } else {
+    } else if (itemType === "equation"){
         itemLabelText = `<i class="far fa-calculator"></i>`;
     }
 

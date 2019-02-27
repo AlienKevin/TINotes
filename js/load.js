@@ -47,11 +47,11 @@ fallback.load({
             dynamicallyLoadScript("dist/js/script.js");
             dynamicallyLoadScript("dist/js/equations.js");
             dynamicallyLoadScript("dist/js/contextMenu.js");
-            dynamicallyLoadScript("dist/js/notebookMenu.js");
             dynamicallyLoadScript("TI-BASIC/baseScript.txt");
             dynamicallyLoadScript("dist/js/generateScript.js");
             dynamicallyLoadScript("dist/js/popup.js");
             dynamicallyLoadScript("dist/js/introSteps.js");
+            dynamicallyLoadScript("dist/js/notebookMenu.js");
         });
 
         function dynamicallyLoadScript(url) {
