@@ -634,6 +634,8 @@ function linkItemToHome(originalItemName, shortlinkedItemName) {
     // modify original item
     originalItem.link = linkedItemName;
     setItemInStorage(originalItemName, originalItem);
+    // add link sign by updating current position
+    setPosition(position);
 }
 
 function getItemNamesAtPosition(position) {
