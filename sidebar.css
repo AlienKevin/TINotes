@@ -23,6 +23,11 @@
     padding: .5em 1em;
 }
 
+#sidebar ul > li:nth-child(1){
+    font-size: 1.3em;
+    padding-left: .5em;
+}
+
 #hamburger-icon {
     margin-top: .5em;
     width: 2em;
