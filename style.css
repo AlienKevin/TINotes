@@ -115,6 +115,11 @@ div#tools {
     margin-bottom: .5em;
 }
 
+span#totalSizeLabel{
+    margin-left: auto;
+    margin-right: .5em;
+}
+
 div#controlPanel{
     display: -webkit-box;
     display: -ms-flexbox;

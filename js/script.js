@@ -356,6 +356,24 @@ function setPosition(newPosition) {
     updateAtPosition(newPosition);
     displayNavigationBar();
     displayItemPlaceholder();
+    displayTotalSize();
+}
+
+function displayTotalSize() {
+    let totalSize = 0;
+    iterateStorage(function (item, itemName, itemType, itemPosition) {
+        if (itemPosition === position){
+            totalSize += countItemSize(itemName);
+        }
+    });
+    const tools = document.getElementById("tools");
+    let totalSizeLabel = document.getElementById("totalSizeLabel");
+    if (!totalSizeLabel) {
+        totalSizeLabel = document.createElement("span");
+        totalSizeLabel.id = "totalSizeLabel";
+        tools.appendChild(totalSizeLabel);
+    }
+    totalSizeLabel.innerText = `${totalSize} bits`;
 }
 
 // retrieve the item name from its full position path
@@ -488,6 +506,8 @@ function deleteItem(itemLabel) {
         removeElementInArray(itemNameList, itemName);
         removeLink(itemName);
     }
+    // update total size
+    displayTotalSize();
     // remove item label
     itemLabel.remove();
     // remove associated edit field
@@ -877,6 +897,7 @@ function updateItemSize(itemName, content) {
         fileLabel.insertAdjacentHTML("beforeend",
             `<span style="float:right;" class="sizeLabel">${sizeString}</span>`);
     }
+    displayTotalSize();
 }
 
 function countItemSize(itemName, content) {
