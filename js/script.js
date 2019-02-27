@@ -581,6 +581,7 @@ function askForNewLinkedName(originalItemName, originalItemType) {
                 attributes: {
                     type: "text",
                     maxLength: lineLength,
+                    spellcheck: false,
                 },
             },
         })
