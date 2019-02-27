@@ -8,15 +8,25 @@
     <title>TINotes</title>
     <!--Page stylesheet-->
     <link rel="stylesheet" type="text/css" href="dist/style.css">
+    <link rel="stylesheet" type="text/css" href="dist/sidebar.css">
     <!--Use fallback.js to load all libraries, github: https://github.com/dolox/fallback/blob/master/README.md-->
     <script src="lib/fallback.js/fallback.min.js" type="text/javascript"></script>
     <script src="dist/js/load.js" type="text/javascript" async></script>
 </head>
 
 <body>
+    <div id="sidebar">
+        <span class="toggle-btn">☰</span>
+        <ul>
+            <li>Home</li>
+            <li>About</li>
+            <li>Contact</li>
+        </ul>
+    </div>
     <h1>
         TINotes <i class="far fa-info-circle infoBtn" id="appInfoBtn"></i>
     </h1>
+
     <div id="main">
         <div id="tools">
             <div id="calculatorTypeSelector">
@@ -85,6 +95,7 @@
             </li>
         </ul>
     </nav>
+    </main>
     <link rel="stylesheet" type="text/css" href="lib/guppy-js/guppy-default-osk.min.css">
     <script src="lib/nerdamer/nerdamer.core.js"></script>
     <script src="lib/nerdamer/Algebra.js"></script>

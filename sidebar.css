@@ -1,0 +1,52 @@
+#sidebar {
+    position: fixed;
+    top: 0;
+    width: 15vw;
+    height: 100%;
+    background: #151719;
+    right: -15vw;
+    transition: all 300ms linear;
+}
+
+#sidebar.active {
+    right: 0;
+}
+
+#sidebar ul {
+    padding: 0;
+    margin-top: .5em;
+}
+
+#sidebar ul li {
+    color: white;
+    list-style: none;
+    padding: .5em 1em;
+}
+
+#sidebar .toggle-btn {
+    cursor: pointer;
+    position: absolute;
+    right: calc(15vw + 2em);
+    top: 2em;
+    font-size: 1.5em;
+    transition: all 300ms linear;
+}
+
+#sidebar .toggle-btn.active {
+    right: calc(15vw + 1em);
+}
+
+@media only screen and (max-width: 1000px) {
+    #sidebar {
+        width: 30vw;
+        right: -30vw;
+    }
+
+    #sidebar .toggle-btn {
+        right: calc(30vw + 1em);
+    }
+
+    #sidebar .toggle-btn.active {
+        right: calc(30vw + 1em);
+    }
+}
