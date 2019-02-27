@@ -28,15 +28,14 @@
     width: 2em;
     height: 1em;
     display: block;
-    position: relative;
-    margin-left: auto;
-    margin-right: 1em;
-    transition: margin .4s ease-out;
-    float: right;
+    position: fixed;
+    left: auto;
+    right: 3em;
+    transition: right .4s ease-out;
 }
 
 #hamburger-icon.active {
-    margin-right: calc(15vw);
+    right: calc(15vw + .6em);
 }
 
 #hamburger-icon .line {
