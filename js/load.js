@@ -37,6 +37,9 @@ fallback.load({
             'Algebrite': [
                 '//cdn.jsdelivr.net/npm/algebrite@1.2.0/dist/algebrite.bundle-for-browser.min.js',
             ],
+            'localForge': [
+                '//cdn.jsdelivr.net/npm/localforage@1.7.3/dist/localforage.min.js',
+            ],
             'utils': 'dist/js/utils.js',
 
         }); 
