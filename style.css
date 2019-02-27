@@ -3,6 +3,11 @@ body {
     font-size: 1em;
     margin: 2em;
     margin-bottom: .2em;
+    margin-top: .2em;
+}
+
+h1{
+    margin-top: .3em;
 }
 
 .codeStyle{
