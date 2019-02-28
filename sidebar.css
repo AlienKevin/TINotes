@@ -1,10 +1,10 @@
 #sidebar {
     position: fixed;
     top: 0;
-    width: 15vw;
+    width: 20vw;
     height: 100%;
     background: #151719;
-    right: -15vw;
+    right: -20vw;
     transition: all 300ms linear;
 }
 
@@ -21,11 +21,16 @@
     color: white;
     list-style: none;
     padding: .5em 1em;
+    cursor: pointer;
 }
 
 #sidebar ul > li:nth-child(1){
     font-size: 1.3em;
     padding-left: .5em;
+}
+
+#sidebar #addNotebookBtn{
+    margin-left: .5em;
 }
 
 #hamburger-icon {
@@ -40,7 +45,7 @@
 }
 
 #hamburger-icon.active {
-    right: calc(15vw + .6em);
+    right: calc(20vw + .6em);
 }
 
 #hamburger-icon .line {
@@ -110,15 +115,15 @@
 
 @media only screen and (max-width: 1000px) {
     #sidebar {
-        width: 30vw;
-        right: -30vw;
+        width: 250px;
+        right: -250px;
     }
 
-    #hamburger-icon.toggle-btn {
-        margin-right: calc(1em);
+    #hamburger-icon {
+        margin-right: calc(10px);
     }
 
-    #hamburger-icon.toggle-btn.active {
-        margin-right: calc(30vw);
+    #hamburger-icon.active {
+        margin-right: calc(170px);
     }
 }

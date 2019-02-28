@@ -27,7 +27,7 @@ function getCurrentNotebook() {
 
 function renameNotebook(notebookItem) {
     const oldNotebookName = notebookItem.innerHTML;
-    const notebookNameInput = createItemNameInput();
+    const notebookNameInput = createItemNameInput("notebook");
     insertAfter(notebookItem, notebookNameInput);
     notebookNameInput.focus();
     notebookItem.remove();
