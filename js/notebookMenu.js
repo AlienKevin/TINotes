@@ -1,5 +1,6 @@
 const toggleBtn = document.querySelector('#hamburger-icon.toggle-btn');
 const sidebar = document.getElementById("sidebar");
+const addNotebookBtn = document.getElementById("addNotebookBtn");
 toggleBtn.addEventListener("click", (event) => {
     event.preventDefault(); // prevent scrolling up to top
     sidebar.classList.toggle("active");
@@ -9,12 +10,6 @@ const defaultNotebookName = "notebook1";
 const notebookNameList = [defaultNotebookName];
 // store the default notebook
 setNotebookInStorage(defaultNotebookName, getCurrentNotebook());
-sidebar.addEventListener("click", (e) => {
-    const target = e.target;
-    if (target.classList.contains("notebookItem")) {
-        renameNotebook(target);
-    }
-})
 
 function getCurrentNotebook() {
     const notebook = {};
@@ -50,6 +45,9 @@ function renameNotebook(notebookItem) {
 
 function displayNotebookLabel(notebookName, labelPosition) {
     const notebookLabel = document.createElement("li");
+    notebookLabel.classList.add("item");
+    notebookLabel.setAttribute("data-type", "notebook");
+    notebookLabel.setAttribute("data-name", notebookName);
     notebookLabel.textContent = notebookName;
     if (labelPosition) {
         insertAfter(labelPosition, notebookLabel);
