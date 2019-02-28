@@ -20,12 +20,12 @@ function getCurrentNotebook() {
     return notebook;
 }
 
-function renameNotebook(notebookItem) {
-    const oldNotebookName = notebookItem.innerHTML;
+function renameNotebook(notebookLabel) {
+    const oldNotebookName = notebookLabel.innerHTML;
     const notebookNameInput = createItemNameInput("notebook");
-    insertAfter(notebookItem, notebookNameInput);
+    insertAfter(notebookLabel, notebookNameInput);
     notebookNameInput.focus();
-    notebookItem.remove();
+    notebookLabel.remove();
     notebookNameInput.addEventListener("keypress", (e) => {
         if (e.keyCode == 13) { // ENTER key
             const newNotebookName = notebookNameInput.value;
@@ -46,8 +46,7 @@ function renameNotebook(notebookItem) {
 function displayNotebookLabel(notebookName, labelPosition) {
     const notebookLabel = document.createElement("li");
     notebookLabel.classList.add("item");
-    notebookLabel.setAttribute("data-type", "notebook");
-    notebookLabel.setAttribute("data-name", notebookName);
+    notebookLabel.classList.add("notebook");
     notebookLabel.textContent = notebookName;
     if (labelPosition) {
         insertAfter(labelPosition, notebookLabel);
