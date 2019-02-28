@@ -7,6 +7,7 @@ toggleBtn.addEventListener("click", (event) => {
     sidebar.classList.toggle("active");
     toggleBtn.classList.toggle("active");
 });
+let currentNotebookName;
 const defaultNotebookName = "notebook1";
 const notebookNameList = [];
 
@@ -28,6 +29,7 @@ function addDefaultNotebook() {
     // display the default notebook
     displayNotebookLabel(defaultNotebookName);
     notebookNameList.push(defaultNotebookName);
+    currentNotebookName = defaultNotebookName;
 }
 
 function loadNotebooks() {
@@ -95,6 +97,15 @@ function removeNotebook(notebookLabel){
     removeNotebookFromStorage(notebookName);
     removeElementInArray(notebookNameList, notebookName);
     notebookLabel.remove();
+    if (currentNotebookName === notebookName){
+        clearCurrentNotebook();
+    }
+}
+
+// Remove all items from storage and delete all labels!!!
+function clearCurrentNotebook(){
+    clearAllItems();
+    localStorage.clear();
 }
 
 function removeNotebookFromStorage(notebookName) {
