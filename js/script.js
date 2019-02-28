@@ -672,13 +672,8 @@ function getItemNamesAtPosition(position) {
 function restrictContextItems(itemLabel) {
     const pinToHomeBtn = document.querySelector(`li.context-menu__item[data-action="pinToHome"`);
     const itemName = itemLabel.getAttribute("data-name");
-    let itemType;
-    types.forEach(type => {
-        if (itemLabel.classList.contains(type)){
-            itemType = type;
-        }
-    })
-    console.log('TCL: restrictContextItems -> itemType', itemType);
+    const itemType = getItemLabelType(itemLabel);
+	console.log('TCL: restrictContextItems -> itemType', itemType);
     if (pinToHomeBtn) {
         if (position === homePosition || itemType === "folder" || itemType === "notebook") {
             pinToHomeBtn.style.display = "none";
@@ -686,6 +681,22 @@ function restrictContextItems(itemLabel) {
             pinToHomeBtn.style.display = "block";
         }
     }
+}
+
+function getItemLabelType(itemLabel){
+	console.log('TCL: getItemLabelType -> itemLabel', itemLabel);
+    let itemType;
+    types.forEach(type => {
+		console.log('TCL: getItemLabelType -> type', type);
+        if (itemLabel.classList.contains(type)){
+            itemType = type;
+            return;
+        }
+    });
+    if (itemType === undefined){
+        throw new Error("Unknown item type!");
+    }
+    return itemType;
 }
 
 function renameItemInStorage(oldItemName, newItemName) {
