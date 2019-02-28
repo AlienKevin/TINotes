@@ -75,6 +75,7 @@ function displayNotebookLabel(notebookName, labelPosition) {
     const notebookLabel = document.createElement("li");
     notebookLabel.classList.add("item");
     notebookLabel.classList.add("notebook");
+    notebookLabel.setAttribute("data-name", notebookName);
     notebookLabel.textContent = notebookName;
     if (labelPosition) {
         insertAfter(labelPosition, notebookLabel);
@@ -87,6 +88,13 @@ function renameNotebookInStorage(oldNotebookName, newNotebookName) {
     getNotebookFromStorage(oldNotebookName)
         .then((notebook) => setNotebookInStorage(newNotebookName, notebook));
     removeNotebookFromStorage(oldNotebookName);
+}
+
+function removeNotebook(notebookLabel){
+    const notebookName = notebookLabel.getAttribute("data-name");
+    removeNotebookFromStorage(notebookName);
+    removeElementInArray(notebookNameList, notebookName);
+    notebookLabel.remove();
 }
 
 function removeNotebookFromStorage(notebookName) {

@@ -499,21 +499,26 @@ function displayFile(position, fileName, fileInfo) {
 }
 
 function deleteItem(itemLabel) {
-    const itemName = itemLabel.getAttribute("data-name");
-    // remove item in storage
-    if (itemName) {
-        removeItemFromStorage(itemName);
-        removeElementInArray(itemNameList, itemName);
-        removeLink(itemName);
-    }
-    // update total size
-    displayTotalSize();
-    // remove item label
-    itemLabel.remove();
-    // remove associated edit field
-    const editField = document.getElementById("editField");
-    if (editField && editField.getAttribute("data-item") === itemName) {
-        editField.remove();
+    const itemType = getItemLabelType(itemLabel);
+    if (itemType === "notebook") {
+        removeNotebook(itemLabel);
+    } else {
+        const itemName = itemLabel.getAttribute("data-name");
+        // remove item in storage
+        if (itemName) {
+            removeItemFromStorage(itemName);
+            removeElementInArray(itemNameList, itemName);
+            removeLink(itemName);
+        }
+        // update total size
+        displayTotalSize();
+        // remove item label
+        itemLabel.remove();
+        // remove associated edit field
+        const editField = document.getElementById("editField");
+        if (editField && editField.getAttribute("data-item") === itemName) {
+            editField.remove();
+        }
     }
 }
 
