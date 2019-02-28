@@ -1,5 +1,6 @@
 const toggleBtn = document.querySelector('#hamburger-icon.toggle-btn');
 const sidebar = document.getElementById("sidebar");
+const notebookMenu = sidebar.querySelector("ul");
 const addNotebookBtn = document.getElementById("addNotebookBtn");
 toggleBtn.addEventListener("click", (event) => {
     event.preventDefault(); // prevent scrolling up to top
@@ -7,9 +8,36 @@ toggleBtn.addEventListener("click", (event) => {
     toggleBtn.classList.toggle("active");
 });
 const defaultNotebookName = "notebook1";
-const notebookNameList = [defaultNotebookName];
-// store the default notebook
-setNotebookInStorage(defaultNotebookName, getCurrentNotebook());
+const notebookNameList = [];
+
+countNotebooks().then((notebookSize) => {
+	console.log('TCL: notebookSize', notebookSize);
+    if (notebookSize > 0) {
+        // load notebooks in storage
+        loadNotebooks();
+    } else{
+        // add default notebook
+        addDefaultNotebook();
+    }
+});
+
+// display and store the default notebook
+function addDefaultNotebook() {
+    // store the default book
+    setNotebookInStorage(defaultNotebookName, getCurrentNotebook());
+    // display the default notebook
+    displayNotebookLabel(defaultNotebookName);
+    notebookNameList.push(defaultNotebookName);
+}
+
+function loadNotebooks() {
+    localforage.iterate(function (notebook, notebookName) {
+        notebookNameList.push(notebookName);
+        displayNotebookLabel(notebookName);
+    }).catch(function (err) {
+        console.log(err);
+    });
+}
 
 function getCurrentNotebook() {
     const notebook = {};
@@ -51,7 +79,7 @@ function displayNotebookLabel(notebookName, labelPosition) {
     if (labelPosition) {
         insertAfter(labelPosition, notebookLabel);
     } else {
-        sidebar.appendChild(notebookLabel);
+        notebookMenu.appendChild(notebookLabel);
     }
 }
 
@@ -75,4 +103,8 @@ function setNotebookInStorage(notebookName, notebook) {
     localforage.setItem(notebookName, notebook).catch(err => {
         console.log(err);
     });
+}
+
+function countNotebooks() {
+    return localforage.length();
 }
