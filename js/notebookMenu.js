@@ -40,9 +40,14 @@ addNotebookBtn.addEventListener("click", () => {
 
 // store notebook when window is unloaded
 window.addEventListener("beforeunload", (e) => {
-    const currentNotebook = getCurrentNotebook();
-    setNotebookInStorage(selectedNotebookName, currentNotebook);
+    storeSelectedNotebook();
 })
+
+function storeSelectedNotebook() {
+    const currentNotebook = getCurrentNotebook();
+	console.log('TCL: storeSelectedNotebook -> currentNotebook', selectedNotebookName);
+    return setNotebookInStorage(selectedNotebookName, currentNotebook);
+}
 
 function addNotebook(previousNotebookLabel) {
     const notebookNameInput = createItemNameInput("notebook");
@@ -63,11 +68,16 @@ function addNotebook(previousNotebookLabel) {
                 displayNotebookLabel(newNotebookName, notebookNameInput);
                 // remove item name input
                 notebookNameInput.remove();
-                // rename selected notebook
-                setSelectedNotebook(newNotebookName);
+
+                storeSelectedNotebook().then(() => {
+                    // clear current notebook
+                    clearSelectedNotebook();
+                    // rename selected notebook
+                    setSelectedNotebook(newNotebookName);
+                });
             }
         }
-    })
+    });
 }
 
 function setSelectedNotebook(notebookName) {
@@ -76,10 +86,10 @@ function setSelectedNotebook(notebookName) {
         console.log('TCL: setSelectedNotebook -> oldSelectedNotebook', oldSelectedNotebook);
         oldSelectedNotebook.classList.remove("selected");
     }
+    // switch to newly selected notebook
+    selectedNotebookName = notebookName;
     // store previously selected notebook
-    setNotebookInStorage(selectedNotebookName, getCurrentNotebook()).then(() => {
-        // switch to newly selected notebook
-        selectedNotebookName = notebookName;
+    storeSelectedNotebook().then(() => {
         const notebookLabel = notebookMenu.querySelector(`li[data-name="${notebookName}"`);
         notebookLabel.classList.add("selected");
         // load the selected notebook
@@ -184,22 +194,23 @@ function renameNotebookInStorage(oldNotebookName, newNotebookName) {
 function removeNotebook(notebookLabel) {
     const notebookName = notebookLabel.getAttribute("data-name");
     console.log('TCL: removeNotebook -> notebookName', notebookName);
-    removeNotebookFromStorage(notebookName);
-    const removedNotebookIndex = notebookNameList.indexOf(notebookName);
-    let previousNotebookName;
-    if (removedNotebookIndex < notebookNameList.length - 1) { // before last
-        previousNotebookName = notebookNameList[removedNotebookIndex + 1];
-    } else if (removedNotebookIndex > 0) { // last but not the only one
-        previousNotebookName = notebookNameList[removedNotebookIndex - 1];
-    }
-    if (previousNotebookName) {
-        setSelectedNotebook(previousNotebookName);
-    }
-    removeElementInArray(notebookNameList, notebookName);
-    notebookLabel.remove();
-    if (selectedNotebookName === notebookName) {
-        clearSelectedNotebook();
-    }
+    removeNotebookFromStorage(notebookName).then(() => {
+        const removedNotebookIndex = notebookNameList.indexOf(notebookName);
+        let previousNotebookName;
+        if (removedNotebookIndex < notebookNameList.length - 1) { // before last
+            previousNotebookName = notebookNameList[removedNotebookIndex + 1];
+        } else if (removedNotebookIndex > 0) { // last but not the only one
+            previousNotebookName = notebookNameList[removedNotebookIndex - 1];
+        }
+        if (previousNotebookName) {
+            setSelectedNotebook(previousNotebookName);
+        }
+        removeElementInArray(notebookNameList, notebookName);
+        notebookLabel.remove();
+        if (selectedNotebookName === notebookName) {
+            clearSelectedNotebook();
+        }
+    });
 }
 
 // Remove all items from storage and delete all labels!!!
