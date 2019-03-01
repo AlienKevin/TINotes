@@ -41,7 +41,7 @@ addNotebookBtn.addEventListener("click", () => {
 // store notebook when window is unloaded
 window.addEventListener("beforeunload", (e) => {
     const currentNotebook = getCurrentNotebook();
-    setNotebookInStorage(selectedNotebookName, currentNotebook);
+    // setNotebookInStorage(selectedNotebookName, currentNotebook);
 })
 
 function addNotebook(previousNotebookLabel) {
@@ -49,7 +49,7 @@ function addNotebook(previousNotebookLabel) {
     if (previousNotebookLabel) {
         insertAfter(previousNotebookLabel, notebookNameInput);
         previousNotebookLabel.remove();
-    } else{
+    } else {
         notebookMenu.appendChild(notebookNameInput);
     }
     notebookNameInput.focus();
@@ -72,19 +72,19 @@ function addNotebook(previousNotebookLabel) {
 
 function setSelectedNotebook(notebookName) {
     // store previously selected notebook
-    setNotebookInStorage(selectedNotebookName, getCurrentNotebook());
-
-    // switch to newly selected notebook
-    selectedNotebookName = notebookName;
-    const oldSelectedNotebook = notebookMenu.querySelector(`.selected`);
-    if (oldSelectedNotebook) {
-        console.log('TCL: setSelectedNotebook -> oldSelectedNotebook', oldSelectedNotebook);
-        oldSelectedNotebook.classList.remove("selected");
-    }
-    const notebookLabel = notebookMenu.querySelector(`li[data-name="${notebookName}"`);
-    notebookLabel.classList.add("selected");
-    // load the selected notebook
-    loadNotebook(notebookName);
+    setNotebookInStorage(selectedNotebookName, getCurrentNotebook()).then(() => {
+        // switch to newly selected notebook
+        selectedNotebookName = notebookName;
+        const oldSelectedNotebook = notebookMenu.querySelector(`.selected`);
+        if (oldSelectedNotebook) {
+            console.log('TCL: setSelectedNotebook -> oldSelectedNotebook', oldSelectedNotebook);
+            oldSelectedNotebook.classList.remove("selected");
+        }
+        const notebookLabel = notebookMenu.querySelector(`li[data-name="${notebookName}"`);
+        notebookLabel.classList.add("selected");
+        // load the selected notebook
+        loadNotebook(notebookName);
+    });
 }
 
 // display and store the default notebook
@@ -110,14 +110,18 @@ function loadNotebook(notebookName) {
 }
 
 function loadNotebookMenu() {
+    let lastNotebookName;
     localforage.iterate(function (notebook, notebookName) {
+        console.log('TCL: loadNotebookMenu -> notebookName', notebookName);
         notebookNameList.push(notebookName);
         displayNotebookLabel(notebookName);
-        if (notebook.selected === true) {
-            console.log('TCL: loadNotebookMenu -> notebook', notebook);
-            setSelectedNotebook(notebookName);
+        lastNotebookName = notebookName;
+    }).then(
+        () => {
+            console.log('TCL: loadNotebookMenu -> lastNotebookName', lastNotebookName);
+            setSelectedNotebook(lastNotebookName);
         }
-    }).catch(function (err) {
+    ).catch(function (err) {
         console.log(err);
     });
 }
@@ -198,7 +202,7 @@ function clearSelectedNotebook() {
 }
 
 function removeNotebookFromStorage(notebookName) {
-    localforage.removeItem(notebookName).catch(function (err) {
+    return localforage.removeItem(notebookName).catch(function (err) {
         console.log(err);
     });
 }
@@ -208,7 +212,7 @@ function getNotebookFromStorage(notebookName) {
 }
 
 function setNotebookInStorage(notebookName, notebook) {
-    localforage.setItem(notebookName, notebook).catch(err => {
+    return localforage.setItem(notebookName, notebook).catch(err => {
         console.log(err);
     });
 }
