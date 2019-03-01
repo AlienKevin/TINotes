@@ -71,13 +71,13 @@ function addNotebook(previousNotebookLabel) {
 }
 
 function setSelectedNotebook(notebookName) {
+    const oldSelectedNotebook = notebookMenu.querySelector(`li[data-name="${selectedNotebookName}"]`);
+    if (oldSelectedNotebook) {
+        console.log('TCL: setSelectedNotebook -> oldSelectedNotebook', oldSelectedNotebook);
+        oldSelectedNotebook.classList.remove("selected");
+    }
     // store previously selected notebook
     setNotebookInStorage(selectedNotebookName, getCurrentNotebook()).then(() => {
-        const oldSelectedNotebook = notebookMenu.querySelector(`li[data-name="${selectedNotebookName}"]`);
-        if (oldSelectedNotebook) {
-            console.log('TCL: setSelectedNotebook -> oldSelectedNotebook', oldSelectedNotebook);
-            oldSelectedNotebook.classList.remove("selected");
-        }
         // switch to newly selected notebook
         selectedNotebookName = notebookName;
         const notebookLabel = notebookMenu.querySelector(`li[data-name="${notebookName}"`);
