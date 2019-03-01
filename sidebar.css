@@ -29,6 +29,10 @@
     padding-left: .5em;
 }
 
+.selected {
+    background: #aaa;
+}
+
 #sidebar #addNotebookBtn{
     margin-left: .5em;
 }

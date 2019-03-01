@@ -10,6 +10,7 @@ toggleBtn.addEventListener("click", (event) => {
 let currentNotebookName;
 const defaultNotebookName = "notebook1";
 const notebookNameList = [];
+let selected = defaultNotebookName; // store the selected notebook name
 
 countNotebooks().then((notebookSize) => {
 	console.log('TCL: notebookSize', notebookSize);
@@ -22,6 +23,24 @@ countNotebooks().then((notebookSize) => {
     }
 });
 
+// select notebook on click
+notebookMenu.addEventListener("click", (e) => {
+    const target = e.target;
+    if (target.classList.contains("notebook")){
+        target.classList.add("selected");
+        const selectedNotebookName = target.getAttribute("data-name");
+        setSelectedNotebook(selectedNotebookName);
+    }
+});
+
+function setSelectedNotebook(notebookName){
+    selected = notebookName;
+    const oldSelectedNotebook = notebookMenu.querySelector(`li.selected`);
+    oldSelectedNotebook.classList.remove("selected");
+    const notebook = notebookMenu.querySelector(`li[data-name="${notebookName}"`);
+    notebook.classList.add("selected");
+}
+
 // display and store the default notebook
 function addDefaultNotebook() {
     // store the default book
@@ -30,6 +49,8 @@ function addDefaultNotebook() {
     displayNotebookLabel(defaultNotebookName);
     notebookNameList.push(defaultNotebookName);
     currentNotebookName = defaultNotebookName;
+    // set selected notebook to the default one
+    setSelectedNotebook(defaultNotebookName);
 }
 
 function loadNotebooks() {
@@ -68,6 +89,8 @@ function renameNotebook(notebookLabel) {
                 displayNotebookLabel(newNotebookName, notebookNameInput);
                 // remove item name input
                 notebookNameInput.remove();
+                // rename selected notebook
+                setSelectedNotebook(newNotebookName);
             }
         }
     })
