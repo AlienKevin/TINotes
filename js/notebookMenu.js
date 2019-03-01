@@ -45,7 +45,7 @@ window.addEventListener("beforeunload", (e) => {
 
 function storeSelectedNotebook() {
     const currentNotebook = getCurrentNotebook();
-	console.log('TCL: storeSelectedNotebook -> currentNotebook', selectedNotebookName);
+    console.log('TCL: storeSelectedNotebook -> currentNotebook', selectedNotebookName);
     return setNotebookInStorage(selectedNotebookName, currentNotebook);
 }
 
@@ -86,10 +86,10 @@ function setSelectedNotebook(notebookName) {
         console.log('TCL: setSelectedNotebook -> oldSelectedNotebook', oldSelectedNotebook);
         oldSelectedNotebook.classList.remove("selected");
     }
-    // switch to newly selected notebook
-    selectedNotebookName = notebookName;
     // store previously selected notebook
     storeSelectedNotebook().then(() => {
+        // switch to newly selected notebook
+        selectedNotebookName = notebookName;
         const notebookLabel = notebookMenu.querySelector(`li[data-name="${notebookName}"`);
         notebookLabel.classList.add("selected");
         // load the selected notebook
@@ -131,6 +131,7 @@ function loadNotebookMenu() {
     }).then(
         () => {
             console.log('TCL: loadNotebookMenu -> lastNotebookName', lastNotebookName);
+            selectedNotebookName = lastNotebookName;
             setSelectedNotebook(lastNotebookName);
         }
     ).catch(function (err) {
@@ -195,6 +196,10 @@ function removeNotebook(notebookLabel) {
     const notebookName = notebookLabel.getAttribute("data-name");
     console.log('TCL: removeNotebook -> notebookName', notebookName);
     removeNotebookFromStorage(notebookName).then(() => {
+        if (selectedNotebookName === notebookName) {
+            clearSelectedNotebook();
+            console.log('TCL: removeNotebook -> clearSelectedNotebook');
+        }
         const removedNotebookIndex = notebookNameList.indexOf(notebookName);
         let previousNotebookName;
         if (removedNotebookIndex < notebookNameList.length - 1) { // before last
@@ -203,13 +208,11 @@ function removeNotebook(notebookLabel) {
             previousNotebookName = notebookNameList[removedNotebookIndex - 1];
         }
         if (previousNotebookName) {
+			console.log('TCL: removeNotebook -> previousNotebookName', previousNotebookName);
             setSelectedNotebook(previousNotebookName);
         }
         removeElementInArray(notebookNameList, notebookName);
         notebookLabel.remove();
-        if (selectedNotebookName === notebookName) {
-            clearSelectedNotebook();
-        }
     });
 }
 
@@ -220,6 +223,7 @@ function clearSelectedNotebook() {
 }
 
 function removeNotebookFromStorage(notebookName) {
+	console.log('TCL: removeNotebookFromStorage -> removeNotebookFromStorage', notebookName);
     return localforage.removeItem(notebookName).catch(function (err) {
         console.log(err);
     });
