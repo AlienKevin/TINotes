@@ -41,7 +41,7 @@ addNotebookBtn.addEventListener("click", () => {
 // store notebook when window is unloaded
 window.addEventListener("beforeunload", (e) => {
     const currentNotebook = getCurrentNotebook();
-    // setNotebookInStorage(selectedNotebookName, currentNotebook);
+    setNotebookInStorage(selectedNotebookName, currentNotebook);
 })
 
 function addNotebook(previousNotebookLabel) {
