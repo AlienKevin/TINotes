@@ -33,11 +33,42 @@ notebookMenu.addEventListener("click", (e) => {
     }
 });
 
+// add new notebook
+addNotebookBtn.addEventListener("click", () => {
+    addNotebook();
+})
+
 // store notebook when window is unloaded
 window.addEventListener("beforeunload", (e) => {
     const currentNotebook = getCurrentNotebook();
     setNotebookInStorage(selectedNotebookName, currentNotebook);
 })
+
+function addNotebook(previousNotebookLabel) {
+    const notebookNameInput = createItemNameInput("notebook");
+    if (previousNotebookLabel) {
+        insertAfter(previousNotebookLabel, notebookNameInput);
+        previousNotebookLabel.remove();
+    } else{
+        notebookMenu.appendChild(notebookNameInput);
+    }
+    notebookNameInput.focus();
+    notebookNameInput.addEventListener("keypress", (e) => {
+        if (e.keyCode == 13) { // ENTER key
+            const newNotebookName = notebookNameInput.value;
+            if (notebookNameList.indexOf(newNotebookName) >= 0 && newNotebookName !== oldNotebookName) { // repeated name
+                createErrorMessage(notebookNameInput,
+                    `Duplicated notebook name`);
+            } else {
+                displayNotebookLabel(newNotebookName, notebookNameInput);
+                // remove item name input
+                notebookNameInput.remove();
+                // rename selected notebook
+                setSelectedNotebook(newNotebookName);
+            }
+        }
+    })
+}
 
 function setSelectedNotebook(notebookName) {
     // store previously selected notebook
@@ -146,7 +177,7 @@ function renameNotebookInStorage(oldNotebookName, newNotebookName) {
 
 function removeNotebook(notebookLabel) {
     const notebookName = notebookLabel.getAttribute("data-name");
-	console.log('TCL: removeNotebook -> notebookName', notebookName);
+    console.log('TCL: removeNotebook -> notebookName', notebookName);
     removeNotebookFromStorage(notebookName);
     const removedNotebookIndex = notebookNameList.indexOf(notebookName);
     if (removedNotebookIndex > 0) {
