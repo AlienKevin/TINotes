@@ -15,21 +15,26 @@
 #sidebar ul {
     padding: 0;
     margin-top: .5em;
+    cursor: pointer;
 }
 
 #sidebar ul li {
     color: white;
     list-style: none;
     padding: .5em 1em;
-    cursor: pointer;
 }
 
-#sidebar ul > li:nth-child(1){
+#sidebar ul > p:nth-child(1){
+    color: white;
     font-size: 1.3em;
     padding-left: .5em;
 }
 
-.selected {
+#sidebar ul li:hover{
+    background: rgba(170, 170, 170, 0.5);
+}
+
+#sidebar ul li.selected {
     background: #aaa;
 }
 
