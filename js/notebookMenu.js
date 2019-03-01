@@ -68,13 +68,8 @@ function addNotebook(previousNotebookLabel) {
                 displayNotebookLabel(newNotebookName, notebookNameInput);
                 // remove item name input
                 notebookNameInput.remove();
-
-                storeSelectedNotebook().then(() => {
-                    // clear current notebook
-                    clearSelectedNotebook();
-                    // rename selected notebook
-                    setSelectedNotebook(newNotebookName);
-                });
+                // rename selected notebook
+                setSelectedNotebook(newNotebookName);
             }
         }
     });
@@ -208,7 +203,7 @@ function removeNotebook(notebookLabel) {
             previousNotebookName = notebookNameList[removedNotebookIndex - 1];
         }
         if (previousNotebookName) {
-			console.log('TCL: removeNotebook -> previousNotebookName', previousNotebookName);
+            console.log('TCL: removeNotebook -> previousNotebookName', previousNotebookName);
             setSelectedNotebook(previousNotebookName);
         }
         removeElementInArray(notebookNameList, notebookName);
@@ -223,7 +218,7 @@ function clearSelectedNotebook() {
 }
 
 function removeNotebookFromStorage(notebookName) {
-	console.log('TCL: removeNotebookFromStorage -> removeNotebookFromStorage', notebookName);
+    console.log('TCL: removeNotebookFromStorage -> removeNotebookFromStorage', notebookName);
     return localforage.removeItem(notebookName).catch(function (err) {
         console.log(err);
     });
