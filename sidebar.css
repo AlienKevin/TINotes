@@ -33,8 +33,12 @@
     background: #aaa;
 }
 
-#sidebar #addNotebookBtn{
+#addNotebookBtn{
     margin-left: .5em;
+}
+
+#addNotebookBtn:hover{
+    color: #aaa;
 }
 
 #hamburger-icon {
