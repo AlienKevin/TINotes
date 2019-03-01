@@ -186,8 +186,13 @@ function removeNotebook(notebookLabel) {
     console.log('TCL: removeNotebook -> notebookName', notebookName);
     removeNotebookFromStorage(notebookName);
     const removedNotebookIndex = notebookNameList.indexOf(notebookName);
-    if (removedNotebookIndex > 0) {
-        const previousNotebookName = notebookNameList[removedNotebookIndex - 1];
+    let previousNotebookName;
+    if (removedNotebookIndex < notebookNameList.length - 1) { // before last
+        previousNotebookName = notebookNameList[removedNotebookIndex + 1];
+    } else if (removedNotebookIndex > 0) { // last but not the only one
+        previousNotebookName = notebookNameList[removedNotebookIndex - 1];
+    }
+    if (previousNotebookName) {
         setSelectedNotebook(previousNotebookName);
     }
     removeElementInArray(notebookNameList, notebookName);
