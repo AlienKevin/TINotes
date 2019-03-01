@@ -101,11 +101,13 @@ function addDefaultNotebook() {
 function loadNotebook(notebookName) {
     clearSelectedNotebook();
     getNotebookFromStorage(notebookName).then((notebook) => {
-        Object.keys(notebook).forEach(itemName => {
-            const item = notebook[itemName];
-            setItemInStorage(itemName, item);
-        });
-        updateAtPosition(homePosition);
+        if (notebook instanceof Object) {
+            Object.keys(notebook).forEach(itemName => {
+                const item = notebook[itemName];
+                setItemInStorage(itemName, item);
+            });
+            updateAtPosition(homePosition);
+        }
     });
 }
 
