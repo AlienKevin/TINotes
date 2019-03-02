@@ -7,10 +7,8 @@ toggleBtn.addEventListener("click", (event) => {
     sidebar.classList.toggle("active");
     toggleBtn.classList.toggle("active");
 });
-let currentNotebookName;
-const defaultNotebookName = "notebook1";
 const notebookNameList = [];
-let selectedNotebookName = defaultNotebookName; // store the selected notebook name
+let selectedNotebookName; // store the selected notebook name
 
 countNotebooks().then((notebookSize) => {
     console.log('TCL: notebookSize', notebookSize);
@@ -97,8 +95,8 @@ function setSelectedNotebook(notebookName, storePreviousNotebook = true) {
 
 // display and store the default notebook
 function addDefaultNotebook() {
-    // store the default book
-    setNotebookInStorage(defaultNotebookName, getCurrentNotebook());
+	console.log('TCL: addDefaultNotebook -> addDefaultNotebook');
+    const defaultNotebookName = "notebook1";
     // display the default notebook
     displayNotebookLabel(defaultNotebookName);
     notebookNameList.push(defaultNotebookName);
@@ -129,7 +127,7 @@ function loadNotebookMenu() {
     }).then(
         () => {
             console.log('TCL: loadNotebookMenu -> lastNotebookName', lastNotebookName);
-            setSelectedNotebook(lastNotebookName);
+            setSelectedNotebook(lastNotebookName, false);
         }
     ).catch(function (err) {
         console.log(err);
