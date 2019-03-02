@@ -73,34 +73,54 @@ function addNotebook(previousNotebookLabel) {
     });
 }
 
-function setSelectedNotebook(notebookName, storePreviousNotebook = true) {
+function setSelectedNotebook(notebookName, opts) {
+    const defaultOpts = {
+        storePrevious: true,
+        storeSelected: true,
+    };
+    const mergedOpts = {...defaultOpts, ...opts};
+    const storePrevious = mergedOpts.storePrevious;
+    const storeSelected = mergedOpts.storeSelected;
+
+    // delete styling of old selected notebook
     const oldSelectedNotebook = notebookMenu.querySelector(`li[data-name="${selectedNotebookName}"]`);
     if (oldSelectedNotebook) {
         console.log('TCL: setSelectedNotebook -> oldSelectedNotebook', oldSelectedNotebook);
         oldSelectedNotebook.classList.remove("selected");
     }
-    if (!storePreviousNotebook) {
+
+    // store previous notebook and switch new newly selected notebook
+    if (!storePrevious) {
         selectedNotebookName = notebookName;
     }
-    // store previously selected notebook
-    storeSelectedNotebook().then(() => {
+    if (storeSelected) {
+        storeSelectedNotebook().then(() => {
+            switchToNewNotebook();
+        });
+    } else {
+        switchToNewNotebook();
+    }
+
+    function switchToNewNotebook() {
         // switch to newly selected notebook
         selectedNotebookName = notebookName;
         const notebookLabel = notebookMenu.querySelector(`li[data-name="${notebookName}"`);
         notebookLabel.classList.add("selected");
         // load the selected notebook
         loadNotebook(notebookName);
-    });
+    }
 }
 
 // display and store the default notebook
 function addDefaultNotebook() {
-	console.log('TCL: addDefaultNotebook -> addDefaultNotebook');
+    console.log('TCL: addDefaultNotebook -> addDefaultNotebook');
     // display the default notebook
     displayNotebookLabel(defaultNotebookName);
     notebookNameList.push(defaultNotebookName);
     // set selected notebook to the default one
-    setSelectedNotebook(defaultNotebookName, false);
+    setSelectedNotebook(defaultNotebookName, {
+        storePrevious: false
+    });
 }
 
 function loadNotebook(notebookName) {
@@ -126,7 +146,10 @@ function loadNotebookMenu() {
     }).then(
         () => {
             console.log('TCL: loadNotebookMenu -> lastNotebookName', lastNotebookName);
-            setSelectedNotebook(lastNotebookName, false);
+            setSelectedNotebook(lastNotebookName, {
+                storePrevious: false,
+                storeSelected: false
+            });
         }
     ).catch(function (err) {
         console.log(err);
@@ -201,12 +224,14 @@ function removeNotebook(notebookLabel) {
             previousNotebookName = notebookNameList[removedNotebookIndex + 1];
         } else if (removedNotebookIndex > 0) { // last but not the only one
             previousNotebookName = notebookNameList[removedNotebookIndex - 1];
-        } else{ // last and the only one
+        } else { // last and the only one
             addDefaultNotebook();
         }
         if (previousNotebookName) {
             console.log('TCL: removeNotebook -> previousNotebookName', previousNotebookName);
-            setSelectedNotebook(previousNotebookName, false);
+            setSelectedNotebook(previousNotebookName, {
+                storePrevious: false
+            });
         }
         removeElementInArray(notebookNameList, notebookName);
         notebookLabel.remove();
