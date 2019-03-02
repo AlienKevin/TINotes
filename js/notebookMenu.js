@@ -75,11 +75,14 @@ function addNotebook(previousNotebookLabel) {
     });
 }
 
-function setSelectedNotebook(notebookName) {
+function setSelectedNotebook(notebookName, storePreviousNotebook = true) {
     const oldSelectedNotebook = notebookMenu.querySelector(`li[data-name="${selectedNotebookName}"]`);
     if (oldSelectedNotebook) {
         console.log('TCL: setSelectedNotebook -> oldSelectedNotebook', oldSelectedNotebook);
         oldSelectedNotebook.classList.remove("selected");
+    }
+    if (!storePreviousNotebook) {
+        selectedNotebookName = notebookName;
     }
     // store previously selected notebook
     storeSelectedNotebook().then(() => {
@@ -100,7 +103,7 @@ function addDefaultNotebook() {
     displayNotebookLabel(defaultNotebookName);
     notebookNameList.push(defaultNotebookName);
     // set selected notebook to the default one
-    setSelectedNotebook(defaultNotebookName);
+    setSelectedNotebook(defaultNotebookName, false);
 }
 
 function loadNotebook(notebookName) {
@@ -126,7 +129,6 @@ function loadNotebookMenu() {
     }).then(
         () => {
             console.log('TCL: loadNotebookMenu -> lastNotebookName', lastNotebookName);
-            selectedNotebookName = lastNotebookName;
             setSelectedNotebook(lastNotebookName);
         }
     ).catch(function (err) {
@@ -191,6 +193,7 @@ function removeNotebook(notebookLabel) {
     const notebookName = notebookLabel.getAttribute("data-name");
     console.log('TCL: removeNotebook -> notebookName', notebookName);
     removeNotebookFromStorage(notebookName).then(() => {
+        console.log(`Doing further operations after removing ${notebookName}...`);
         if (selectedNotebookName === notebookName) {
             clearSelectedNotebook();
             console.log('TCL: removeNotebook -> clearSelectedNotebook');
@@ -204,7 +207,7 @@ function removeNotebook(notebookLabel) {
         }
         if (previousNotebookName) {
             console.log('TCL: removeNotebook -> previousNotebookName', previousNotebookName);
-            setSelectedNotebook(previousNotebookName);
+            setSelectedNotebook(previousNotebookName, false);
         }
         removeElementInArray(notebookNameList, notebookName);
         notebookLabel.remove();
