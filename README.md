@@ -29,6 +29,12 @@ II. Download and use offline
 2. Lauch the `index.html` file by double click in your favorite browser
 3. Now you should be inside the TINotes user interface
 
+## Tested/Recommended Browsers
+In order of preference:
+1. Google Chrome
+2. Opera
+3. Mozilla Firefox
+
 ## Usage
 ### Create, edit, view, and save notes
 1. Select the type of calculator you are using
