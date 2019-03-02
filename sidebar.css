@@ -16,6 +16,7 @@
     padding: 0;
     margin-top: .5em;
     cursor: pointer;
+    user-select: none;
 }
 
 #sidebar ul li {
