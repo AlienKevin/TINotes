@@ -1,3 +1,5 @@
+// set drivers for localforage, excluding localstorage
+localforage.setDriver([localforage.WEBSQL, localforage.INDEXEDDB]);
 const toggleBtn = document.querySelector('#hamburger-icon.toggle-btn');
 const sidebar = document.getElementById("sidebar");
 const notebookMenu = sidebar.querySelector("ul");
