@@ -12,6 +12,7 @@ toggleBtn.addEventListener("click", (event) => {
 const notebookNameList = [];
 let selectedNotebookName; // store the selected notebook name
 const defaultNotebookName = "notebook1";
+
 countNotebooks().then((notebookSize) => {
     console.log('TCL: notebookSize', notebookSize);
     if (notebookSize > 0) {
@@ -40,12 +41,14 @@ addNotebookBtn.addEventListener("click", () => {
 
 // store notebook when window is unloaded
 window.addEventListener("beforeunload", (e) => {
-    storeSelectedNotebook();
+    storeSelectedNotebook(true);
 })
 
-function storeSelectedNotebook() {
+function storeSelectedNotebook(setSelected=false) {
     const currentNotebook = getCurrentNotebook();
-    console.log('TCL: storeSelectedNotebook -> currentNotebook', selectedNotebookName);
+    if (setSelected){
+        currentNotebook.selected = true;
+    }
     return setNotebookInStorage(selectedNotebookName, currentNotebook);
 }
 
@@ -148,7 +151,11 @@ function loadNotebookMenu() {
     }).then(
         () => {
             console.log('TCL: loadNotebookMenu -> lastNotebookName', lastNotebookName);
-            setSelectedNotebook(lastNotebookName, {
+            let notebookNameToSelect = lastNotebookName;
+            if (selectedNotebookName){
+                notebookNameToSelect = selectedNotebookName;
+            }
+            setSelectedNotebook(notebookNameToSelect, {
                 storePrevious: false,
                 storeSelected: false
             });
