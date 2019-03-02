@@ -826,21 +826,6 @@ function openFileEditField(itemName, itemInfo, position) {
                 content = insertSubstring(content, content.length - 1, "\n", 0); // avoid word wrapping
             }
             console.log('TCL: openFileEditField -> content.length', content.length);
-        } else { // deleting contents
-            // const cursorPosition = editor.selectionStart;
-            console.log('TCL: openFileEditField -> cursorPosition', cursorPosition);
-            // let previousNewline = content.substring(0, cursorPosition)
-            //     .lastIndexOf("\n");
-            console.log('TCL: openFileEditField -> previousNewline', previousNewline)
-            // const nextNewline = content.indexOf("\n", cursorPosition);
-            // if (previousNewline === -1){
-            //     previousNewline = 0;
-            // }
-            console.log('TCL: openFileEditField -> nextNewline', nextNewline);
-            // if (nextNewline - previousNewline < lineLength){
-            //     content = deleteSubstring(content, nextNewline, 1);
-            //     content = insertSubstring(content, previousNewline + lineLength, "\n");
-            // }
         }
         editor.value = content;
         lastFileContent = content;
