@@ -65,6 +65,8 @@ function addNotebook(previousNotebookLabel) {
                 createErrorMessage(notebookNameInput,
                     `Duplicated notebook name`);
             } else {
+                // add to notebook name list
+                notebookNameList.push(newNotebookName);
                 displayNotebookLabel(newNotebookName, notebookNameInput);
                 // remove item name input
                 notebookNameInput.remove();
