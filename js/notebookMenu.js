@@ -19,9 +19,10 @@ let notebookNameList = [];
 let selectedNotebookName; // store the selected notebook name
 const defaultNotebookName = "notebook1";
 
-loadMetaInfo();
-
-countNotebooks().then((notebookSize) => {
+loadMetaInfo().then(() => {
+    // console.log('TCL: notebookNameList', notebookNameList);
+    return countNotebooks();
+}).then((notebookSize) => {
     console.log('TCL: notebookSize', notebookSize);
     if (notebookSize > 0) {
         // load notebooks in storage
@@ -31,6 +32,11 @@ countNotebooks().then((notebookSize) => {
         addDefaultNotebook();
     }
 });
+
+// periodically store selected notebook
+setInterval(function () {
+    storeSelectedNotebook();
+}, 1000);
 
 // select notebook on click
 notebookMenu.addEventListener("click", (e) => {
@@ -62,16 +68,18 @@ function storeMetaInfo() {
 }
 
 function loadMetaInfo() {
-    getMetaInfo("notebookNameList").then((nameList) => {
-        if (nameList) {
-            notebookNameList = nameList;
-        }
-    });
-    getMetaInfo("selectedNotebookName").then((selected) => {
-        if (selected) {
-            selectedNotebookName = selected;
-        }
-    });
+    return Promise.all([
+        getMetaInfo("notebookNameList").then((nameList) => {
+            if (nameList) {
+                notebookNameList = nameList;
+            }
+        }),
+        getMetaInfo("selectedNotebookName").then((selected) => {
+            if (selected) {
+                selectedNotebookName = selected;
+            }
+        })
+    ]);
 }
 
 function setMetaInfo(key, value) {
@@ -88,7 +96,7 @@ function getMetaInfo(key) {
 
 function storeSelectedNotebook() {
     const currentNotebook = getCurrentNotebook();
-    console.log('TCL: storeSelectedNotebook -> currentNotebook', selectedNotebookName);
+    // console.log('TCL: storeSelectedNotebook -> currentNotebook', selectedNotebookName);
     return setNotebookInStorage(selectedNotebookName, currentNotebook);
 }
 
@@ -159,6 +167,8 @@ function setSelectedNotebook(notebookName, opts) {
         // load the selected notebook
         loadNotebook(notebookName);
     }
+
+    storeMetaInfo();
 }
 
 // display and store the default notebook
@@ -187,29 +197,22 @@ function loadNotebook(notebookName) {
 }
 
 function loadNotebookMenu() {
-    let lastNotebookName;
-    localforage.iterate(function (notebook, notebookName) {
+    console.log('TCL: loadNotebookMenu -> notebookNameList', notebookNameList);
+    notebookNameList.forEach(notebookName => {
         console.log('TCL: loadNotebookMenu -> notebookName', notebookName);
         // notebookNameList.push(notebookName);
         displayNotebookLabel(notebookName);
-        lastNotebookName = notebookName;
-    }).then(
-        () => {
-            console.log('TCL: loadNotebookMenu -> lastNotebookName', lastNotebookName);
-            setSelectedNotebook(lastNotebookName, {
-                storePrevious: false,
-                storeSelected: false
-            });
-        }
-    ).catch(function (err) {
-        console.log(err);
+    })
+    setSelectedNotebook(selectedNotebookName, {
+        storePrevious: false,
+        storeSelected: false
     });
 }
 
 function getCurrentNotebook() {
     const notebook = {};
     Object.keys(localStorage).forEach(key => {
-        console.log('TCL: key', key);
+        // console.log('TCL: key', key);
         notebook[key] = getItemFromStorage(key);
     })
     return notebook;
