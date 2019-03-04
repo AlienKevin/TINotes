@@ -1,3 +1,9 @@
+// Handle rejected promises
+window.addEventListener('unhandledrejection', function(event) {
+    // the event object has two special properties:
+    console.error(event.promise);// the promise that generated the error
+    console.error(event.reason); // the unhandled error object
+  });
 // Here we actually invoke Fallback JS to retrieve the following libraries for the page.
 fallback.load({
             // Include your stylesheets, this can be an array of stylesheets or a string!
@@ -44,18 +50,22 @@ fallback.load({
 
         }); 
         fallback.ready(function () {
-            dynamicallyLoadScript("dist/js/script.js");
-            dynamicallyLoadScript("dist/js/equations.js");
-            dynamicallyLoadScript("dist/js/contextMenu.js");
-            dynamicallyLoadScript("TI-BASIC/baseScript.txt");
-            dynamicallyLoadScript("dist/js/generateScript.js");
-            dynamicallyLoadScript("dist/js/popup.js");
-            dynamicallyLoadScript("dist/js/introSteps.js");
-            dynamicallyLoadScript("dist/js/notebookMenu.js");
+            dynamicallyLoadScript("dist/js/script.js")
+            .then(() => dynamicallyLoadScript("dist/js/equations.js"))
+            .then(() => dynamicallyLoadScript("dist/js/contextMenu.js"))
+            .then(() => dynamicallyLoadScript("TI-BASIC/baseScript.txt"))
+            .then(() => dynamicallyLoadScript("dist/js/generateScript.js"))
+            .then(() => dynamicallyLoadScript("dist/js/popup.js"))
+            .then(() => dynamicallyLoadScript("dist/js/introSteps.js"))
+            .then(() => dynamicallyLoadScript("dist/js/notebookMenu.js"));
         });
 
         function dynamicallyLoadScript(url) {
+            return new Promise(function(resolve, reject) {
             var script = document.createElement("script"); // create a script DOM node
             script.src = url; // set its src to the provided URL
+            script.onload = resolve;
+            script.onerror = () => reject(new Error(`Error when loading ${url}!`));
             document.body.appendChild(script); // add it to the end of the head section of the page (could change 'head' to 'body' to add it to the end of the body section instead)
-        }
+        });
+    }
