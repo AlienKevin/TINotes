@@ -311,3 +311,10 @@ function setNotebookInStorage(notebookName, notebook) {
         console.log(err);
     });
 }
+
+function clearAllStorage(){
+    notebookNameList = [];
+    localStorage.clear();
+    localforage.clear();
+    metaInfo.clear();
+}
