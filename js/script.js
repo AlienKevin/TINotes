@@ -420,6 +420,7 @@ function displayItem(itemName, itemType, itemPosition) {
     itemLabel.classList.add("item");
     itemLabel.setAttribute("data-name", itemName);
     itemLabel.addEventListener("click", () => {
+        const itemInfo = getItemFromStorage(itemName);
         const editField = document.getElementById("editField");
         if (editField) { // has previous item's editor open
             const previousItemName = editField.getAttribute("data-item");
