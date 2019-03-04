@@ -20,10 +20,8 @@ let selectedNotebookName; // store the selected notebook name
 const defaultNotebookName = "notebook1";
 
 loadMetaInfo().then(() => {
-    // console.log('TCL: notebookNameList', notebookNameList);
-    return countNotebooks();
-}).then((notebookSize) => {
-    console.log('TCL: notebookSize', notebookSize);
+    const notebookSize = notebookNameList.length;
+	console.log('TCL: notebookSize', notebookSize);
     if (notebookSize > 0) {
         // load notebooks in storage
         loadNotebookMenu();
@@ -312,8 +310,4 @@ function setNotebookInStorage(notebookName, notebook) {
     return localforage.setItem(notebookName, notebook).catch(err => {
         console.log(err);
     });
-}
-
-function countNotebooks() {
-    return localforage.length();
 }
