@@ -1,5 +1,11 @@
 // set drivers for localforage, excluding localstorage
 localforage.setDriver([localforage.WEBSQL, localforage.INDEXEDDB]);
+// separate instance for storing meta info
+const metaInfo = localforage.createInstance({
+    name: "metaInfo"
+});
+metaInfo.setDriver([localforage.WEBSQL, localforage.INDEXEDDB]);
+
 const toggleBtn = document.querySelector('#hamburger-icon.toggle-btn');
 const sidebar = document.getElementById("sidebar");
 const notebookMenu = sidebar.querySelector("ul");
@@ -9,9 +15,12 @@ toggleBtn.addEventListener("click", (event) => {
     sidebar.classList.toggle("active");
     toggleBtn.classList.toggle("active");
 });
-const notebookNameList = [];
+let notebookNameList = [];
 let selectedNotebookName; // store the selected notebook name
 const defaultNotebookName = "notebook1";
+
+loadMetaInfo();
+
 countNotebooks().then((notebookSize) => {
     console.log('TCL: notebookSize', notebookSize);
     if (notebookSize > 0) {
@@ -40,8 +49,42 @@ addNotebookBtn.addEventListener("click", () => {
 
 // store notebook when window is unloaded
 window.addEventListener("beforeunload", (e) => {
-    storeSelectedNotebook();
-})
+    return "";
+});
+
+function storeMetaInfo() {
+    return metaInfo.clear().then(() => {
+        return Promise.all([
+            setMetaInfo("notebookNameList", notebookNameList),
+            setMetaInfo("selectedNotebookName", selectedNotebookName)
+        ]);
+    });
+}
+
+function loadMetaInfo() {
+    getMetaInfo("notebookNameList").then((nameList) => {
+        if (nameList) {
+            notebookNameList = nameList;
+        }
+    });
+    getMetaInfo("selectedNotebookName").then((selected) => {
+        if (selected) {
+            selectedNotebookName = selected;
+        }
+    });
+}
+
+function setMetaInfo(key, value) {
+    return metaInfo.setItem(key, value).catch(function (err) {
+        console.log(err);
+    });
+}
+
+function getMetaInfo(key) {
+    return metaInfo.getItem(key).catch(function (err) {
+        console.log(err);
+    })
+}
 
 function storeSelectedNotebook() {
     const currentNotebook = getCurrentNotebook();
@@ -82,7 +125,10 @@ function setSelectedNotebook(notebookName, opts) {
         storePrevious: true,
         storeSelected: true,
     };
-    const mergedOpts = {...defaultOpts, ...opts};
+    const mergedOpts = {
+        ...defaultOpts,
+        ...opts
+    };
     const storePrevious = mergedOpts.storePrevious;
     const storeSelected = mergedOpts.storeSelected;
 
@@ -144,7 +190,7 @@ function loadNotebookMenu() {
     let lastNotebookName;
     localforage.iterate(function (notebook, notebookName) {
         console.log('TCL: loadNotebookMenu -> notebookName', notebookName);
-        notebookNameList.push(notebookName);
+        // notebookNameList.push(notebookName);
         displayNotebookLabel(notebookName);
         lastNotebookName = notebookName;
     }).then(
