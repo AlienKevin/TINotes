@@ -46,25 +46,32 @@ fallback.load({
             'localForge': [
                 '//cdn.jsdelivr.net/npm/localforage@1.7.3/dist/localforage.min.js',
             ],
-            'utils': 'dist/js/utils.js',
-
         }); 
         fallback.ready(function () {
-            dynamicallyLoadScript("dist/js/script.js")
-            .then(() => dynamicallyLoadScript("dist/js/equations.js"))
-            .then(() => dynamicallyLoadScript("dist/js/contextMenu.js"))
-            .then(() => dynamicallyLoadScript("TI-BASIC/baseScript.txt"))
-            .then(() => dynamicallyLoadScript("dist/js/generateScript.js"))
-            .then(() => dynamicallyLoadScript("dist/js/popup.js"))
-            .then(() => dynamicallyLoadScript("dist/js/introSteps.js"))
-            .then(() => dynamicallyLoadScript("dist/js/notebookMenu.js"));
+            const scripts = [
+                "dist/js/utils.js",
+                "dist/js/script.js", "dist/js/equations.js", "dist/js/contextMenu.js",
+                 "TI-BASIC/baseScript.txt", "dist/js/generateScript.js", "dist/js/popup.js", 
+                 "dist/js/introSteps.js", "dist/js/notebookMenu.js",
+            ];
+            dynamicallyLoadScripts(scripts);
         });
+
+        function dynamicallyLoadScripts(urls){
+            if (urls.length === 0){
+                return;
+            }
+            let promise = dynamicallyLoadScript(urls[0]);
+            urls.slice(1).forEach(url => {
+                promise = promise.then(dynamicallyLoadScript(url));
+            });
+        }
 
         function dynamicallyLoadScript(url) {
             return new Promise(function(resolve, reject) {
             var script = document.createElement("script"); // create a script DOM node
             script.src = url; // set its src to the provided URL
-            script.onload = resolve;
+            script.onload = () => {resolve(script); console.log(`${url} loaded!`)};
             script.onerror = () => reject(new Error(`Error when loading ${url}!`));
             document.body.appendChild(script); // add it to the end of the head section of the page (could change 'head' to 'body' to add it to the end of the body section instead)
         });
