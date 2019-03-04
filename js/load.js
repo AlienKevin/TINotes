@@ -63,7 +63,7 @@ fallback.load({
             }
             let promise = dynamicallyLoadScript(urls[0]);
             urls.slice(1).forEach(url => {
-                promise = promise.then(dynamicallyLoadScript(url));
+                promise = promise.then(() => dynamicallyLoadScript(url));
             });
         }
 
