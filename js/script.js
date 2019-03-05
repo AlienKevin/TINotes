@@ -258,9 +258,9 @@ function createMenuItem(type) {
     const itemNameInput = createItemNameInput(type);
     itemNameInput.addEventListener('keypress', (e) => {
         if (e.keyCode == 13) { // ENTER key
-            const shortItemName = itemNameInput.value;
+            const shortItemName = itemNameInput.value.trim();
             const fullItemName = getFullItemName(shortItemName);
-            if (shortItemName.replace(/\s/g, "").length >= minMenuItemLength) {
+            if (shortItemName.length >= minMenuItemLength) {
                 if (type === "folder" && shortItemName.indexOf("\\") >= 0) {
                     createErrorMessage(itemNameInput,
                         `Folder name cannot contain "\\"`);
@@ -552,9 +552,9 @@ function renameItem(itemLabel) {
             console.log('TCL: renameItem -> itemLabel.parentNode', itemLabel.parentNode);
             itemLabel.remove();
             itemNameInput.addEventListener("keypress", (e) => {
-                const shortItemName = itemNameInput.value;
+                const shortItemName = itemNameInput.value.trim();
                 const fullItemName = getFullItemName(shortItemName);
-                if (shortItemName.replace(/\s/g,"").length >= minMenuItemLength) {
+                if (shortItemName.length >= minMenuItemLength) {
                     if (type === "folder" && shortItemName.indexOf("\\") >= 0) {
                         createErrorMessage(itemNameInput,
                             `Folder name cannot contain "\\"`);

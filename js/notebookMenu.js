@@ -111,7 +111,7 @@ function addNotebook(previousNotebookLabel) {
     notebookNameInput.focus();
     notebookNameInput.addEventListener("keypress", (e) => {
         if (e.keyCode == 13) { // ENTER key
-            const newNotebookName = notebookNameInput.value;
+            const newNotebookName = notebookNameInput.value.trim();
             if (notebookNameList.indexOf(newNotebookName) >= 0) { // repeated name
                 createErrorMessage(notebookNameInput,
                     `Duplicated notebook name`);
