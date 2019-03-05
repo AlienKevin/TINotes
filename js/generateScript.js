@@ -140,13 +140,13 @@ function generateScriptHelper(position, index) {
     // console.log('TCL: generateScriptHelper -> index', index);
     // console.log('TCL: generateScriptHelper -> position', position);
     let homeMenu = `If N=${index}\nThen\nN->|LA(W)\n`;
-    homeMenu += `Menu("${getEndOfPosition(position)}"`;
+    homeMenu += `Menu("${getEndOfActivePosition(position)}"`;
     let branching = ``;
     const indexList = [];
     iterateStorage(function (item, itemName, itemType, itemPosition, index) {
         if (itemPosition === position) {
             index++;
-            homeMenu += `,"${getEndOfPosition(itemName)}",${index}`;
+            homeMenu += `,"${getEndOfActivePosition(itemName)}",${index}`;
             if (itemType === `file`) {
                 branching += generateFileScript(index, item.content);
             } else if (itemType === `equation`) {
