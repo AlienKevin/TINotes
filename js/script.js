@@ -260,8 +260,11 @@ function createMenuItem(type) {
         if (e.keyCode == 13) { // ENTER key
             const shortItemName = itemNameInput.value;
             const fullItemName = getFullItemName(shortItemName);
-            if (shortItemName.length >= minMenuItemLength) {
-                if (itemNameList.indexOf(fullItemName) >= 0) { // repeated name
+            if (shortItemName.replace(/\s/g, "").length >= minMenuItemLength) {
+                if (type === "folder" && shortItemName.indexOf("\\") >= 0) {
+                    createErrorMessage(itemNameInput,
+                        `Folder name cannot contain "\\"`);
+                } else if (itemNameList.indexOf(fullItemName) >= 0) { // repeated name
                     createErrorMessage(itemNameInput,
                         `Duplicated ${type} name, ${type} name must be unique`);
                 } else {
@@ -541,7 +544,7 @@ function renameItem(itemLabel) {
         if (oldItemName) {
             const item = getItemFromStorage(oldItemName);
             const type = item.type;
-            const itemNameInput = createItemNameInput();
+            const itemNameInput = createItemNameInput(type);
             itemNameInput.value = getEndOfActivePosition(oldItemName);
             insertAfter(itemLabel, itemNameInput);
             itemNameInput.focus();
@@ -549,18 +552,26 @@ function renameItem(itemLabel) {
             console.log('TCL: renameItem -> itemLabel.parentNode', itemLabel.parentNode);
             itemLabel.remove();
             itemNameInput.addEventListener("keypress", (e) => {
-                if (e.keyCode == 13) { // ENTER key
-                    const newItemName = getFullItemName(itemNameInput.value);
-                    if (itemNameList.indexOf(newItemName) >= 0 && newItemName !== oldItemName) { // repeated name
+                const shortItemName = itemNameInput.value;
+                const fullItemName = getFullItemName(shortItemName);
+                if (shortItemName.replace(/\s/g,"").length >= minMenuItemLength) {
+                    if (type === "folder" && shortItemName.indexOf("\\") >= 0) {
                         createErrorMessage(itemNameInput,
-                            `Duplicated ${type} name, ${type} name must be unique`);
-                    } else {
-                        replaceElementInArray(itemNameList, oldItemName, newItemName);
-                        renameItemInStorage(oldItemName, newItemName);
-                        displayItem(newItemName, type, itemNameInput);
-                        // remove item name input
-                        itemNameInput.remove();
+                            `Folder name cannot contain "\\"`);
+                    } else if (e.keyCode == 13) { // ENTER key
+                        if (itemNameList.indexOf(fullItemName) >= 0 && fullItemName !== oldItemName) { // repeated name
+                            createErrorMessage(itemNameInput,
+                                `Duplicated ${type} name, ${type} name must be unique`);
+                        } else {
+                            replaceElementInArray(itemNameList, oldItemName, fullItemName);
+                            renameItemInStorage(oldItemName, fullItemName);
+                            displayItem(fullItemName, type, itemNameInput);
+                            // remove item name input
+                            itemNameInput.remove();
+                        }
                     }
+                } else {
+                    createErrorMessage(itemNameInput, `${type} name can't be empty`);
                 }
             })
         }
