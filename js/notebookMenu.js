@@ -6,6 +6,8 @@ const metaInfo = localforage.createInstance({
 });
 metaInfo.setDriver([localforage.WEBSQL, localforage.INDEXEDDB]);
 
+localforage.iterate((value, key) => {console.log(key, value)})
+
 const toggleBtn = document.querySelector('#hamburger-icon.toggle-btn');
 const sidebar = document.getElementById("sidebar");
 const notebookMenu = sidebar.querySelector("ul");

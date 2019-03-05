@@ -163,7 +163,7 @@ function createPositionLabel(position) {
     const positionLabel = document.createElement("span");
     positionLabel.classList.add("btn");
     positionLabel.classList.add("positionLabel");
-    positionLabel.innerHTML = getEndOfPosition(position);
+    positionLabel.innerHTML = getEndOfActivePosition(position);
     positionLabel.addEventListener("click", () => {
         setPosition(position);
         console.log('TCL: createPositionLabel -> position', position);
@@ -379,15 +379,14 @@ function displayTotalSize() {
 // retrieve the item name from its full position path
 // e.g. itemName = "home/folder1/file1"
 // returns "file1"
-function getEndOfPosition(itemName) {
-    return itemName.substring(itemName.lastIndexOf("/") + 1);
-}
-
-// retrieve the item folder name from its full position path
-// e.g. itemName = "home/folder1/file1"
-// returns "home/folder1"
-function getStartOfPosition(itemName) {
-    return itemName.substring(0, itemName.lastIndexOf("/"));
+// item must be at the current position!!!
+function getEndOfActivePosition(itemName) {
+    let endPosition = itemName.substring(position.length + 1); // when item is NOT a folder
+    if (endPosition === "") { // when item is a folder and itemName === position
+        return itemName.substring(itemName.lastIndexOf("/") + 1);
+    } else {
+        return endPosition;
+    }
 }
 
 // display item labels
@@ -395,7 +394,7 @@ function displayItem(itemName, itemType, itemPosition) {
     // replace input with label
     const itemLabel = document.createElement("p");
     const itemInfo = getItemFromStorage(itemName);
-    const displayedName = getEndOfPosition(itemName);
+    const displayedName = getEndOfActivePosition(itemName);
     let itemLabelText = "";
     if (itemType === "file") {
         itemLabelText = `📝`;
@@ -543,7 +542,7 @@ function renameItem(itemLabel) {
             const item = getItemFromStorage(oldItemName);
             const type = item.type;
             const itemNameInput = createItemNameInput();
-            itemNameInput.value = getEndOfPosition(oldItemName);
+            itemNameInput.value = getEndOfActivePosition(oldItemName);
             insertAfter(itemLabel, itemNameInput);
             itemNameInput.focus();
             console.log('TCL: renameItem -> itemLabel', itemLabel);
@@ -632,7 +631,7 @@ function linkItemToHome(originalItemName, shortlinkedItemName) {
     const originalItem = getItemFromStorage(originalItemName);
     console.log('TCL: linkItemToHome -> originalItem', originalItem);
     if (shortlinkedItemName === undefined) {
-        shortlinkedItemName = getEndOfPosition(originalItemName);
+        shortlinkedItemName = getEndOfActivePosition(originalItemName);
     }
     const linkedItemName = `home/${shortlinkedItemName}`;
     console.log('TCL: pinToHome -> newItemName', linkedItemName);
@@ -730,10 +729,14 @@ function setItemInStorage(itemName, item) {
     // update linked item
     if (item.link) {
         const linkedItemName = item.link;
+        console.log('TCL: setItemInStorage -> linkedItemName', linkedItemName);
         const linkedItem = clone(item);
-        linkedItem.position = getStartOfPosition(linkedItemName);
-        linkedItem.link = itemName;
-        localStorage.setItem(linkedItemName, JSON.stringify(linkedItem));
+        const storedLinkedItem = getItemFromStorage(linkedItemName);
+        if (storedLinkedItem) {
+            linkedItem.position = storedLinkedItem.position;
+            linkedItem.link = itemName;
+            localStorage.setItem(linkedItemName, JSON.stringify(linkedItem));
+        }
     }
 }
 
