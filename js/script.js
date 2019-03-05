@@ -36,6 +36,7 @@ const conversionTable = {
     Sigma: "Σ",
     sigma: "σ",
     tau: "τ",
+    theta: "θ",
 
     // other symbols
     "sqrt(": "√(",
