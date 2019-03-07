@@ -64,6 +64,7 @@ window.addEventListener("beforeunload", (e) => {
 });
 
 function storeMetaInfo() {
+	// console.log('TCL: storeMetaInfo -> selectedNotebookName', selectedNotebookName);
     return metaInfo.clear().then(() => {
         return Promise.all([
             setMetaInfo("notebookNameList", notebookNameList),
@@ -170,13 +171,14 @@ function setSelectedNotebook(notebookName, opts) {
     function switchToNewNotebook() {
         // switch to newly selected notebook
         selectedNotebookName = notebookName;
-        const notebookLabel = notebookMenu.querySelector(`li[data-name="${notebookName}"`);
+        const notebookLabel = notebookMenu.querySelector(`li[data-name="${notebookName}"]`);
+		// console.log('TCL: switchToNewNotebook -> notebookLabel', notebookLabel);
         notebookLabel.classList.add("selected");
         // load the selected notebook
         loadNotebook(notebookName);
-    }
 
-    storeMetaInfo();
+        storeMetaInfo();
+    }
 }
 
 // display and store the default notebook
@@ -265,6 +267,7 @@ function displayNotebookLabel(notebookName, labelPosition) {
 }
 
 function renameNotebookInStorage(oldNotebookName, newNotebookName) {
+	// console.log('TCL: renameNotebookInStorage -> renameNotebookInStorage');
     getNotebookFromStorage(oldNotebookName)
         .then((notebook) => setNotebookInStorage(newNotebookName, notebook));
     removeNotebookFromStorage(oldNotebookName);
