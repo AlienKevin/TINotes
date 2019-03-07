@@ -34,8 +34,13 @@ loadMetaInfo().then(() => {
 });
 
 // periodically store selected notebook
-setInterval(function () {
-    storeSelectedNotebook();
+setTimeout(function periodicallyStoreNotebook() {
+    storeSelectedNotebook().then(
+        () => {
+            console.log("storing selected notebook...");
+            setTimeout(periodicallyStoreNotebook, 1000);
+        }
+    );
 }, 1000);
 
 // select notebook on click
